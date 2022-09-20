@@ -5,5 +5,5 @@ package ru.swetophor;
  * отражённых в ней данных                     *
  ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** **/
 
-public enum типКарты { КОСМОГРАММА, СИНАСТРИЯ, ТРАНЗИТ
+public enum ChartType { COSMOGRAMME, SYNASTRY, TRANSIT
 }

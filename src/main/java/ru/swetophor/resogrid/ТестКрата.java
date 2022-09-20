@@ -1,4 +1,4 @@
-package ru.swetophor.РезонанснаяРешётка;
+package ru.swetophor.resogrid;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -17,7 +17,7 @@ public class ТестКрата {
             System.out.println("Введи зазор:");
             зазор = Double.parseDouble(ввод.readLine());
             if (зазор < 0) break;
-            System.out.println("Крат аспекта вероятно " + найтиКрат(гармоника, дуга, зазор) + "\n");
+            System.out.println("Крат аспекта вероятно " + findMultiplier(гармоника, дуга, зазор) + "\n");
         }
         System.out.println("\nРабота тестократа завершена!");
     }
@@ -26,10 +26,10 @@ public class ТестКрата {
     static double дуга;
     static double зазор;
 
-    static private int найтиКрат(int резонанс, double дуга, double зазор) {
-        double единичник = 360 / резонанс;
+    static private int findMultiplier(int резонанс, double дуга, double зазор) {
+        double единичник = 360. / резонанс;
         int крат = 1;
-        while (крат <= (int) резонанс / 2) {
+        while (крат <= резонанс / 2) {
             if (дуга == крат * единичник + зазор || дуга == крат * единичник - зазор)
                 return крат;
             крат++;

@@ -1,7 +1,7 @@
 package ru.swetophor;
 
-public class Толкователь {
-    public static String описаниеРезонанса(int гармоника, int крат) {
+public class Interpreter {
+    public static String ResonanceDescription(int гармоника, int крат) {
         switch (гармоника) {
             case 1 : return "<1> Соединение: ";
             case 2 : return "<2> Противоположение: ";
