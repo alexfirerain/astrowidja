@@ -18,7 +18,7 @@ public class Matrix {
     protected static Resonance[][] resonances;
     protected int edgeHarmonic;
     protected int orbisDivider;
-    protected MatrixType тип;
+    protected MatrixType type;
 
     // методы открытаго доступа к внутренним полям
     public int getEdgeHarmonic() { return edgeHarmonic; }
@@ -28,13 +28,13 @@ public class Matrix {
 
     // текстовый вывод матрицы результатов
     public void resultsOutput() {
-        switch (тип) {
+        switch (type) {
             case SYNASTRY:                                 // таблица всех астр одной на все астры другой
                 for (int i = 0; i < datum1.size(); i++)
                     for (int j = 0; j < datum2.size(); j++)
                         resonances[i][j].resonancesOutput();
                 break;
-            case COSMOGRAMME:                               // полутаблица астр карты между собой
+            case COSMOGRAM:                               // полутаблица астр карты между собой
                 for (int i = 0; i < datum1.size(); i++)
                     for (int j = i + 1; j < datum2.size(); j++)
                         resonances[i][j].resonancesOutput();
@@ -46,7 +46,7 @@ public class Matrix {
     public Matrix(ArrayList <Astra> array1, ArrayList<Astra> array2, int edgeHarmonic, int orbisDivider) {
         this.edgeHarmonic = edgeHarmonic;
         this.orbisDivider = orbisDivider;
-        тип = SYNASTRY;
+        type = SYNASTRY;
         resonances = new Resonance[array1.size()][array2.size()];
         datum1 = array1;
         datum2 = array2;
@@ -54,7 +54,7 @@ public class Matrix {
     }
     // из двух массивов б/доп-параметров
     public Matrix(ArrayList<Astra> массив1, ArrayList<Astra> массив2) {
-        тип = SYNASTRY;
+        type = SYNASTRY;
         edgeHarmonic = Settings.getEdgeHarmonic();
         orbisDivider = Settings.getOrbisDivider();
         resonances = new Resonance[массив1.size()][массив2.size()];
@@ -64,7 +64,7 @@ public class Matrix {
     }
     // из одного массива (сам на себя) б/доп-параметров
     public Matrix(ArrayList<Astra> array) {
-        тип = COSMOGRAMME;
+        type = COSMOGRAM;
         edgeHarmonic = Settings.getEdgeHarmonic();
         orbisDivider = Settings.getOrbisDivider();
         resonances = new Resonance[array.size()][array.size()];

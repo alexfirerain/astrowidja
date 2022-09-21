@@ -17,7 +17,8 @@ public class Synastry extends MultiChart {
     }
 
     private void calculateAspectTable() {
-        chartsAspects = new Matrix(moments.get(0).chartsAstrasOutput(), moments.get(1).chartsAstrasOutput());
+        chartsAspects = new Matrix(moments.get(0).chartsAstrasOutput(),
+                                        moments.get(1).chartsAstrasOutput());
     }
 
     public void plotAspectTable() {

@@ -3,27 +3,26 @@ package ru.swetophor.celestialmechanics;
 import static java.lang.Math.abs;
 import static java.lang.Math.round;
 import static java.lang.String.format;
-import static java.lang.String.valueOf;
 import static ru.swetophor.celestialmechanics.ZodiacSign.pointsZodium;
 
-/** * * * * * * * * * * * * * * * * * * * * *
- * Инструментальный класс для решения       *
- * задач по пространственному расположению  *
- * * * * * * * * * * * * * * * * * * * * *  */
+/**
+ * Инструментальный класс для решения
+ * задач по пространственному расположению
+ */
 public class Mechanics {
     public static final double CIRCLE = 360.0;
 
     // вычисляет дугу между двумя точками на большом круге
     public static double getArc(double a, double b){
         double arc = abs(normalizeCoordinate(a) - normalizeCoordinate(b));
-        if (arc > CIRCLE /2)
+        if (arc > CIRCLE /  2)
             arc = CIRCLE - arc;
         return arc;
     }
 
     // вычисляет дугу между астрами, переданными как объекты
     public static double getArc(Astra a, Astra b){
-        return getArc(a.zodiacPosition, b.zodiacPosition);
+        return getArc(a.getZodiacPosition(), b.getZodiacPosition());
     }
 
     // приводит дугу к расстоянию меж ея концами
@@ -31,10 +30,13 @@ public class Mechanics {
         return getArc(normalizeCoordinate(a), 0);
     }
 
-    // приводит координату в диапазон от 0 до 360°
-    public static double normalizeCoordinate(double p){
-        while (p < 0) p += CIRCLE;
-        p %= CIRCLE;
+/**
+    Приводит координату в диапазон от 0 до 360°.
+*/
+        public static double normalizeCoordinate(double p){
+            p %= CIRCLE;
+            if (p < 0)
+                p += CIRCLE;
         return p;
     }
 
@@ -116,14 +118,14 @@ public class Mechanics {
      *          съ всеми избыточными нолями
      */
     public static String secondFormatTablewise(double inDegrees) {
-        int вСекундах = (int) round((inDegrees * 3600));
-        int градусов = вСекундах / 3600;
-        int минут = вСекундах % 3600 / 60;
-        int секунд = вСекундах - градусов * 3600 - минут * 60;
-        String форматка;
-        форматка = format("%03d°", градусов) + format("%02d'", минут) + format("%02d\"", секунд);
-        форматка = format("%-10s", форматка);
-        return форматка;
+        int inSeconds = (int) round((inDegrees * 3600));
+        int degrees = inSeconds / 3600;
+        int minutes = inSeconds % 3600 / 60;
+        int seconds = inSeconds - degrees * 3600 - minutes * 60;
+        String formatHolder;
+        formatHolder = format("%03d°", degrees) + format("%02d'", minutes) + format("%02d\"", seconds);
+        formatHolder = format("%-10s", formatHolder);
+        return formatHolder;
     }
 
 

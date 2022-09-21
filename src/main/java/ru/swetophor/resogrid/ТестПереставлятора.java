@@ -30,6 +30,9 @@ public class ТестПереставлятора {
                 .forEach(System.out::println);
 
         System.out.println(normalizeCoordinate(360));
+
+
+
     }
 
 }

@@ -3,26 +3,32 @@ package ru.swetophor.celestialmechanics;
 import static ru.swetophor.celestialmechanics.Mechanics.normalizeCoordinate;
 
 /**
- * Прототип небеснаго те́ла —
- * объект, имеющий:
- *      ♦ идентификатор
- *      ♦ положение
- *      ♦ физическия свойства
- *      ♦ астральныя свойства
+ * Прототип небесного те́ла — объект, имеющий:
+ * <li> идентификатор
+ * <li> положение
+ * <li> физическия свойства
+ * <li> астральныя свойства
  */
 public class Astra {
-    public String name;                                        // чо за астра
-    public Chart heaven;                                        // чья астра
-    public double zodiacPosition;                        // положение в Зодиаке
+    /**
+     * Идентифицирующее имя астры.
+     */
+    private String name;                                        // чо за астра
+    /**
+     * Ссылка на карту, в которой находится астра.
+     */
+    private Chart heaven;                                        // чья астра
+    /**
+     * Зодиакальное положение астры от 0°♈
+     */
+    private double zodiacPosition;                        // положение в Зодиаке
 
     // конструкторы для задания координаты с/без минут и секунд
     public Astra(String name, double degree, double minute, double second) {
-        this.name = name;
-        this.zodiacPosition = normalizeCoordinate(degree + minute/60 + second/3600);
+        this(name, degree + minute/60 + second/3600);
     }
     public Astra(String name, double degree, double minute) {
-        this.name = name;
-        this.zodiacPosition = normalizeCoordinate(degree + minute/60);
+        this(name, degree + minute/60);
     }
     public Astra(String name, double degree) {
         this.name = name;
@@ -30,4 +36,27 @@ public class Astra {
     }
 
 
+    public String getName() {
+        return this.name;
+    }
+
+    public Chart getHeaven() {
+        return this.heaven;
+    }
+
+    public double getZodiacPosition() {
+        return this.zodiacPosition;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setHeaven(Chart heaven) {
+        this.heaven = heaven;
+    }
+
+    public void setZodiacPosition(double zodiacPosition) {
+        this.zodiacPosition = zodiacPosition;
+    }
 }

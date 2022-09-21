@@ -31,7 +31,7 @@ public class Application {
         Synastry двойная = new Synastry(thisChart, moreChart);
         двойная.plotAspectTable();
     }
-    static public int ИДы = 0;
+    static public int IDs = 0;
 
     private static void welcome() {
         System.out.printf("""

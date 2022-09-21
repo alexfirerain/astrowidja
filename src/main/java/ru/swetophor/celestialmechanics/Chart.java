@@ -2,7 +2,7 @@ package ru.swetophor.celestialmechanics;
 
 
 import static ru.swetophor.celestialmechanics.Mechanics.зодиакФормат;
-import static ru.swetophor.Application.ИДы;
+import static ru.swetophor.Application.IDs;
 
 import ru.swetophor.resogrid.Matrix;
 import ru.swetophor.ChartType;
@@ -26,15 +26,15 @@ public class Chart {
     @Override  public String toString() {
         return name + " (" + type + " №" + ID + ")";
     }
-    private ArrayList<Astra> астрыКарты;
+    private ArrayList<Astra> chartsAstras;
     Matrix chartsAspects;
 
     // конструктор
     Chart() {
-        ИДы++;
-        ID = ИДы;
-        type = ChartType.COSMOGRAMME;
-        установкаАстрКарты(new ArrayList<>());
+        IDs++;
+        ID = IDs;
+        type = ChartType.COSMOGRAM;
+        chartsAstrasSetting(new ArrayList<>());
     }
     public Chart(String name) {
         this();
@@ -43,11 +43,11 @@ public class Chart {
 
     // функциональность
     public void addAstra(Astra astra) {
-        astra.heaven = this;
-        chartsAstrasOutput().add(astra);
+        astra.setHeaven(this);
+        chartsAstras.add(astra);
     }
     private void calculateAspectTable() {
-        chartsAspects = new Matrix(chartsAstrasOutput());
+        chartsAspects = new Matrix(chartsAstras);
     }
     public void plotAspectTable() {
         calculateAspectTable();
@@ -58,17 +58,17 @@ public class Chart {
     }
 
     public ArrayList<Astra> chartsAstrasOutput() {
-        return астрыКарты;
+        return chartsAstras;
     }
 
     public void списокАстрКарты() {
         System.out.println("\nЗодиакальныя позиции (" + name + "):");
-        for (Astra очердная : астрыКарты) {
-            System.out.println(очердная.name + "\t " + зодиакФормат(очердная.zodiacPosition));
+        for (Astra очердная : chartsAstras) {
+            System.out.println(очердная.getName() + "\t " + зодиакФормат(очердная.getZodiacPosition()));
         }
     }
 
-    public void установкаАстрКарты(ArrayList<Astra> наборАстр) {
-        астрыКарты = наборАстр;
+    public void chartsAstrasSetting(ArrayList<Astra> наборАстр) {
+        chartsAstras = наборАстр;
     }
 }

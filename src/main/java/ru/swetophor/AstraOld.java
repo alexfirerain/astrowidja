@@ -1,21 +1,21 @@
 package ru.swetophor;
 
-public class Astra {
+public class AstraOld {
     String id;
     double position;
-    public Astra(String name, double coordinate){
+    public AstraOld(String name, double coordinate){
         id = name;
         position = coordinate;
         while (position < 0) position += 360;
         position %= 360;
     }
-    public Astra(String name, double grades, double minutes){
+    public AstraOld(String name, double grades, double minutes){
         id = name;
         position = grades + minutes/60;
         position %= 360;
         if (position < 0) position += 360;
     }
-    public Astra(String name, double grades, double minutes, double seconds){
+    public AstraOld(String name, double grades, double minutes, double seconds){
         id = name;
         position = grades + minutes/60 + seconds/3600;
         position %= 360;

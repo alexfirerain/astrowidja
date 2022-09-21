@@ -15,21 +15,21 @@ public class ТестФормата {
         stars.add(new Astra("звезда", 0, 0, 0));
 
         System.out.println("\n* секундФормат без параметра *");
-        for (Astra she : stars) System.out.println(secondFormat(she.zodiacPosition));
+        for (Astra she : stars) System.out.println(secondFormat(she.getZodiacPosition()));
 
         System.out.println("\n* секундФормат без лишних нолей *");
-        for (Astra she : stars) System.out.println(secondFormat(she.zodiacPosition, true));
+        for (Astra she : stars) System.out.println(secondFormat(she.getZodiacPosition(), true));
 
         System.out.println("\n* секундФормат с лишними нолями *");
-        for (Astra she : stars) System.out.println(secondFormat(she.zodiacPosition, false));
+        for (Astra she : stars) System.out.println(secondFormat(she.getZodiacPosition(), false));
 
         System.out.println("\n* секундФорматТаблично без параметра *");
-        for (Astra she : stars) System.out.println(secondFormatTablewise(she.zodiacPosition));
+        for (Astra she : stars) System.out.println(secondFormatTablewise(she.getZodiacPosition()));
 
         System.out.println("\n* секундФорматТаблично без лишних нолей *");
-        for (Astra she : stars) System.out.println(secondFormatTablewise(she.zodiacPosition, true));
+        for (Astra she : stars) System.out.println(secondFormatTablewise(she.getZodiacPosition(), true));
 
         System.out.println("\n* секундФорматТаблично с лишними нолями *");
-        for (Astra she : stars) System.out.println(secondFormatTablewise(she.zodiacPosition, false));
+        for (Astra she : stars) System.out.println(secondFormatTablewise(she.getZodiacPosition(), false));
     }
 }

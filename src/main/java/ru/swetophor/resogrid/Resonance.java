@@ -13,23 +13,46 @@ import static ru.swetophor.resogrid.ResonanceType.*;
  * взаимодействие (резонансы) между некоторыми двумя точками
  */
 public class Resonance {
-
+    /**
+     * Ссылка на карту, в которой находится первая астра.
+     */
     private final Chart whoseFirst;
+    /**
+     * Ссылка на карту, в которой находится вторая астра.
+     */
     private Chart whoseSecond;
+    /**
+     * Тип резонанса:
+     */
     private final ResonanceType type;
-    private String first;                  // название первой астры
-    private String second;                  // название второй астры
-    private double arc;                  // угловое расстояние меж точками
-    private double orbis;                 // допуск, с которым аспект считается действующим
-    private int edgeHarmonic;           // наибольший целочисленный резонанс, иже проверяем
+    /**
+     * Название первой астры.
+     */
+    private String first;
+    /**
+     * Название второй астры.
+     */
+    private String second;
+    /**
+     * Угловое расстояние меж точками.
+     */
+    private double arc;
+    /**
+     * Орбис, т.е. допуск, с которым аспект считается действующим.
+     */
+    private double orb;
+    /**
+     * Наибольший проверяемый целочисленный резонанс
+     */
+    private int edgeHarmonic;
     private ArrayList<Resound> resounds;     // найденные в пределах орбиса резонансы по росту гармоники
     private ArrayList<Resound> resoundsByStrength;     // найденные в пределах орбиса резонансы убыванию силы
 
     // методы открытаго доступа к внутренним полям
     public double getArc() { return arc; }
     public void setArc(double arc) { this.arc = arc; }
-    public double getOrbis() { return orbis; }
-    public void setOrbis(double orbis) { this.orbis = orbis; }
+    public double getOrb() { return orb; }
+    public void setOrb(double orb) { this.orb = orb; }
 
     // один из действующих для данной дуги резонансов
     class Resound {
@@ -50,27 +73,28 @@ public class Resonance {
             this.number = number;
             this.multiplier = findMultiplier(number, fromArc);
             this.gap = gap;
-            this.strength = ((orbis - gap) / orbis) * 100;
-            this.depth = (int) floor(orbis / gap);
+            this.strength = ((orb - gap) / orb) * 100;
+            this.depth = (int) floor(orb / gap);
         }
     }
 
     // получение массива резонансов для двух астр (конструктор)
-    Resonance(Astra a, Astra b, double orbis, int edgeHarmonic) {
-        first = a.name; whoseFirst = a.heaven;
-        if (a.equals(b)) type = SELF;
-        else {
-            second = b.name; whoseSecond = b.heaven;
-            if(whoseFirst.getName().equals(whoseSecond.getName())) type = CHART;
-            else type = SYNASTRY;
-            first = a.name; second = b.name;
+    Resonance(Astra a, Astra b, double orb, int edgeHarmonic) {
+        first = a.getName(); whoseFirst = a.getHeaven();
+        if (a.equals(b)) {
+            type = SELF;
+        } else {
+            second = b.getName(); whoseSecond = b.getHeaven();
+            type = whoseFirst.getName().equals(whoseSecond.getName()) ?
+                    CHART : SYNASTRY;
+            first = a.getName(); second = b.getName();
             arc = Mechanics.getArc(a, b);
-            this.orbis = orbis; this.edgeHarmonic = edgeHarmonic;
+            this.orb = orb; this.edgeHarmonic = edgeHarmonic;
             resounds = new ArrayList<>(); resoundsByStrength = new ArrayList<>();
             double harmonicArc;
             for (int i = 1; i <= edgeHarmonic; i++) {
                 harmonicArc = normalizeArc(arc * i);
-                if (harmonicArc < orbis && !isNotSimple(i))
+                if (harmonicArc < orb && !isNotSimple(i))
                     resounds.add(new Resound(i, harmonicArc, arc));
             }
             sort();
@@ -80,15 +104,19 @@ public class Resonance {
     // вспомогательный метод нахождения крата аспекта
     private int findMultiplier(int resonance, double arc) {
 //        double единичник = 360 / резонанс;
-        int крат = 1;
-        while (крат < resonance / 2) {
-            if (abs(крат * CIRCLE / resonance - arc) < orbis / resonance) break;
-            else крат++;
+        int multiplier = 1;
+        while (multiplier < resonance / 2) {
+            if (abs(multiplier * CIRCLE / resonance - arc) < orb / resonance) break;
+            else multiplier++;
         }
-        return крат;
+        return multiplier;
     }
 
-    // вспомогательный метод отсечения кратных гармоник
+    /**
+     * Вспомогательный метод отсечения кратных гармоник.
+     * @param which число, которое проверяется на кратность уже найденным отзвукам.
+     * @return истинно, если проверяемое число кратно какому-то из уже найденных.
+     */
     private boolean isNotSimple(int which) {
         for (Resound next : resounds) {
             if (next.number == 1) continue;
@@ -99,7 +127,7 @@ public class Resonance {
     // вспомогательный метод вывода созвуков
     private void resoundsOutput() {
         if (resounds.size() == 0)
-            System.out.printf("Ни однаго резонанса до %d при орбисе %s!%n", edgeHarmonic, orbis);
+            System.out.printf("Ни однаго резонанса до %d при орбисе %s!%n", edgeHarmonic, orb);
         for (Resound aspect : resoundsByStrength) {
             System.out.print(ResonanceDescription(aspect.number, aspect.multiplier));
             System.out.printf("Резонанс %d (x%d) %s (%d) (%.2f%%, %s)%n",
@@ -112,14 +140,22 @@ public class Resonance {
     private void sort() {
         while (resoundsByStrength.size() < resounds.size()) {
             int strongest = 0;
-            while (resoundsByStrength.contains(resounds.get(strongest))) strongest++;
+            while (resoundsByStrength.contains(resounds.get(strongest)))
+                strongest++;
             if (resoundsByStrength.size() < resounds.size() - 1) {
                 int strong = strongest + 1;
-                while (resoundsByStrength.contains(resounds.get(strong))) strong++;
-                while (strong < resounds.size()) {
-                    if (resounds.get(strong).gap < resounds.get(strongest).gap) strongest = strong;
+
+                while (resoundsByStrength.contains(resounds.get(strong)))
                     strong++;
-                    while (strong < resounds.size() && resoundsByStrength.contains(resounds.get(strong))) strong++;
+
+                while (strong < resounds.size()) {
+                    if (resounds.get(strong).gap < resounds.get(strongest).gap)
+                        strongest = strong;
+
+                    strong++;
+
+                    while (strong < resounds.size() && resoundsByStrength.contains(resounds.get(strong)))
+                        strong++;
                 }
             }
             resoundsByStrength.add(resounds.get(strongest));

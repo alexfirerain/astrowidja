@@ -2,19 +2,22 @@ package ru.swetophor.celestialmechanics;
 
 import static ru.swetophor.celestialmechanics.Mechanics.normalizeCoordinate;
 
+/**
+ * Представление зодиакального знака, содержит символ.
+ */
 public enum ZodiacSign {
-    ОВЕН("♈"),
-    ТЕЛЕЦ("♉"),
-    БЛИЗНЕЦЫ("♊"),
-    РАК("♋"),
-    ЛЕВ("♌"),
-    ДЕВА("♍"),
-    ВЕСЫ("♎"),
-    СКОРПИОН("♏"),
-    СТРЕЛЕЦ("♐"),
-    КОЗЕРОГ("♑"),
-    ВОДОЛЕЙ("♒"),
-    РЫБЫ("♓");
+    ARIES("♈"),
+    TAURUS("♉"),
+    GEMINI("♊"),
+    CANCER("♋"),
+    LEO("♌"),
+    VIRGO("♍"),
+    LIBRA("♎"),
+    SCORPIO("♏"),
+    SAGITTARIUS("♐"),
+    CAPRICORN("♑"),
+    AQUARIUS("♒"),
+    PISCES("♓");
 
     private final String symbol;
 
@@ -22,23 +25,23 @@ public enum ZodiacSign {
         this.symbol = symbol;
     }
 
-    public String symbol() {
+    public String getSymbol() {
         return symbol;
     }
 
     public static String pointsZodium(double position) {
         position = normalizeCoordinate(position);
-        if (position < 30) return ОВЕН.symbol;
-        else if (position < 60) return ТЕЛЕЦ.symbol;
-        else if (position < 90) return БЛИЗНЕЦЫ.symbol;
-        else if (position < 120) return РАК.symbol;
-        else if (position < 150) return ЛЕВ.symbol;
-        else if (position < 180) return ДЕВА.symbol;
-        else if (position < 210) return ВЕСЫ.symbol;
-        else if (position < 240) return СКОРПИОН.symbol;
-        else if (position < 270) return СТРЕЛЕЦ.symbol;
-        else if (position < 300) return КОЗЕРОГ.symbol;
-        else if (position < 330) return ВОДОЛЕЙ.symbol;
-        else return РЫБЫ.symbol;
+        if (position < 30) return ARIES.symbol;
+        else if (position < 60) return TAURUS.symbol;
+        else if (position < 90) return GEMINI.symbol;
+        else if (position < 120) return CANCER.symbol;
+        else if (position < 150) return LEO.symbol;
+        else if (position < 180) return VIRGO.symbol;
+        else if (position < 210) return LIBRA.symbol;
+        else if (position < 240) return SCORPIO.symbol;
+        else if (position < 270) return SAGITTARIUS.symbol;
+        else if (position < 300) return CAPRICORN.symbol;
+        else if (position < 330) return AQUARIUS.symbol;
+        else return PISCES.symbol;
     }
 }
