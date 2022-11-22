@@ -12,7 +12,9 @@ import static ru.swetophor.celestialmechanics.ZodiacSign.pointsZodium;
 public class Mechanics {
     public static final double CIRCLE = 360.0;
 
-    // вычисляет дугу между двумя точками на большом круге
+    /**
+     * вычисляет дугу между двумя точками на большом круге
+     */
     public static double getArc(double a, double b){
         double arc = abs(normalizeCoordinate(a) - normalizeCoordinate(b));
         if (arc > CIRCLE /  2)
@@ -20,12 +22,16 @@ public class Mechanics {
         return arc;
     }
 
-    // вычисляет дугу между астрами, переданными как объекты
+    /**
+     * вычисляет дугу между астрами, переданными как объекты
+     */
     public static double getArc(Astra a, Astra b){
         return getArc(a.getZodiacPosition(), b.getZodiacPosition());
     }
 
-    // приводит дугу к расстоянию меж ея концами
+    /**
+     * приводит дугу к расстоянию меж ея концами
+     */
     public static double normalizeArc(double a){
         return getArc(normalizeCoordinate(a), 0);
     }
@@ -59,7 +65,12 @@ public class Mechanics {
         int degrees = inSeconds / (3600);
         int minutes = inSeconds % 3600 / 60;
         int seconds = inSeconds - degrees * 3600 - minutes * 60;
-        return format("%3s", degrees) + "°" + format("%2s", minutes) + "'" + format("%2s", seconds)+ "\"";
+        return "%s°%s'%s\""
+                .formatted(
+                        format("%3s", degrees),
+                        format("%2s", minutes),
+                        format("%2s", seconds)
+                );
     }
 
     /**
@@ -132,17 +143,15 @@ public class Mechanics {
     /**
      преобразует эклиптическую долготу в зодиакальную
      */
-    public static String зодиакФормат(double позиция) {
-        return pointsZodium(позиция) + "\t" + secondFormat(позиция % 30, false);
+    public static String zodiacFormat(double position) {
+        return pointsZodium(position) + "\t" + secondFormat(position % 30, false);
     }
 
     public static double findMedian(double positionA, double positionB) {
         double arc = getArc(positionA, positionB);
-        double minorPosition;
-        if (normalizeCoordinate(positionA + arc) == positionB)
-            minorPosition = positionA;
-        else
-            minorPosition = positionB;
+        double minorPosition =
+                normalizeCoordinate(positionA + arc) == positionB ?
+                positionA : positionB;
 
         double median = normalizeCoordinate(minorPosition + arc / 2);
 

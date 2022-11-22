@@ -3,7 +3,7 @@ package ru.swetophor.resogrid;
 import ru.swetophor.Settings;
 import java.util.ArrayList;
 import static java.lang.String.format;
-import static ru.swetophor.Settings.getOrbisDivider;
+import static ru.swetophor.Settings.getOrbsDivider;
 import static ru.swetophor.celestialmechanics.Mechanics.*;
 
 public class WavePattern {
@@ -35,8 +35,8 @@ public class WavePattern {
         else message.append(format("Всего найдено %d пересечений, считая до гармоники %d", п, edgeOfPatternHarmonics));
 
         message.append(format(" при орбисе %s (1/%d часть круга)%n",
-                secondFormat(CIRCLE / getOrbisDivider(), true),
-                getOrbisDivider()));
+                secondFormat(CIRCLE / getOrbsDivider(), true),
+                getOrbsDivider()));
         return message.toString();
     }
 
@@ -97,7 +97,7 @@ public class WavePattern {
             this.harmonic = i;
             this.multiplier = k;
             this.arc = normalizeCoordinate(CIRCLE / harmonic * multiplier);
-            this.aspectOrbis = CIRCLE / getOrbisDivider() / harmonic;
+            this.aspectOrbis = CIRCLE / getOrbsDivider() / harmonic;
         }
         private double getBeginning() {
             if (arc - aspectOrbis >= 0) return arc - aspectOrbis;

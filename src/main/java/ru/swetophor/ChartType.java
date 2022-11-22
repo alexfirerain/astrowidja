@@ -1,10 +1,21 @@
 package ru.swetophor;
 
-/** ** ** ** ** ** ** ** ** ** ** ** ** ** ** **
- * Какой может быть карта с точки зрения       *
- * отражённых в ней данных                     *
- ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** **/
-
+/**
+ * Какой может быть карта с точки зрения
+ * отражённых в ней данных
+ */
 public enum ChartType {
-    COSMOGRAM, SYNASTRY, TRANSIT
+    COSMOGRAM("Космограмма"), SYNASTRY("Синастрия"), TRANSIT("Транзит");
+
+    public final String presentation;
+
+    ChartType(String presentation) {
+        this.presentation = presentation;
+
+    }
+
+    @Override
+    public String toString() {
+        return presentation;
+    }
 }

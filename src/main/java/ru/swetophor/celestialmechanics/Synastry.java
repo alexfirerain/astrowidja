@@ -7,7 +7,9 @@ public class Synastry extends MultiChart {
 
     @Override public String toString() { return "%s (карта №%d)".formatted(name, ID); }
 
-    // конструктор синастрии из двух карт
+    /**
+     * конструктор синастрии из двух карт
+     */
     public Synastry(Chart chart1, Chart chart2) {
         super("Синастрия: %s и %s".formatted(chart1.name, chart2.name));
         moments.add(chart1);
@@ -17,8 +19,8 @@ public class Synastry extends MultiChart {
     }
 
     private void calculateAspectTable() {
-        chartsAspects = new Matrix(moments.get(0).chartsAstrasOutput(),
-                                        moments.get(1).chartsAstrasOutput());
+        aspects = new Matrix(moments.get(0).getAstras(),
+                             moments.get(1).getAstras());
     }
 
     public void plotAspectTable() {
@@ -32,7 +34,7 @@ public class Synastry extends MultiChart {
                 moments.get(1).name,
                 ID);
         calculateAspectTable();
-        chartsAspects.resultsOutput();
+        System.out.println(aspects.resultsOutput());
     }
 
 

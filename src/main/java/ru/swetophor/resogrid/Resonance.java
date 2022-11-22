@@ -1,5 +1,7 @@
 package ru.swetophor.resogrid;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.swetophor.celestialmechanics.*;
 import java.util.ArrayList;
 import static java.lang.Math.abs;
@@ -12,6 +14,8 @@ import static ru.swetophor.resogrid.ResonanceType.*;
  * Структурированный массив, описывающий
  * взаимодействие (резонансы) между некоторыми двумя точками
  */
+@Setter
+@Getter
 public class Resonance {
     /**
      * Ссылка на карту, в которой находится первая астра.
@@ -47,12 +51,6 @@ public class Resonance {
     private int edgeHarmonic;
     private ArrayList<Resound> resounds;     // найденные в пределах орбиса резонансы по росту гармоники
     private ArrayList<Resound> resoundsByStrength;     // найденные в пределах орбиса резонансы убыванию силы
-
-    // методы открытаго доступа к внутренним полям
-    public double getArc() { return arc; }
-    public void setArc(double arc) { this.arc = arc; }
-    public double getOrb() { return orb; }
-    public void setOrb(double orb) { this.orb = orb; }
 
     // один из действующих для данной дуги резонансов
     class Resound {
@@ -124,16 +122,24 @@ public class Resonance {
         }
         return false;
     }
-    // вспомогательный метод вывода созвуков
-    private void resoundsOutput() {
-        if (resounds.size() == 0)
-            System.out.printf("Ни однаго резонанса до %d при орбисе %s!%n", edgeHarmonic, orb);
-        for (Resound aspect : resoundsByStrength) {
-            System.out.print(ResonanceDescription(aspect.number, aspect.multiplier));
-            System.out.printf("Резонанс %d (x%d) %s (%d) (%.2f%%, %s)%n",
-                    aspect.number, aspect.multiplier, aspect.strengthLevel(), aspect.depth,
-                    aspect.strength, secondFormat(aspect.gap, true));
+
+    private String resoundsReport() {
+        StringBuilder sb = new StringBuilder();
+
+        if (resounds.size() == 0) {
+            sb.append("Ни однаго резонанса до %d при орбисе %s%n".formatted(edgeHarmonic, orb));
         }
+        for (Resound aspect : resoundsByStrength) {
+            sb.append(ResonanceDescription(aspect.number, aspect.multiplier));
+            sb.append("Резонанс %d (x%d) %s (%d) (%.2f%%, %s)%n".formatted(
+                    aspect.number,
+                    aspect.multiplier,
+                    aspect.strengthLevel(),
+                    aspect.depth,
+                    aspect.strength,
+                    secondFormat(aspect.gap, true)));
+        }
+        return sb.toString();
     }
 
     // метод получения упорядоченнаго по силе
@@ -162,20 +168,29 @@ public class Resonance {
         }
     }
 
-    // текстовой вывод данных по резонансу
-    public void resonancesOutput() {
+    public String resonancesOutput() {
+        StringBuilder sb = new StringBuilder();
         switch (type) {
-            case SELF -> System.out.printf("%n%s (%s)%n", first, whoseFirst.getName());
+            case SELF -> sb.append("%n%s (%s)%n".formatted(first, whoseFirst.getName()));
             case CHART -> {
-                System.out.printf("%n* Дуга между %s и %s (%s) = %s%n",
-                        first, second, whoseFirst.getName(), secondFormat(arc, true));
-                resoundsOutput();
+                sb.append("%n* Дуга между %s и %s (%s) = %s%n".formatted(
+                        first,
+                        second,
+                        whoseFirst.getName(),
+                        secondFormat(arc, true)));
+                sb.append(resoundsReport());
             }
             case SYNASTRY -> {
-                System.out.printf("%n* Дуга между %s (%s) и %s (%s) = %s%n",
-                        first, whoseFirst.getName(), second, whoseSecond.getName(), secondFormat(arc, true));
-                resoundsOutput();
+                sb.append("%n* Дуга между %s (%s) и %s (%s) = %s%n".formatted(
+                        first,
+                        whoseFirst.getName(),
+                        second,
+                        whoseSecond.getName(),
+                        secondFormat(arc, true)));
+                sb.append(resoundsReport());
             }
         }
+        return sb.toString();
+
     }
 }

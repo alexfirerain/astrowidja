@@ -4,17 +4,17 @@ import static ru.swetophor.celestialmechanics.Mechanics.CIRCLE;
 
 public class Settings {
     static int edgeHarmonic = 108;
-    static int orbisDivider = 30;
-    static boolean halfOrbisForDoubles = true;
+    static int orbsDivider = 30;
+    static boolean halfOrbsForDoubles = true;
 
     public static int getEdgeHarmonic() { return edgeHarmonic; }
 
-    public static void setEdgeHarmonic(int крайняяГармоника) { Settings.edgeHarmonic = крайняяГармоника; }
+    public static void setEdgeHarmonic(int edgeHarmonic) { Settings.edgeHarmonic = edgeHarmonic; }
 
-    public static int getOrbisDivider() { return orbisDivider; }
+    public static int getOrbsDivider() { return orbsDivider; }
 
-    public static void setOrbisDivider(int делительОрбиса) { Settings.orbisDivider = делительОрбиса; }
+    public static void setOrbsDivider(int orbsDivider) { Settings.orbsDivider = orbsDivider; }
 
-    public static double getOrbis() { return CIRCLE / orbisDivider; }
+    public static double getOrbs() { return CIRCLE / orbsDivider; }
 
 }
