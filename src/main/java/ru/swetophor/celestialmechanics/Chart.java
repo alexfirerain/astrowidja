@@ -8,7 +8,6 @@ import ru.swetophor.resogrid.Matrix;
 
 import java.util.ArrayList;
 
-import static ru.swetophor.Application.IDs;
 import static ru.swetophor.celestialmechanics.Mechanics.zodiacFormat;
 
 /**
@@ -22,24 +21,20 @@ import static ru.swetophor.celestialmechanics.Mechanics.zodiacFormat;
 */
 @Setter
 @Getter
-public class Chart {
-    protected int ID;
-    protected ChartType type;
-    protected String name;
-    protected ArrayList<Astra> astras;
+public class Chart extends ChartObject {
+
+    protected ArrayList<Astra> astras = new ArrayList<>();
+
+    protected final ChartType type = ChartType.COSMOGRAM;
     protected Matrix aspects;
+
+    public Chart(String name) {
+        super(name);
+    }
 
     // конструктор
 
-    Chart() {
-        ID = ++IDs;
-        type = ChartType.COSMOGRAM;
-        setAstras(new ArrayList<>());
-    }
-    public Chart(String name) {
-        this();
-        setName(name);
-    }
+
     // функциональность
 
     public void addAstra(Astra astra) {
@@ -61,11 +56,17 @@ public class Chart {
         System.out.println(aspects.resultsOutput());
     }
 
-    public void printAstrasList() {
-        System.out.printf("%nЗодиакальныя позиции (%s):%n", name);
-        astras.forEach(next -> System.out.printf(
-                "%s\t %s%n", next.getName(), zodiacFormat(next.getZodiacPosition()))
+
+    public String printAstrasList() {
+        StringBuilder list = new StringBuilder("%nЗодиакальныя позиции (%s):%n".formatted(name));
+        astras.forEach(next -> list.append(
+                "%s\t %s%n".formatted(
+                                next.getName(),
+                                zodiacFormat(next.getZodiacPosition())
+                        )
+                )
         );
+        return list.toString();
     }
 
     @Override  public String toString() {

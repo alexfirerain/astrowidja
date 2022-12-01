@@ -5,7 +5,12 @@ import ru.swetophor.ChartType;
 
 public class Synastry extends MultiChart {
 
-    @Override public String toString() { return "%s (карта №%d)".formatted(name, ID); }
+
+    @Override
+    public String toString() { return "%s (карта №%d)".formatted(name, ID); }
+
+    protected final ChartType type = ChartType.SYNASTRY;
+    protected Matrix aspects;
 
     /**
      * конструктор синастрии из двух карт
@@ -14,13 +19,7 @@ public class Synastry extends MultiChart {
         super("Синастрия: %s и %s".formatted(chart1.name, chart2.name));
         moments.add(chart1);
         moments.add(chart2);
-        type = ChartType.SYNASTRY;
-        calculateAspectTable();
-    }
-
-    private void calculateAspectTable() {
-        aspects = new Matrix(moments.get(0).getAstras(),
-                             moments.get(1).getAstras());
+        aspects = new Matrix(chart1.getAstras(), chart2.getAstras());
     }
 
     public void plotAspectTable() {
@@ -33,7 +32,6 @@ public class Synastry extends MultiChart {
                 moments.get(0).name,
                 moments.get(1).name,
                 ID);
-        calculateAspectTable();
         System.out.println(aspects.resultsOutput());
     }
 

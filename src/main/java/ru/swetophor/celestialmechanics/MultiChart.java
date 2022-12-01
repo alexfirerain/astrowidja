@@ -2,15 +2,10 @@ package ru.swetophor.celestialmechanics;
 
 import java.util.ArrayList;
 
-class MultiChart extends Chart {
-    ArrayList<Chart> moments;
-    private MultiChart() {
-        super();
-        moments = new ArrayList<>();
-    }
+abstract class MultiChart extends ChartObject {
+    ArrayList<Chart> moments = new ArrayList<>();
 
-    MultiChart(String chartTitle) {
-        this();
-        setName(chartTitle);
+    public MultiChart(String name) {
+        super(name);
     }
 }
