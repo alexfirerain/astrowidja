@@ -1,7 +1,6 @@
 package ru.swetophor.celestialmechanics;
 
 
-import lombok.Getter;
 import lombok.Setter;
 import ru.swetophor.ChartType;
 import ru.swetophor.resogrid.Matrix;
@@ -20,7 +19,6 @@ import static ru.swetophor.celestialmechanics.Mechanics.zodiacFormat;
      *   • матрицу резонансов
 */
 @Setter
-@Getter
 public class Chart extends ChartObject {
 
     protected ArrayList<Astra> astras = new ArrayList<>();
@@ -33,6 +31,20 @@ public class Chart extends ChartObject {
     }
 
     // конструктор
+
+    public static Chart readFromString(String input) {
+        String[] lines = input.lines().toArray(String[]::new);
+        Chart newChart;
+        if (lines.length == 0)
+            throw new IllegalArgumentException("текст не содержит строк");
+
+        newChart = new Chart(lines[0]);
+        for (int i = 1; i < lines.length; i++) {
+            newChart.addAstra(Astra.readFromString(lines[i]));
+        }
+
+        return newChart;
+    }
 
 
     // функциональность
@@ -73,4 +85,15 @@ public class Chart extends ChartObject {
         return "%s (%s №%d)".formatted(name, type, ID);
     }
 
+    public ArrayList<Astra> getAstras() {
+        return this.astras;
+    }
+
+    public ChartType getType() {
+        return this.type;
+    }
+
+    public Matrix getAspects() {
+        return this.aspects;
+    }
 }

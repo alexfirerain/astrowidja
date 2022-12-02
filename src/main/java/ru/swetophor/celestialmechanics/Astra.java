@@ -1,5 +1,9 @@
 package ru.swetophor.celestialmechanics;
 
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import static ru.swetophor.celestialmechanics.Mechanics.normalizeCoordinate;
 
 /**
@@ -33,6 +37,34 @@ public class Astra {
     public Astra(String name, double degree) {
         this.name = name;
         this.zodiacPosition = normalizeCoordinate(degree);
+    }
+
+    public static Astra fromData(String name, Double[] coordinate) {
+        switch (coordinate.length) {
+            case 0 -> throw new IllegalArgumentException("координат нет");
+            case 1 -> {
+                return new Astra(name, coordinate[0]);
+            }
+            case 2 -> {
+                return new Astra(name, coordinate[0], coordinate[1]);
+            }
+            case 3 -> {
+                return new Astra(name, coordinate[0], coordinate[1], coordinate[2]);
+            }
+            default -> throw new IllegalArgumentException("слишком много координат");
+        }
+    }
+
+    public static Astra readFromString(String input) {
+        var e = input.split(" ");
+        if (e.length == 0)
+            throw new IllegalArgumentException("текст не содержит строк");
+
+        var coors = IntStream.range(1, e.length)
+                .mapToObj(i -> Double.parseDouble(e[i]))
+                .collect(Collectors.toCollection(() -> new ArrayList<>(3)));
+
+        return Astra.fromData(input, coors.toArray(Double[]::new));
     }
 
 

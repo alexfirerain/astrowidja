@@ -14,13 +14,22 @@ import static ru.swetophor.Settings.*;
 public class Application {
     public static void main(String[] args) {
         welcome();
-        Chart thisChart = new Chart("СЧ");
-        thisChart.addAstra(new Astra("Солнце", 283, 15, 49));
-        thisChart.addAstra(new Astra("Луна", 253, 6, 27));
-        thisChart.addAstra(new Astra("Венера", 260, 32, 34));
-        thisChart.addAstra(new Astra("Марс", 302, 58, 14));
-        System.out.println(thisChart.printAstrasList());
-        thisChart.plotAspectTable();
+//        Chart thisChart = new Chart("СЧ");
+//        thisChart.addAstra(new Astra("Солнце", 283, 15, 49));
+//        thisChart.addAstra(new Astra("Луна", 253, 6, 27));
+//        thisChart.addAstra(new Astra("Венера", 260, 32, 34));
+//        thisChart.addAstra(new Astra("Марс", 302, 58, 14));
+//
+        Chart SCChart = Chart.readFromString("""
+                СЧ
+                Солнце 283 15 49
+                Луна 253 6 27
+                Венера 260 32 34
+                Марс 302 58 14
+                """);
+
+        System.out.println(SCChart.printAstrasList());
+        SCChart.plotAspectTable();
 
         Chart moreChart = new Chart("Сева");
         moreChart.addAstra(new Astra("Солнце", 81, 5, 8));
@@ -30,7 +39,7 @@ public class Application {
         System.out.println(moreChart.printAstrasList());
         moreChart.plotAspectTable();
 
-        Synastry doubleChart = new Synastry(thisChart, moreChart);
+        Synastry doubleChart = new Synastry(SCChart, moreChart);
         doubleChart.plotAspectTable();
     }
 
