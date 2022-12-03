@@ -14,32 +14,39 @@ import static ru.swetophor.Settings.*;
 public class Application {
     public static void main(String[] args) {
         welcome();
-//        Chart thisChart = new Chart("СЧ");
-//        thisChart.addAstra(new Astra("Солнце", 283, 15, 49));
-//        thisChart.addAstra(new Astra("Луна", 253, 6, 27));
-//        thisChart.addAstra(new Astra("Венера", 260, 32, 34));
-//        thisChart.addAstra(new Astra("Марс", 302, 58, 14));
-//
+
         Chart SCChart = Chart.readFromString("""
                 СЧ
                 Солнце 283 15 49
                 Луна 253 6 27
                 Венера 260 32 34
                 Марс 302 58 14
+                Юпитер 189 41
+                Сатурн 189 35
+                Уран 238 33
+                Нептун 263 9
+                Плутон 204 11
+                Хирон 43 34
+                Раху 131 8
                 """);
 
-        System.out.println(SCChart.printAstrasList());
+        System.out.println(SCChart.outputAstrasList());
         SCChart.plotAspectTable();
 
-        Chart moreChart = new Chart("Сева");
-        moreChart.addAstra(new Astra("Солнце", 81, 5, 8));
-        moreChart.addAstra(new Astra("Луна", 348, 59, 25));
-        moreChart.addAstra(new Astra("Венера", 35, 19, 47));
-        moreChart.addAstra(new Astra("Марс", 143, 35, 4));
-        System.out.println(moreChart.printAstrasList());
-        moreChart.plotAspectTable();
+        Chart SWChart = Chart.readFromString("""
+                Сева
+                Солнце 81 5 8
+                Луна 348 59 25
+                Венера 35 19 47
+                Марс 143 35 4
+                        """);
 
-        Synastry doubleChart = new Synastry(SCChart, moreChart);
+
+
+        System.out.println(SWChart.outputAstrasList());
+        SWChart.plotAspectTable();
+
+        Synastry doubleChart = new Synastry(SCChart, SWChart);
         doubleChart.plotAspectTable();
     }
 

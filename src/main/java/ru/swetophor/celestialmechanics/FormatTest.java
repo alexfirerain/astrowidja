@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import static ru.swetophor.celestialmechanics.Mechanics.secondFormat;
 import static ru.swetophor.celestialmechanics.Mechanics.secondFormatTablewise;
 
-public class ТестФормата {
+public class FormatTest {
     public static void main(String[] args) {
         ArrayList<Astra> stars = new ArrayList<>();
         stars.add(new Astra("звезда", 50, 30, 5));

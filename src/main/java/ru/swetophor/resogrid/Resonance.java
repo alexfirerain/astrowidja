@@ -61,7 +61,7 @@ public class Resonance {
         int depth;            // он же через количество последующих гармоник, через кои проходит
         String strengthLevel() {
             if (depth <= 1) return "- приблизительный ";
-            else if (depth <= 2) return "- уверенный ";
+            else if (depth == 2) return "- уверенный ";
             else if (depth <= 5) return "- глубокий ";
             else if (depth <= 12) return "- точный ";
             else if (depth <= 24) return "- глубоко точный ";

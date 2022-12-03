@@ -6,6 +6,7 @@ import ru.swetophor.ChartType;
 import ru.swetophor.resogrid.Matrix;
 
 import java.util.ArrayList;
+import java.util.stream.IntStream;
 
 import static ru.swetophor.celestialmechanics.Mechanics.zodiacFormat;
 
@@ -39,9 +40,10 @@ public class Chart extends ChartObject {
             throw new IllegalArgumentException("текст не содержит строк");
 
         newChart = new Chart(lines[0]);
-        for (int i = 1; i < lines.length; i++) {
-            newChart.addAstra(Astra.readFromString(lines[i]));
-        }
+        IntStream.range(1, lines.length)
+                .mapToObj(i -> Astra.readFromString(lines[i]))
+                .forEach(newChart::addAstra);
+
 
         return newChart;
     }
@@ -49,10 +51,16 @@ public class Chart extends ChartObject {
 
     // функциональность
 
-    public void addAstra(Astra astra) {
+    public void attachAstra(Astra astra) {
+        addAstra(astra);
+        calculateAspectTable();
+    }
+
+    private void addAstra(Astra astra) {
         astra.setHeaven(this);
         astras.add(astra);
     }
+
     private void calculateAspectTable() {
         aspects = new Matrix(astras);
     }
@@ -69,7 +77,7 @@ public class Chart extends ChartObject {
     }
 
 
-    public String printAstrasList() {
+    public String outputAstrasList() {
         StringBuilder list = new StringBuilder("%nЗодиакальныя позиции (%s):%n".formatted(name));
         astras.forEach(next -> list.append(
                 "%s\t %s%n".formatted(

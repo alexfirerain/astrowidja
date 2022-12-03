@@ -39,7 +39,7 @@ public class Astra {
         this.zodiacPosition = normalizeCoordinate(degree);
     }
 
-    public static Astra fromData(String name, Double[] coordinate) {
+    public static Astra fromData(String name, Double... coordinate) {
         switch (coordinate.length) {
             case 0 -> throw new IllegalArgumentException("координат нет");
             case 1 -> {
@@ -56,15 +56,15 @@ public class Astra {
     }
 
     public static Astra readFromString(String input) {
-        var e = input.split(" ");
-        if (e.length == 0)
+        var elements = input.split(" ");
+        if (elements.length == 0)
             throw new IllegalArgumentException("текст не содержит строк");
 
-        var coors = IntStream.range(1, e.length)
-                .mapToObj(i -> Double.parseDouble(e[i]))
+        var coors = IntStream.range(1, elements.length)
+                .mapToObj(i -> Double.parseDouble(elements[i]))
                 .collect(Collectors.toCollection(() -> new ArrayList<>(3)));
 
-        return Astra.fromData(input, coors.toArray(Double[]::new));
+        return Astra.fromData(elements[0], coors.toArray(Double[]::new));
     }
 
 
