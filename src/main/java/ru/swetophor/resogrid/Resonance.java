@@ -20,11 +20,11 @@ public class Resonance {
     /**
      * Ссылка на карту, в которой находится первая астра.
      */
-    private final Chart whoseFirst;
+    private final Chart whose_a1;
     /**
      * Ссылка на карту, в которой находится вторая астра.
      */
-    private Chart whoseSecond;
+    private Chart whose_a2;
     /**
      * Тип резонанса:
      */
@@ -32,11 +32,11 @@ public class Resonance {
     /**
      * Название первой астры.
      */
-    private String first;
+    private String astra_1;
     /**
      * Название второй астры.
      */
-    private String second;
+    private String astra_2;
     /**
      * Угловое расстояние меж точками.
      */
@@ -49,16 +49,49 @@ public class Resonance {
      * Наибольший проверяемый целочисленный резонанс
      */
     private int edgeHarmonic;
-    private ArrayList<Resound> resounds;     // найденные в пределах орбиса резонансы по росту гармоники
-    private ArrayList<Resound> resoundsByStrength;     // найденные в пределах орбиса резонансы убыванию силы
+    /**
+     * найденные в пределах орбиса резонансы по росту гармоники
+     */
+    private ArrayList<Resound> resounds;     //
+    /**
+     * найденные в пределах орбиса резонансы по убыванию силы
+     */
+    private ArrayList<Resound> resoundsByStrength;     //
 
-    // один из действующих для данной дуги резонансов
+    /**
+     * один из действующих для данной дуги резонансов
+     */
     class Resound {
-        int number;              // гармоника
-        int multiplier;               // дальность
-        double gap;           // орбис для соединения в этой гармонике
-        double strength;            // тот же орбис в % от наиточнаго
-        int depth;            // он же через количество последующих гармоник, через кои проходит
+
+        /**
+        гармоника
+         */
+        int numeric;              //
+
+        /**
+        дальность
+         */
+        int multiplier;               //
+
+        /**
+        орбис для соединения в этой гармонике
+         */
+        double clearance;           //
+
+        /**
+        тот же орбис в % от наиточнаго
+         */
+        double strength;            //
+
+        /**
+        он же через количество последующих гармоник, через кои проходит
+         */
+        int depth;
+
+        /**
+         * Выводит характеристику, насколько точен резонанс.
+         * @return строковое представление ранга точности.
+         */
         String strengthLevel() {
             if (depth <= 1) return "- приблизительный ";
             else if (depth == 2) return "- уверенный ";
@@ -67,28 +100,34 @@ public class Resonance {
             else if (depth <= 24) return "- глубоко точный ";
             else return "- крайне точный ";
         }
-        Resound(int number, double gap, double fromArc) {
-            this.number = number;
-            this.multiplier = findMultiplier(number, fromArc);
-            this.gap = gap;
-            this.strength = ((orb - gap) / orb) * 100;
-            this.depth = (int) floor(orb / gap);
+        Resound(int numeric, double clearance, double fromArc) {
+            this.numeric = numeric;
+            this.multiplier = findMultiplier(numeric, fromArc);
+            this.clearance = clearance;
+            this.strength = ((orb - clearance) / orb) * 100;
+            this.depth = (int) floor(orb / clearance);
         }
     }
 
-    // получение массива резонансов для двух астр (конструктор)
+    /**
+     * получение массива резонансов для двух астр (конструктор)
+     */
     Resonance(Astra a, Astra b, double orb, int edgeHarmonic) {
-        first = a.getName(); whoseFirst = a.getHeaven();
+        astra_1 = a.getName();
+        whose_a1 = a.getHeaven();
         if (a.equals(b)) {
             type = SELF;
         } else {
-            second = b.getName(); whoseSecond = b.getHeaven();
-            type = whoseFirst.getName().equals(whoseSecond.getName()) ?
+            astra_2 = b.getName();
+            whose_a2 = b.getHeaven();
+            type = whose_a1.getID() == whose_a2.getID() ?
                     CHART : SYNASTRY;
-            first = a.getName(); second = b.getName();
+            astra_1 = a.getName();
+            astra_2 = b.getName();
             arc = Mechanics.getArc(a, b);
             this.orb = orb; this.edgeHarmonic = edgeHarmonic;
-            resounds = new ArrayList<>(); resoundsByStrength = new ArrayList<>();
+            resounds = new ArrayList<>();
+            resoundsByStrength = new ArrayList<>();
             double harmonicArc;
             for (int i = 1; i <= edgeHarmonic; i++) {
                 harmonicArc = normalizeArc(arc * i);
@@ -99,15 +138,22 @@ public class Resonance {
         }
     }
 
-    // вспомогательный метод нахождения крата аспекта
+    /**
+     * вспомогательный метод нахождения крата аспекта
+     */
     private int findMultiplier(int resonance, double arc) {
-//        double единичник = 360 / резонанс;
+        double single = CIRCLE / resonance;
         int multiplier = 1;
-        while (multiplier < resonance / 2) {
-            if (abs(multiplier * CIRCLE / resonance - arc) < orb / resonance) break;
-            else multiplier++;
-        }
-        return multiplier;
+        double orbHere = orb / resonance;
+
+        while (multiplier < resonance / 2)
+            if (abs(single * multiplier - arc) < orbHere)
+                return multiplier;
+            else
+                multiplier++;
+
+        throw new IllegalArgumentException("Предложенная дуга %f.0°не является кратом для %d"
+                .formatted(arc, resonance));
     }
 
     /**
@@ -117,8 +163,8 @@ public class Resonance {
      */
     private boolean isNotSimple(int which) {
         for (Resound next : resounds) {
-            if (next.number == 1) continue;
-            if(which % next.number == 0) return true;
+            if (next.numeric == 1) continue;
+            if(which % next.numeric == 0) return true;
         }
         return false;
     }
@@ -130,19 +176,21 @@ public class Resonance {
             sb.append("Ни однаго резонанса до %d при орбисе %s%n".formatted(edgeHarmonic, orb));
         }
         for (Resound aspect : resoundsByStrength) {
-            sb.append(ResonanceDescription(aspect.number, aspect.multiplier));
+            sb.append(ResonanceDescription(aspect.numeric, aspect.multiplier));
             sb.append("Резонанс %d (x%d) %s (%d) (%.2f%%, %s)%n".formatted(
-                    aspect.number,
+                    aspect.numeric,
                     aspect.multiplier,
                     aspect.strengthLevel(),
                     aspect.depth,
                     aspect.strength,
-                    secondFormat(aspect.gap, true)));
+                    secondFormat(aspect.clearance, true)));
         }
         return sb.toString();
     }
 
-    // метод получения упорядоченнаго по силе
+    /**
+     * метод получения упорядоченнаго по силе
+     */
     private void sort() {
         while (resoundsByStrength.size() < resounds.size()) {
             int strongest = 0;
@@ -155,7 +203,7 @@ public class Resonance {
                     strong++;
 
                 while (strong < resounds.size()) {
-                    if (resounds.get(strong).gap < resounds.get(strongest).gap)
+                    if (resounds.get(strong).clearance < resounds.get(strongest).clearance)
                         strongest = strong;
 
                     strong++;
@@ -171,21 +219,21 @@ public class Resonance {
     public String resonancesOutput() {
         StringBuilder sb = new StringBuilder();
         switch (type) {
-            case SELF -> sb.append("%n%s (%s)%n".formatted(first, whoseFirst.getName()));
+            case SELF -> sb.append("%n%s (%s)%n".formatted(astra_1, whose_a1.getName()));
             case CHART -> {
                 sb.append("%n* Дуга между %s и %s (%s) = %s%n".formatted(
-                        first,
-                        second,
-                        whoseFirst.getName(),
+                        astra_1,
+                        astra_2,
+                        whose_a1.getName(),
                         secondFormat(arc, true)));
                 sb.append(resoundsReport());
             }
             case SYNASTRY -> {
                 sb.append("%n* Дуга между %s (%s) и %s (%s) = %s%n".formatted(
-                        first,
-                        whoseFirst.getName(),
-                        second,
-                        whoseSecond.getName(),
+                        astra_1,
+                        whose_a1.getName(),
+                        astra_2,
+                        whose_a2.getName(),
                         secondFormat(arc, true)));
                 sb.append(resoundsReport());
             }
