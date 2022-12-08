@@ -145,15 +145,12 @@ public class Resonance {
         double single = CIRCLE / resonance;
         int multiplier = 1;
         double orbHere = orb / resonance;
-
         while (multiplier < resonance / 2)
-            if (abs(single * multiplier - arc) < orbHere)
-                return multiplier;
+            if (abs(multiplier * single - arc) < orbHere)
+                break;
             else
                 multiplier++;
-
-        throw new IllegalArgumentException("Предложенная дуга %f.0°не является кратом для %d"
-                .formatted(arc, resonance));
+        return multiplier;
     }
 
     /**
