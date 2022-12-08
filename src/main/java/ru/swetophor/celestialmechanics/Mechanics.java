@@ -144,7 +144,7 @@ public class Mechanics {
      преобразует эклиптическую долготу в зодиакальную
      */
     public static String zodiacFormat(double position) {
-        return pointsZodium(position) + "\t" + secondFormat(position % 30, false);
+        return pointsZodium(position) + "\t" + secondFormat(position % 30);
     }
 
     public static double findMedian(double positionA, double positionB) {

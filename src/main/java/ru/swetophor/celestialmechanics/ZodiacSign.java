@@ -30,18 +30,21 @@ public enum ZodiacSign {
     }
 
     public static String pointsZodium(double position) {
-        position = normalizeCoordinate(position);
-        if (position < 30) return ARIES.symbol;
-        else if (position < 60) return TAURUS.symbol;
-        else if (position < 90) return GEMINI.symbol;
-        else if (position < 120) return CANCER.symbol;
-        else if (position < 150) return LEO.symbol;
-        else if (position < 180) return VIRGO.symbol;
-        else if (position < 210) return LIBRA.symbol;
-        else if (position < 240) return SCORPIO.symbol;
-        else if (position < 270) return SAGITTARIUS.symbol;
-        else if (position < 300) return CAPRICORN.symbol;
-        else if (position < 330) return AQUARIUS.symbol;
-        else return PISCES.symbol;
+        return switch ((int) normalizeCoordinate(position) / 30) {
+            case 0 -> ARIES.symbol;
+            case 1 -> TAURUS.symbol;
+            case 2 -> GEMINI.symbol;
+            case 3 -> CANCER.symbol;
+            case 4 -> LEO.symbol;
+            case 5 -> VIRGO.symbol;
+            case 6 -> LIBRA.symbol;
+            case 7 -> SCORPIO.symbol;
+            case 8 -> SAGITTARIUS.symbol;
+            case 9 -> CAPRICORN.symbol;
+            case 10 -> AQUARIUS.symbol;
+            case 11 -> PISCES.symbol;
+            default -> throw new IllegalStateException("Unexpected value: " + position);
+        };
     }
+
 }

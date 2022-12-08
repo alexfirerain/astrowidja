@@ -56,20 +56,19 @@ public class Chart extends ChartObject {
     private void calculateAspectTable() {
         aspects = new Matrix(astras);
     }
-    public void plotAspectTable() {
+    public String getAspectTable() {
         calculateAspectTable();
-        String CAPTION = """
+        return """
 
                 **************************************
                 * %s: %s (№%d) *
                 **************************************
-                """;
-        System.out.printf(CAPTION, type, name, ID);
-        System.out.println(aspects.resultsOutput());
+                """.formatted(type, name, ID)
+                + aspects.resultsOutput();
     }
 
 
-    public String printAstrasList() {
+    public String getAstrasList() {
         StringBuilder list = new StringBuilder("%nЗодиакальныя позиции (%s):%n".formatted(name));
         astras.forEach(next -> list.append(
                 "%s\t %s%n".formatted(

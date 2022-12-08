@@ -64,12 +64,12 @@ public class Astra {
                 .mapToObj(i -> Double.parseDouble(e[i]))
                 .collect(Collectors.toCollection(() -> new ArrayList<>(3)));
 
-        return Astra.fromData(input, coors.toArray(Double[]::new));
+        return Astra.fromData(e[0], coors.toArray(Double[]::new));
     }
 
 
     public String getName() {
-        return this.name;
+        return "%s (%s)".formatted(name, getZodiacDegree());
     }
 
     public Chart getHeaven() {
@@ -91,4 +91,9 @@ public class Astra {
     public void setZodiacPosition(double zodiacPosition) {
         this.zodiacPosition = zodiacPosition;
     }
+
+    public String getZodiacDegree() {
+        return (int) Math.ceil(zodiacPosition % 30) + "°" + ZodiacSign.pointsZodium(zodiacPosition);
+    }
+
 }

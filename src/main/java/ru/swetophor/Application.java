@@ -2,7 +2,6 @@ package ru.swetophor;
 
 
 import ru.swetophor.celestialmechanics.*;
-import ru.swetophor.celestialmechanics.Astra;
 
 import static ru.swetophor.Settings.*;
 
@@ -14,12 +13,7 @@ import static ru.swetophor.Settings.*;
 public class Application {
     public static void main(String[] args) {
         welcome();
-//        Chart thisChart = new Chart("СЧ");
-//        thisChart.addAstra(new Astra("Солнце", 283, 15, 49));
-//        thisChart.addAstra(new Astra("Луна", 253, 6, 27));
-//        thisChart.addAstra(new Astra("Венера", 260, 32, 34));
-//        thisChart.addAstra(new Astra("Марс", 302, 58, 14));
-//
+
         Chart SCChart = Chart.readFromString("""
                 СЧ
                 Солнце 283 15 49
@@ -27,20 +21,24 @@ public class Application {
                 Венера 260 32 34
                 Марс 302 58 14
                 """);
+        printChartStat(SCChart);
 
-        System.out.println(SCChart.printAstrasList());
-        SCChart.plotAspectTable();
+        Chart SWChart = Chart.readFromString("""
+                Сева
+                Солнце 81 5 8
+                Луна 348 59 25
+                Венера 35 19 47
+                Марс 143 35 4
+                """);
+        printChartStat(SWChart);
 
-        Chart moreChart = new Chart("Сева");
-        moreChart.addAstra(new Astra("Солнце", 81, 5, 8));
-        moreChart.addAstra(new Astra("Луна", 348, 59, 25));
-        moreChart.addAstra(new Astra("Венера", 35, 19, 47));
-        moreChart.addAstra(new Astra("Марс", 143, 35, 4));
-        System.out.println(moreChart.printAstrasList());
-        moreChart.plotAspectTable();
-
-        Synastry doubleChart = new Synastry(SCChart, moreChart);
+        Synastry doubleChart = new Synastry(SCChart, SWChart);
         doubleChart.plotAspectTable();
+    }
+
+    private static void printChartStat(Chart chart) {
+        System.out.println(chart.getAstrasList());
+        System.out.println(chart.getAspectTable());
     }
 
     // TODO: вынести процедуру загрузки астр, запариться с чтением из файла.
