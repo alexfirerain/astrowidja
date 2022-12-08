@@ -2,6 +2,8 @@ package ru.swetophor.resogrid;
 
 import ru.swetophor.Settings;
 import java.util.ArrayList;
+import java.util.stream.IntStream;
+
 import static java.lang.String.format;
 import static ru.swetophor.Settings.getOrbsDivider;
 import static ru.swetophor.celestialmechanics.Mechanics.*;
@@ -17,22 +19,22 @@ public class WavePattern {
     private static String reportOverlapping() {
         if (Rose.patterns.size() == 0) return "Расчёт ещё не выполнен!";
         StringBuilder message = new StringBuilder();
-        int э = 0;
-        int п = 0;
-        while (э < Rose.patterns.size() - 1) {
-            if (Rose.patterns.get(э).getEnd() > Rose.patterns.get(++э).getBeginning()) {
+        int a = 0;
+        int b = 0;
+        while (a < Rose.patterns.size() - 1) {
+            if (Rose.patterns.get(a).getEnd() > Rose.patterns.get(++a).getBeginning()) {
                 message.append(format("Нахлёст %s между %d/%d (%s) и %d/%d (%s)%n",
-                        secondFormat(Rose.patterns.get(--э).getEnd() - Rose.patterns.get(++э).getBeginning(), true),
-                        Rose.patterns.get(--э).multiplier, Rose.patterns.get(э).harmonic, secondFormat(Rose.patterns.get(э).arc, true),
-                        Rose.patterns.get(++э).multiplier, Rose.patterns.get(э).harmonic, secondFormat(Rose.patterns.get(э).arc, true)));
-                п++;
+                        secondFormat(Rose.patterns.get(--a).getEnd() - Rose.patterns.get(++a).getBeginning(), true),
+                        Rose.patterns.get(--a).multiplier, Rose.patterns.get(a).harmonic, secondFormat(Rose.patterns.get(a).arc, true),
+                        Rose.patterns.get(++a).multiplier, Rose.patterns.get(a).harmonic, secondFormat(Rose.patterns.get(a).arc, true)));
+                b++;
             } else {
-                э++;
+                a++;
             }
         }
-        if (п == 0)
+        if (b == 0)
             message.append(format("Никаких пересечений до гармоники %d", edgeOfPatternHarmonics));
-        else message.append(format("Всего найдено %d пересечений, считая до гармоники %d", п, edgeOfPatternHarmonics));
+        else message.append(format("Всего найдено %d пересечений, считая до гармоники %d", b, edgeOfPatternHarmonics));
 
         message.append(format(" при орбисе %s (1/%d часть круга)%n",
                 secondFormat(CIRCLE / getOrbsDivider(), true),
@@ -43,22 +45,13 @@ public class WavePattern {
     private static void showPatternUpTo(int harmonicsEdge) {
         edgeOfPatternHarmonics = harmonicsEdge;
         ArrayList<Aspect> patterns = new ArrayList <>();
-        double single;
-        int harmonic = 1;
         patterns.add(new Aspect(1, 1));
 
-        while (harmonic <= edgeOfPatternHarmonics) {
-            single = normalizeCoordinate(CIRCLE / harmonic);
-            multipliersIteration:
-            for (int multiplier = 1; multiplier <= harmonic/2; multiplier++) {
-                for (Aspect alreadyWritten : patterns)
-                    if (single * multiplier == alreadyWritten.arc) continue multipliersIteration;
-                patterns.add(new Aspect(harmonic, multiplier));
-            }
-            harmonic++;
-        }
+        for (int harmonic = 1; harmonic <= edgeOfPatternHarmonics; harmonic++)
+            Rose.fillWavePattern(harmonic, patterns);
 
         patterns = orderedAspects(patterns);
+
         for (Aspect next : patterns) System.out.printf("%2d/%d\t%10s\t(%10s - %10s)%n",
                 next.multiplier, next.harmonic,
                 secondFormatTablewise(next.arc, true),
@@ -92,26 +85,31 @@ public class WavePattern {
         int harmonic;
         int multiplier;
         double arc;
-        double aspectOrbis;
+        double aspectOrbs;
         public Aspect(int i, int k) {
             this.harmonic = i;
             this.multiplier = k;
             this.arc = normalizeCoordinate(CIRCLE / harmonic * multiplier);
-            this.aspectOrbis = CIRCLE / getOrbsDivider() / harmonic;
+            this.aspectOrbs = CIRCLE / getOrbsDivider() / harmonic;
         }
         private double getBeginning() {
-            if (arc - aspectOrbis >= 0) return arc - aspectOrbis;
-            else return 0;
+            double beginning = arc - aspectOrbs;
+            return beginning >= 0 ? beginning : 0;
         }
 
         private double getEnd() {
-            if (arc + aspectOrbis <= CIRCLE/2) return arc + aspectOrbis;
-            else return 180;
+            double end = arc + aspectOrbs;
+            return end <= CIRCLE/2 ? end : 0;
         }
         @Override
         public String toString() {
-            return secondFormat(arc, false) + " " + multiplier + "/" + harmonic
-                    + " (" + secondFormat(getBeginning(), false) + " - " + getEnd() + ")";
+            return "%s %d/%d (%s - %s)".formatted(
+                        secondFormat(arc, false),
+                        multiplier,
+                        harmonic,
+                        secondFormat(getBeginning(), false),
+                        secondFormat(getEnd(), false)
+                    );
         }
     }
 
@@ -119,32 +117,40 @@ public class WavePattern {
         static ArrayList<Aspect> patterns;
         public static void showPatternUpTo(int harmonics) {
             createPattern(harmonics);
-            patterns.forEach(next -> System.out.printf("%2d/%d\t%10s\t(%10s - %10s)%n",
-                    next.multiplier, next.harmonic,
+            StringBuilder sb = new StringBuilder();
+            patterns.forEach(next -> sb.append(
+                    "%2d/%d\t%10s\t(%10s - %10s)%n".formatted(
+                    next.multiplier,
+                    next.harmonic,
                     secondFormatTablewise(next.arc, true),
                     secondFormatTablewise(next.getBeginning(), true),
-                    secondFormatTablewise(next.getEnd(), true)));
+                    secondFormatTablewise(next.getEnd(), true)))
+            );
+            System.out.println(sb);
         }
 
         private static void createPattern(int harmonics) {
             patterns = new ArrayList <>();
-            double single;
-            int harmonic = 1;
             patterns.add(new Aspect(1, 1));            // до конца не удалось понять, почему нужна эта строка
-            while (harmonic <= harmonics) {
-                single = normalizeCoordinate(CIRCLE / harmonic);
-                multipliersIteration:
-                for (int multiplier = 1; multiplier <= harmonic/2; multiplier++) {
 
-                    for (Aspect alreadyWritten : patterns)
-                        if (single * multiplier == alreadyWritten.arc)
-                            continue multipliersIteration;
+            IntStream.rangeClosed(1, harmonics).forEach(
+                    harmonic -> fillWavePattern(harmonic, patterns)
+            );
 
-                    patterns.add(new Aspect(harmonic, multiplier));
-                }
-                harmonic++;
-            }
             patterns = orderedAspects(patterns);
+        }
+
+        private static void fillWavePattern(int harmonic, ArrayList<Aspect> patterns) {
+            double single = normalizeCoordinate(CIRCLE / harmonic);
+            multipliersIteration:
+            for (int multiplier = 1; multiplier <= harmonic/2; multiplier++) {
+
+                for (Aspect alreadyWritten : patterns)
+                    if (single * multiplier == alreadyWritten.arc)
+                        continue multipliersIteration;
+
+                patterns.add(new Aspect(harmonic, multiplier));
+            }
         }
 
     }

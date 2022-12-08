@@ -144,7 +144,9 @@ public class Mechanics {
      преобразует эклиптическую долготу в зодиакальную
      */
     public static String zodiacFormat(double position) {
-        return pointsZodium(position) + "\t" + secondFormat(position % 30);
+        return "%s\t%s"
+                .formatted(pointsZodium(position),
+                        secondFormat(position % 30, true));
     }
 
     public static double findMedian(double positionA, double positionB) {
@@ -158,5 +160,10 @@ public class Mechanics {
         if (arc == CIRCLE / 2)
             median = -median;
         return median;
+    }
+
+    public static String zodiacDegree(double position) {
+
+        return "%s°%s".formatted((int) Math.ceil(position % 30), pointsZodium(position));
     }
 }

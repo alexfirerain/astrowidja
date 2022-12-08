@@ -1,8 +1,12 @@
 package ru.swetophor.celestialmechanics;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.swetophor.resogrid.Matrix;
 import ru.swetophor.ChartType;
 
+@Setter
+@Getter
 public class Synastry extends MultiChart {
 
 
