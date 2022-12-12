@@ -62,9 +62,10 @@ public class Astra {
 
         var coors = IntStream.range(1, elements.length)
                 .mapToObj(i -> Double.parseDouble(elements[i]))
-                .collect(Collectors.toCollection(() -> new ArrayList<>(3)));
+                .collect(Collectors.toCollection(() -> new ArrayList<>(3)))
+                .toArray(Double[]::new);
 
-        return Astra.fromData(elements[0], coors.toArray(Double[]::new));
+        return Astra.fromData(elements[0], coors);
     }
 
 

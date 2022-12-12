@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="StacktraceSettings">
+    <option name="packages">
+      <set>
+        <option value="ru.swetophor" />
+        <option value="ru.swetophor.celestialmechanics" />
+        <option value="ru.swetophor.resogrid" />
+      </set>
+    </option>
+  </component>
+</project>
