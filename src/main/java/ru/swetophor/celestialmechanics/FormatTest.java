@@ -1,35 +1,52 @@
 package ru.swetophor.celestialmechanics;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 
 import static ru.swetophor.celestialmechanics.Mechanics.secondFormat;
 import static ru.swetophor.celestialmechanics.Mechanics.secondFormatTablewise;
 
 public class FormatTest {
+    static Astra[] astras =
+            Arrays.stream(new String[]{
+                    "звезда 50 30 5",
+                    "звезда 50 0 5",
+                    "звезда 50 30 0",
+                    "звезда 0 30 0",
+                    "звезда 0 0 0" })
+            .map(Astra::readFromString)
+            .toList()
+            .toArray(new Astra[0]);
+
     public static void main(String[] args) {
-        ArrayList<Astra> stars = new ArrayList<>();
-        stars.add(new Astra("звезда", 50, 30, 5));
-        stars.add(new Astra("звезда", 50, 0, 5));
-        stars.add(new Astra("звезда", 50, 30, 0));
-        stars.add(new Astra("звезда", 0, 30, 0));
-        stars.add(new Astra("звезда", 0, 0, 0));
 
         System.out.println("\n* секундФормат без параметра *");
-        for (Astra she : stars) System.out.println(secondFormat(she.getZodiacPosition()));
+        Arrays.stream(astras)
+                .map(she -> secondFormat(she.getZodiacPosition()))
+                .forEach(System.out::println);
 
         System.out.println("\n* секундФормат без лишних нолей *");
-        for (Astra she : stars) System.out.println(secondFormat(she.getZodiacPosition(), true));
+        Arrays.stream(astras)
+                .map(she -> secondFormat(she.getZodiacPosition(), true))
+                .forEach(System.out::println);
 
         System.out.println("\n* секундФормат с лишними нолями *");
-        for (Astra she : stars) System.out.println(secondFormat(she.getZodiacPosition(), false));
+        Arrays.stream(astras)
+                .map(she -> secondFormat(she.getZodiacPosition(), false))
+                .forEach(System.out::println);
 
         System.out.println("\n* секундФорматТаблично без параметра *");
-        for (Astra she : stars) System.out.println(secondFormatTablewise(she.getZodiacPosition()));
+        Arrays.stream(astras)
+                .map(she -> secondFormatTablewise(she.getZodiacPosition()))
+                .forEach(System.out::println);
 
         System.out.println("\n* секундФорматТаблично без лишних нолей *");
-        for (Astra she : stars) System.out.println(secondFormatTablewise(she.getZodiacPosition(), true));
+        Arrays.stream(astras)
+                .map(she -> secondFormatTablewise(she.getZodiacPosition(), true))
+                .forEach(System.out::println);
 
         System.out.println("\n* секундФорматТаблично с лишними нолями *");
-        for (Astra she : stars) System.out.println(secondFormatTablewise(she.getZodiacPosition(), false));
+        Arrays.stream(astras)
+                .map(she -> secondFormatTablewise(she.getZodiacPosition(), false))
+                .forEach(System.out::println);
     }
 }

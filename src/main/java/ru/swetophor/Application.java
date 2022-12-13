@@ -11,10 +11,7 @@ import static ru.swetophor.Settings.*;
  * программы как таковой
  ** ** ** ** ** ** ** ** ** ** ** ** ** ** **/
 public class Application {
-    public static void main(String[] args) {
-        welcome();
-
-        Chart SCChart = Chart.readFromString("""
+    static String SC = """
                 СЧ
                 Солнце 283 15 49
                 Луна 253 6 27
@@ -27,21 +24,27 @@ public class Application {
                 Плутон 204 11
                 Хирон 43 34
                 Раху 131 8
-                """);
-        printChartStat(SCChart);
-
-        Chart SWChart = Chart.readFromString("""
+                """;
+    static String SW = """
                 Сева
                 Солнце 81 5 8
                 Луна 348 59 25
                 Венера 35 19 47
                 Марс 143 35 4
-                """);
+                """;
+    public static void main(String[] args) {
+        welcome();
+
+        Chart SCChart = Chart.readFromString(SC);
+        printChartStat(SCChart);
+
+        Chart SWChart = Chart.readFromString(SW);
         printChartStat(SWChart);
 
         Synastry doubleChart = new Synastry(SCChart, SWChart);
         doubleChart.plotAspectTable();
     }
+
 
     private static void printChartStat(Chart chart) {
         System.out.println(chart.getAstrasList());

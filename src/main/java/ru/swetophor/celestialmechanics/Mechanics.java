@@ -17,9 +17,9 @@ public class Mechanics {
      */
     public static double getArc(double a, double b){
         double arc = abs(normalizeCoordinate(a) - normalizeCoordinate(b));
-        if (arc > CIRCLE /  2)
-            arc = CIRCLE - arc;
-        return arc;
+        return arc > CIRCLE / 2 ?
+                CIRCLE - arc :
+                arc;
     }
 
     /**
@@ -39,11 +39,9 @@ public class Mechanics {
 /**
     Приводит координату в диапазон от 0 до 360°.
 */
-        public static double normalizeCoordinate(double p){
-            p %= CIRCLE;
-            if (p < 0)
-                p += CIRCLE;
-        return p;
+    public static double normalizeCoordinate(double p){
+        p %= CIRCLE;
+        return p < 0 ? p + CIRCLE : p;
     }
 
 //    public static String секундФормат(double вГрадусах) {
@@ -61,15 +59,12 @@ public class Mechanics {
 //    }
 
     public static String secondFormat(double inDegrees) {
-        int inSeconds = (int) round((inDegrees * 3600));
-        int degrees = inSeconds / (3600);
-        int minutes = inSeconds % 3600 / 60;
-        int seconds = inSeconds - degrees * 3600 - minutes * 60;
+        int[] coors = degreesToCoors(inDegrees);
         return "%s°%s'%s\""
                 .formatted(
-                        format("%3s", degrees),
-                        format("%2s", minutes),
-                        format("%2s", seconds)
+                        format("%3s", coors[0]),
+                        format("%2s", coors[1]),
+                        format("%2s", coors[2])
                 );
     }
 
@@ -80,19 +75,27 @@ public class Mechanics {
      *      то отсутствующия секунды или секунды и минуты упускаются.
      */
     public static String secondFormat(double inDegrees, boolean withoutExtraZeros) {
-        int inSeconds = (int) round((inDegrees * 3600));
-        int degrees = inSeconds / 3600;
-        int minutes = inSeconds % 3600 / 60;
-        int seconds = inSeconds - degrees * 3600 - minutes * 60;
-        String degreeString = "";
-        if (withoutExtraZeros && (degrees != 0)) degreeString = degrees + "°";
-//        else degreeString = format("% 3d°", градусов);
-        if (withoutExtraZeros && (minutes > 0 || seconds > 0) && (minutes != 0)) degreeString += minutes + "'";
-//        else degreeString += format("% 2d'", минут);
-        if (withoutExtraZeros && seconds > 0) degreeString += seconds + "\"";
-//        else degreeString += format("% 2d\"", секунд);
-        if (degreeString.length() == 0) degreeString = "0°";
-        return degreeString;
+        int[] coors = degreesToCoors(inDegrees);
+        StringBuilder degreeString = new StringBuilder();
+        if (withoutExtraZeros &&
+                (coors[0] != 0))
+            degreeString.append(coors[0]).append("°");
+//        else
+//          degreeString.append(format("% 3d°", coors[0]));
+        if (withoutExtraZeros &&
+                (coors[1] > 0 || coors[2] > 0) &&
+                (coors[1] != 0))
+            degreeString.append(coors[1]).append("'");
+//        else
+//          degreeString.append(format("% 2d'", coors[1]));
+        if (withoutExtraZeros &&
+                coors[2] > 0)
+            degreeString.append(coors[2]).append("\"");
+//        else
+//        degreeString.append(format("% 2d\"", coors[2]));
+        if (degreeString.length() == 0)
+            return "0°";
+        return degreeString.toString();
     }
 
     /**
@@ -101,24 +104,25 @@ public class Mechanics {
      *      выровненную влево.
      */
     public static String secondFormatTablewise(double inDegrees, boolean withoutExtraZeros) {
+        int[] coors = degreesToCoors(inDegrees);
+        StringBuilder formatHolder = new StringBuilder();
 
-        int inSeconds = (int) round((inDegrees * 3600));
-        int degrees = inSeconds / 3600;
-        int minutes = inSeconds % 3600 / 60;
-        int seconds = inSeconds - degrees * 3600 - minutes * 60;
-        String formatHolder;
         if (withoutExtraZeros)
-            formatHolder = format("%3s", degrees) + "°";
+            formatHolder.append(format("%3s°", coors[0]));
         else
-            formatHolder = format("%03d°", degrees);
-        if (withoutExtraZeros && (minutes > 0 || seconds > 0))
-            formatHolder += format("%2s'", minutes);
+            formatHolder.append(format("%03d°", coors[0]));
+
+        if (withoutExtraZeros &&
+                (coors[1] > 0 || coors[2] > 0))
+            formatHolder.append(format("%2s'", coors[1]));
         else
-            formatHolder += format("%02d'", minutes);
-        if (withoutExtraZeros && seconds > 0)
-            formatHolder += format("%2s\"", seconds);
+            formatHolder.append(format("%02d'", coors[1]));
+
+        if (withoutExtraZeros &&
+                coors[2] > 0)
+            formatHolder.append(format("%2s\"", coors[2]));
         else
-            formatHolder += format("%02d\"", seconds);
+            formatHolder.append(format("%02d\"", coors[2]));
 
         return format("%-10s", formatHolder);
 
@@ -129,14 +133,13 @@ public class Mechanics {
      *          съ всеми избыточными нолями
      */
     public static String secondFormatTablewise(double inDegrees) {
-        int inSeconds = (int) round((inDegrees * 3600));
-        int degrees = inSeconds / 3600;
-        int minutes = inSeconds % 3600 / 60;
-        int seconds = inSeconds - degrees * 3600 - minutes * 60;
-        String formatHolder;
-        formatHolder = format("%03d°", degrees) + format("%02d'", minutes) + format("%02d\"", seconds);
-        formatHolder = format("%-10s", formatHolder);
-        return formatHolder;
+        int[] coors = degreesToCoors(inDegrees);
+        StringBuilder formatHolder = new StringBuilder();
+
+        formatHolder.append(format("%03d°", coors[0]))
+                    .append(format("%02d'", coors[1]))
+                    .append(format("%02d\"", coors[2]));
+        return format("%-10s", formatHolder);
     }
 
 
@@ -166,4 +169,14 @@ public class Mechanics {
 
         return "%s°%s".formatted((int) Math.ceil(position % 30), pointsZodium(position));
     }
+
+    public static int[] degreesToCoors(double position) {
+        int[] coors = new int[3];
+        int inSeconds = (int) round((normalizeCoordinate(position) * 3600));
+        coors[0] = inSeconds / 3600;
+        coors[1] = inSeconds % 3600 / 60;
+        coors[2] = inSeconds % 60;
+        return coors;
+    }
+
 }
