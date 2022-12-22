@@ -77,24 +77,29 @@ public class Mechanics {
     public static String secondFormat(double inDegrees, boolean withoutExtraZeros) {
         int[] coors = degreesToCoors(inDegrees);
         StringBuilder degreeString = new StringBuilder();
+
         if (withoutExtraZeros &&
                 (coors[0] != 0))
             degreeString.append(coors[0]).append("°");
-//        else
-//          degreeString.append(format("% 3d°", coors[0]));
+        else
+          degreeString.append(format("% 3d°", coors[0]));
+
         if (withoutExtraZeros &&
                 (coors[1] > 0 || coors[2] > 0) &&
                 (coors[1] != 0))
             degreeString.append(coors[1]).append("'");
-//        else
-//          degreeString.append(format("% 2d'", coors[1]));
+        else
+          degreeString.append(format("% 2d'", coors[1]));
+
         if (withoutExtraZeros &&
                 coors[2] > 0)
             degreeString.append(coors[2]).append("\"");
-//        else
-//        degreeString.append(format("% 2d\"", coors[2]));
+        else
+            degreeString.append(format("% 2d\"", coors[2]));
+
         if (degreeString.length() == 0)
             return "0°";
+
         return degreeString.toString();
     }
 

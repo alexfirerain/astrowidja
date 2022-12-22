@@ -45,7 +45,7 @@ public class Matrix {
     /**
      * Выдаёт строку с перечислением всех резонансов между астрами Матрицы.
      * Если тип "Космограмма", выдаются резонансы каждой точки с каждой следующей по списку.
-     * Если тип "Синастрия", выдаются резонансы каждой точки с каждой точки второй карты.
+     * Если тип "Синастрия", выдаются резонансы каждой точки с каждой точкой второй карты.
      * @return строковое представление всех резонансов между уникальными точками.
      */
     public String resultsOutput() {
@@ -53,20 +53,18 @@ public class Matrix {
 
         switch (type) {
             case SYNASTRY -> {                                 // таблица всех астр одной на все астры другой
-                for (int i = 0; i < datum1.size(); i++) {
+                for (int i = 0; i < datum1.size(); i++)
                     for (int j = 0; j < datum2.size(); j++) {
                         sb.append(resonances[i][j].resonancesOutput());
                         sb.append("\n");
                     }
-                }
             }
             case COSMOGRAM -> {                               // полутаблица астр карты между собой
-                for (int i = 0; i < datum1.size(); i++) {
+                for (int i = 0; i < datum1.size(); i++)
                     for (int j = i + 1; j < datum2.size(); j++) {
                         sb.append(resonances[i][j].resonancesOutput());
                         sb.append("\n");
                     }
-                }
             }
         }
         return sb.toString();

@@ -17,4 +17,7 @@ public class Settings {
 
     public static double getOrbs() { return CIRCLE / orbsDivider; }
 
+    public static void disableHalfOrbForDoubles() { halfOrbsForDoubles = false; }
+
+    public static void enableHalfOrbForDoubles() { halfOrbsForDoubles = true; }
 }

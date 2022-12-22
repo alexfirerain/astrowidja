@@ -11,6 +11,8 @@ import static ru.swetophor.Settings.*;
  * программы как таковой
  ** ** ** ** ** ** ** ** ** ** ** ** ** ** **/
 public class Application {
+
+
     static String SC = """
                 СЧ
                 Солнце 283 15 49
@@ -64,7 +66,5 @@ public class Application {
         """,
                 getOrbs(), orbsDivider, edgeHarmonic);
     }
-    public static void disableHalfOrbisForDoubles() { halfOrbsForDoubles = false; }
-    public static void enableHalfOrbisForDoubles() { halfOrbsForDoubles = true; }
 
 }

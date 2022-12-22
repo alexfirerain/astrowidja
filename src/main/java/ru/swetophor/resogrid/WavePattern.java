@@ -10,7 +10,7 @@ import static ru.swetophor.celestialmechanics.Mechanics.*;
 
 public class WavePattern {
     public static void main(String[] args) {
-        Rose.showPatternUpTo(23);
+        Rose.showPatternUpTo(13);
         System.out.println(reportOverlapping());
     }
 
@@ -23,10 +23,19 @@ public class WavePattern {
         int b = 0;
         while (a < Rose.patterns.size() - 1) {
             if (Rose.patterns.get(a).getEnd() > Rose.patterns.get(++a).getBeginning()) {
-                message.append(format("Нахлёст %s между %d/%d (%s) и %d/%d (%s)%n",
-                        secondFormat(Rose.patterns.get(--a).getEnd() - Rose.patterns.get(++a).getBeginning(), true),
-                        Rose.patterns.get(--a).multiplier, Rose.patterns.get(a).harmonic, secondFormat(Rose.patterns.get(a).arc, true),
-                        Rose.patterns.get(++a).multiplier, Rose.patterns.get(a).harmonic, secondFormat(Rose.patterns.get(a).arc, true)));
+                message
+                    .append(
+                          format(
+                            "Нахлёст %s между %d/%d (%s) и %d/%d (%s)%n",
+                                    secondFormat(Rose.patterns.get(--a).getEnd() - Rose.patterns.get(++a).getBeginning(), true),
+                                    Rose.patterns.get(--a).multiplier,
+                                    Rose.patterns.get(a).harmonic,
+                                    secondFormat(Rose.patterns.get(a).arc, true),
+                                    Rose.patterns.get(++a).multiplier,
+                                    Rose.patterns.get(a).harmonic,
+                                    secondFormat(Rose.patterns.get(a).arc, true)
+                          )
+                    );
                 b++;
             } else {
                 a++;
@@ -34,11 +43,12 @@ public class WavePattern {
         }
         if (b == 0)
             message.append(format("Никаких пересечений до гармоники %d", edgeOfPatternHarmonics));
-        else message.append(format("Всего найдено %d пересечений, считая до гармоники %d", b, edgeOfPatternHarmonics));
+        else
+            message.append(format("Всего найдено %d пересечений, считая до гармоники %d", b, edgeOfPatternHarmonics));
 
-        message.append(format(" при орбисе %s (1/%d часть круга)%n",
-                secondFormat(CIRCLE / getOrbsDivider(), true),
-                getOrbsDivider()));
+        message.append(" при орбисе %s (1/%d часть круга)%n".formatted(
+                            secondFormat(CIRCLE / getOrbsDivider(),true),
+                            getOrbsDivider()));
         return message.toString();
     }
 
@@ -63,15 +73,19 @@ public class WavePattern {
         ArrayList<Aspect> orderedAspects = new ArrayList <>();
             while (orderedAspects.size() < patterns.size()) {
                 int next = 0;
-                while (orderedAspects.contains(patterns.get(next))) next++;
+                while (orderedAspects.contains(patterns.get(next)))
+                    next++;
+
                 if (orderedAspects.size() < patterns.size() - 1) {
                     int following = next + 1;
                     while (orderedAspects.contains(patterns.get(following)))
                         following++;
+
                     while (following < patterns.size()) {
                         if (patterns.get(following).arc < patterns.get(next).arc)
                             next = following;
                         following++;
+
                         while (following < patterns.size() && orderedAspects.contains(patterns.get(following)))
                             following++;
                     }
@@ -81,25 +95,57 @@ public class WavePattern {
         return orderedAspects;
     }
 
-    static class Aspect {
+    /**
+     * Модель идеального аспекта, задаваемого скольки-то множителями какого-то делителя,
+     * равного некоторой дуге и обладающего определённым орбом.
+     */
+    static class Aspect implements Comparable<Aspect> {
+        /**
+         * Гармоника, делитель аспекта.
+         */
         int harmonic;
+        /**
+         * Множитель, крат аспекта.
+         */
         int multiplier;
+        /**
+         * Дуга, соответствующая аспекту.
+         */
         double arc;
+        /**
+         * Орб, надлежащий аспекту быть действительным.
+         */
         double aspectOrbs;
+
+        /**
+         * Создать аспект как множитель делителей.
+         * Дуга и орб высчитываются по заданному в настройках стандарту.
+         * @param i гармоника, делитель.
+         * @param k множитель, крат.
+         */
         public Aspect(int i, int k) {
             this.harmonic = i;
             this.multiplier = k;
             this.arc = normalizeCoordinate(CIRCLE / harmonic * multiplier);
             this.aspectOrbs = CIRCLE / getOrbsDivider() / harmonic;
         }
+        /**
+         * Начало действия аспекта.
+         * @return  дугу, соответствующую нижней границе начала действия аспекта
+         * (0, если начинается с соединения).
+         */
         private double getBeginning() {
             double beginning = arc - aspectOrbs;
             return beginning >= 0 ? beginning : 0;
         }
-
+        /**
+         * Конец действия аспекта.
+         * @return дугу, соответствующую верхней границе действия аспекта
+         * (180, если превышает оппозицию).
+         */
         private double getEnd() {
             double end = arc + aspectOrbs;
-            return end <= CIRCLE/2 ? end : 0;
+            return end <= CIRCLE/2 ? end : 180.;
         }
         @Override
         public String toString() {
@@ -110,6 +156,17 @@ public class WavePattern {
                         secondFormat(getBeginning(), false),
                         secondFormat(getEnd(), false)
                     );
+        }
+
+        /**
+         * Сравнивает аспекты по дуге.
+         * @param o the object to be compared. 
+         * @return положительное значение, если дуга этого аспекта больше того,
+         * с которым сравнивается; отрицательное, если этот меньше того; ноль если равны.
+         */
+        @Override
+        public int compareTo(Aspect o) {
+            return (int) (arc - o.arc);
         }
     }
 
