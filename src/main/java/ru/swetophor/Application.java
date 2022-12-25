@@ -17,16 +17,38 @@ public class Application {
                 СЧ
                 Солнце 283 15 49
                 Луна 253 6 27
+                Меркурий 285 13 59
                 Венера 260 32 34
                 Марс 302 58 14
-                Юпитер 189 41
-                Сатурн 189 35
-                Уран 238 33
-                Нептун 263 9
-                Плутон 204 11
-                Хирон 43 34
-                Раху 131 8
+                Церера 112 17 23
+                Юпитер 189 41 40
+                Сатурн 189 34 56
+                Хирон 43 35 4
+                Уран 238 32 43
+                Нептун 263 9 4
+                Плутон 204 11 20
+                Раху 132 22 11
+                Лилит 202 7 59
                 """;
+
+    static String TV = """
+            Таня
+            Солнце 178 14 6
+            Луна 206 41 44
+            Меркурий 160 50 49
+            Венера 167 31 18
+            Марс 69 0 55
+            Церера 161 53 58
+            Юпитер 126 42 29
+            Сатурн 288 42 24
+            Хирон 115 37 11
+            Уран 275 37 10
+            Нептун 281 47 57
+            Плутон 225 52 18
+            Раху 304 30 35
+            Лилит 251 45 47
+            """;
+
     static String SW = """
                 Сева
                 Солнце 81 5 8
@@ -40,10 +62,10 @@ public class Application {
         Chart SCChart = Chart.readFromString(SC);
         printChartStat(SCChart);
 
-        Chart SWChart = Chart.readFromString(SW);
-        printChartStat(SWChart);
+        Chart TVChart = Chart.readFromString(TV);
+        printChartStat(TVChart);
 
-        Synastry doubleChart = new Synastry(SCChart, SWChart);
+        Synastry doubleChart = new Synastry(SCChart, TVChart);
         doubleChart.plotAspectTable();
     }
 

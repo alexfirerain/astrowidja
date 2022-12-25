@@ -172,9 +172,17 @@ public class Mechanics {
 
     public static String zodiacDegree(double position) {
 
-        return "%s°%s".formatted((int) Math.ceil(position % 30), pointsZodium(position));
+        return "%s°%s"
+                .formatted(
+                        (int) Math.ceil(position % 30),
+                        pointsZodium(position));
     }
 
+    /**
+     * Превращает координату дуги из градусов в массив [градусы, минуты, секунды].
+     * @param position дуга в градусах и дробных долях градуса.
+     * @return массив из трёх целых величин: градусы, минуты и секунды.
+     */
     public static int[] degreesToCoors(double position) {
         int[] coors = new int[3];
         int inSeconds = (int) round((normalizeCoordinate(position) * 3600));

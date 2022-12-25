@@ -69,8 +69,12 @@ public class Astra {
     }
 
 
-    public String getName() {
+    public String getNameWithZodiacDegree() {
         return "%s (%s)".formatted(name, getZodiacDegree());
+    }
+
+    public String getName() {
+        return name;
     }
 
     public Chart getHeaven() {
@@ -94,7 +98,10 @@ public class Astra {
     }
 
     public String getZodiacDegree() {
-        return (int) Math.ceil(zodiacPosition % 30) + "°" + ZodiacSign.pointsZodium(zodiacPosition);
+        return "%d°%s"
+                .formatted(
+                        (int) Math.ceil(zodiacPosition % 30),
+                        ZodiacSign.pointsZodium(zodiacPosition));
     }
 
 }

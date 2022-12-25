@@ -125,7 +125,8 @@ public class Resonance {
             astra_1 = a.getName();
             astra_2 = b.getName();
             arc = Mechanics.getArc(a, b);
-            this.orb = orb; this.edgeHarmonic = edgeHarmonic;
+            this.orb = orb;
+            this.edgeHarmonic = edgeHarmonic;
             resounds = new ArrayList<>();
             resoundsByStrength = new ArrayList<>();
             double harmonicArc;
@@ -218,18 +219,18 @@ public class Resonance {
         switch (type) {
             case SELF -> sb.append("%n%s (%s)%n".formatted(astra_1, whose_a1.getName()));
             case CHART -> {
-                sb.append("%n* Дуга между %s и %s (%s) = %s%n".formatted(
-                        astra_1,
-                        astra_2,
+                sb.append("%n* Дуга между %c %s и %c %s (%s) = %s%n".formatted(
+                        AstraEntity.findSymbolByName(astra_1), Mechanics.zodiacDegree(whose_a1.getAstraPosition(astra_1)),
+                        AstraEntity.findSymbolByName(astra_2), Mechanics.zodiacDegree(whose_a1.getAstraPosition(astra_2)),
                         whose_a1.getName(),
                         secondFormat(arc, true)));
                 sb.append(resoundsReport());
             }
             case SYNASTRY -> {
-                sb.append("%n* Дуга между %s (%s) и %s (%s) = %s%n".formatted(
-                        astra_1,
+                sb.append("%n* Дуга между %c %s (%s) и %c %s (%s) = %s%n".formatted(
+                        AstraEntity.findSymbolByName(astra_1), Mechanics.zodiacDegree(whose_a1.getAstraPosition(astra_1)),
                         whose_a1.getName(),
-                        astra_2,
+                        AstraEntity.findSymbolByName(astra_2), Mechanics.zodiacDegree(whose_a2.getAstraPosition(astra_2)),
                         whose_a2.getName(),
                         secondFormat(arc, true)));
                 sb.append(resoundsReport());

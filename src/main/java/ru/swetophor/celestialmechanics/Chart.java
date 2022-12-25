@@ -80,7 +80,7 @@ public class Chart extends ChartObject {
         StringBuilder list = new StringBuilder("%nЗодиакальныя позиции (%s):%n".formatted(name));
         astras.forEach(next -> list.append(
                 "%s\t %s%n".formatted(
-                                next.getName(),
+                                next.getNameWithZodiacDegree(),
                                 zodiacFormat(next.getZodiacPosition())
                         )
                 )
@@ -102,5 +102,12 @@ public class Chart extends ChartObject {
 
     public Matrix getAspects() {
         return this.aspects;
+    }
+
+    public double getAstraPosition(String name) {
+        for (Astra a : astras)
+            if (a.getName().equals(name))
+                return a.getZodiacPosition();
+        throw new IllegalArgumentException("Astra " + name + " not found.");
     }
 }
