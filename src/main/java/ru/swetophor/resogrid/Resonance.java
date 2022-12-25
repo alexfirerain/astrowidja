@@ -4,6 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 import ru.swetophor.celestialmechanics.*;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static java.lang.Math.abs;
 import static java.lang.Math.floor;
 import static ru.swetophor.celestialmechanics.Mechanics.*;
@@ -48,15 +52,11 @@ public class Resonance {
     /**
      * Наибольший проверяемый целочисленный резонанс
      */
-    private int edgeHarmonic;
+    private int ultimateHarmonic;
     /**
      * найденные в пределах орбиса резонансы по росту гармоники
      */
     private ArrayList<Resound> resounds;     //
-    /**
-     * найденные в пределах орбиса резонансы по убыванию силы
-     */
-    private ArrayList<Resound> resoundsByStrength;     //
 
     /**
      * один из действующих для данной дуги резонансов
@@ -111,8 +111,12 @@ public class Resonance {
 
     /**
      * получение массива резонансов для двух астр (конструктор)
+     * @param a первая астра резонанса.
+     * @param b вторая астра резонанса.
+     * @param orb первичный орбис резонанса.
+     * @param ultimateHarmonic  до какой гармоники продолжать анализ.
      */
-    Resonance(Astra a, Astra b, double orb, int edgeHarmonic) {
+    Resonance(Astra a, Astra b, double orb, int ultimateHarmonic) {
         astra_1 = a.getName();
         whose_a1 = a.getHeaven();
         if (a.equals(b)) {
@@ -126,16 +130,20 @@ public class Resonance {
             astra_2 = b.getName();
             arc = Mechanics.getArc(a, b);
             this.orb = orb;
-            this.edgeHarmonic = edgeHarmonic;
+            this.ultimateHarmonic = ultimateHarmonic;
+
             resounds = new ArrayList<>();
-            resoundsByStrength = new ArrayList<>();
-            double harmonicArc;
-            for (int i = 1; i <= edgeHarmonic; i++) {
-                harmonicArc = normalizeArc(arc * i);
-                if (harmonicArc < orb && !isNotSimple(i))
-                    resounds.add(new Resound(i, harmonicArc, arc));
+            for (int h = 1; h <= ultimateHarmonic; h++) {
+                double arcInHarmonic = normalizeArc(arc * h);
+                if (arcInHarmonic < orb && isNotRepeating(h))
+                    resounds.add(new Resound(h, arcInHarmonic, arc));
             }
-            sort();
+
+//            IntStream.range(1, ultimateHarmonic + 1).forEach(h -> {
+//                double arcInHarmonic = normalizeArc(arc * h);
+//                if (arcInHarmonic < orb && isNotRepeating(h))
+//                    resounds.add(new Resound(h, arcInHarmonic, arc));
+//            });
         }
     }
 
@@ -155,25 +163,25 @@ public class Resonance {
     }
 
     /**
-     * Вспомогательный метод отсечения кратных гармоник.
+     * Вспомогательный метод отсечения кратных гармоник при заполнении списка отзвуков.
      * @param which число, которое проверяется на кратность уже найденным отзвукам.
-     * @return истинно, если проверяемое число кратно какому-то из уже найденных.
+     * @return истинно, если проверяемое число не кратно никакому из уже найденных (кроме 1).
      */
-    private boolean isNotSimple(int which) {
+    private boolean isNotRepeating(int which) {
         for (Resound next : resounds) {
             if (next.numeric == 1) continue;
-            if(which % next.numeric == 0) return true;
+            if(which % next.numeric == 0) return false;
         }
-        return false;
+        return true;
     }
 
     private String resoundsReport() {
         StringBuilder sb = new StringBuilder();
 
         if (resounds.size() == 0) {
-            sb.append("Ни однаго резонанса до %d при орбисе %s%n".formatted(edgeHarmonic, orb));
+            sb.append("Ни однаго резонанса до %d при орбисе %s%n".formatted(ultimateHarmonic, orb));
         }
-        for (Resound aspect : resoundsByStrength) {
+        for (Resound aspect : getResoundsByStrength()) {
             sb.append(ResonanceDescription(aspect.numeric, aspect.multiplier));
             sb.append("Резонанс %d (x%d) %s (%d) (%.2f%%, %s)%n".formatted(
                     aspect.numeric,
@@ -184,34 +192,6 @@ public class Resonance {
                     secondFormat(aspect.clearance, true)));
         }
         return sb.toString();
-    }
-
-    /**
-     * метод получения упорядоченнаго по силе
-     */
-    private void sort() {
-        while (resoundsByStrength.size() < resounds.size()) {
-            int strongest = 0;
-            while (resoundsByStrength.contains(resounds.get(strongest)))
-                strongest++;
-            if (resoundsByStrength.size() < resounds.size() - 1) {
-                int strong = strongest + 1;
-
-                while (resoundsByStrength.contains(resounds.get(strong)))
-                    strong++;
-
-                while (strong < resounds.size()) {
-                    if (resounds.get(strong).clearance < resounds.get(strongest).clearance)
-                        strongest = strong;
-
-                    strong++;
-
-                    while (strong < resounds.size() && resoundsByStrength.contains(resounds.get(strong)))
-                        strong++;
-                }
-            }
-            resoundsByStrength.add(resounds.get(strongest));
-        }
     }
 
     public String resonancesOutput() {
@@ -239,4 +219,11 @@ public class Resonance {
         return sb.toString();
 
     }
+
+    private List<Resound> getResoundsByStrength() {
+        return resounds.stream()
+                .sorted(Comparator.comparing(res -> res.strength))
+                .collect(Collectors.toList());
+    }
+
 }
