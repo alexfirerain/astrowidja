@@ -1,5 +1,9 @@
 package ru.swetophor;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 public class Interpreter {
     public static String ResonanceDescription(int harmonic, int multiplier) {
         switch (harmonic) {
@@ -54,28 +58,9 @@ public class Interpreter {
                 else if (multiplier == 5) return "<2x3x3>[5] Двусполовин-девятерик: ";
                 else if (multiplier == 7) return "<2x3x3>[7] Трисполовин-девятерик: ";
 
-            case 20 : if (multiplier == 1) return "<2x2x5> : ";
-                else if (multiplier == 7) return "<2x2x5>[7] : ";
 
-            case 21 : return standard("<3x7>", multiplier);
 
-            case 22 : return standard("<2x11>", multiplier);
-
-            case 24 : return standard("<2x3x4>", multiplier);
-
-            case 25 : return standard("<5x5>", multiplier);
-
-            case 26 : return standard("<2x13>", multiplier);
-
-            case 27 : return standard("<3x3x3>", multiplier);
-
-            case 28 : return standard("<2x2x7>", multiplier);
-
-            case 30 : return standard("<2x3x5>", multiplier);
-
-            case 40 : return standard("<2x4x5>", multiplier);
-
-            default: return "<" + harmonic + ">[" + multiplier + "] : ";
+            default: return standard(multipliersExplicate(harmonic), multiplier);
         }
     }
 
@@ -87,4 +72,35 @@ public class Interpreter {
         return "<%d>%s : ".formatted(harm, mult == 1 ? "" : "[" + mult + "]");
     }
 
+    public static String multipliersExplicate(int number) {
+        if (number < 0) throw new IllegalArgumentException("функция работает с положительными числами");
+        if (number == 0) return "<0>";
+        if (number == 1) return "<1>";
+        List<Integer> multipliers = new ArrayList<>();
+
+        int divider = 2;
+        while(number > 1) {
+            if (divider > number / divider) {
+                multipliers.add(number);
+                break;
+            }
+//            System.out.println(number + " / " + divider);
+            if (number % divider == 0) {
+                multipliers.add(divider);
+                number /= divider;
+            } else {
+                divider++;
+            }
+        }
+
+        multipliers.sort(Comparator.reverseOrder());
+        StringBuilder answer = new StringBuilder("<");
+        if (multipliers.size() > 0)
+            answer.append(multipliers.get(0));
+        for (int i = 1; i < multipliers.size(); i++)
+            answer.append("x")
+                    .append(multipliers.get(i));
+        answer.append(">");
+        return answer.toString();
+    }
 }

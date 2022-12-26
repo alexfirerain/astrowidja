@@ -2,11 +2,13 @@ package ru.swetophor.resogrid;
 
 import lombok.Getter;
 import lombok.Setter;
+import ru.swetophor.Interpreter;
 import ru.swetophor.celestialmechanics.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.floor;
@@ -56,12 +58,12 @@ public class Resonance {
     /**
      * найденные в пределах орбиса резонансы по росту гармоники
      */
-    private ArrayList<Resound> resounds;     //
+    private ArrayList<Aspect> aspects;     //
 
     /**
      * один из действующих для данной дуги резонансов
      */
-    class Resound {
+    class Aspect {
 
         /**
         гармоника
@@ -100,7 +102,17 @@ public class Resonance {
             else if (depth <= 24) return "- глубоко точный ";
             else return "- крайне точный ";
         }
-        Resound(int numeric, double clearance, double fromArc) {
+
+        String strengthRating() {
+            if (depth <= 1) return "★";
+            else if (depth == 2) return "★★";
+            else if (depth <= 5) return "★★★";
+            else if (depth <= 12) return "★★★★";
+            else if (depth <= 24) return "★★★★★";
+            else return "✰✰✰✰✰";
+        }
+
+        Aspect(int numeric, double clearance, double fromArc) {
             this.numeric = numeric;
             this.multiplier = findMultiplier(numeric, fromArc);
             this.clearance = clearance;
@@ -136,11 +148,11 @@ public class Resonance {
             this.orb = orb;
             this.ultimateHarmonic = ultimateHarmonic;
 
-            resounds = new ArrayList<>();
+            aspects = new ArrayList<>();
             for (int h = 1; h <= ultimateHarmonic; h++) {
                 double arcInHarmonic = normalizeArc(arc * h);
                 if (arcInHarmonic < orb && isNotRepeating(h))
-                    resounds.add(new Resound(h, arcInHarmonic, arc));
+                    aspects.add(new Aspect(h, arcInHarmonic, arc));
             }
 
 //            IntStream.range(1, ultimateHarmonic + 1).forEach(h -> {
@@ -172,7 +184,7 @@ public class Resonance {
      * @return истинно, если проверяемое число не кратно никакому из уже найденных (кроме 1).
      */
     private boolean isNotRepeating(int which) {
-        for (Resound next : resounds) {
+        for (Aspect next : aspects) {
             if (next.numeric == 1) continue;
             if(which % next.numeric == 0) return false;
         }
@@ -182,10 +194,10 @@ public class Resonance {
     private String resoundsReport() {
         StringBuilder sb = new StringBuilder();
 
-        if (resounds.size() == 0) {
-            sb.append("Ни однаго резонанса до %d при орбисе %s%n".formatted(ultimateHarmonic, orb));
+        if (aspects.size() == 0) {
+            sb.append("Ни одного резонанса до %d при орбисе %s%n".formatted(ultimateHarmonic, orb));
         }
-        for (Resound aspect : getResoundsByStrength()) {
+        for (Aspect aspect : getAspectsByStrength()) {
             sb.append(ResonanceDescription(aspect.numeric, aspect.multiplier));
             sb.append("Резонанс %d (x%d) %s (%d) (%.2f%%, %s)%n".formatted(
                     aspect.numeric,
@@ -194,6 +206,23 @@ public class Resonance {
                     aspect.depth,
                     aspect.strength,
                     secondFormat(aspect.clearance, true)));
+        }
+        return sb.toString();
+    }
+
+    private String resoundsReport2() {
+        StringBuilder sb = new StringBuilder();
+
+        if (aspects.size() == 0) {
+            sb.append("Ни одного резонанса до %d при орбисе %s%n".formatted(ultimateHarmonic, orb));
+        }
+        for (Aspect aspect : getAspectsByStrength()) {
+            sb.append(ResonanceDescription(aspect.numeric, aspect.multiplier));
+            sb.append("Резонанс %d/%d %s (%.0f%%)%n".formatted(
+                    aspect.multiplier,
+                    aspect.numeric,
+                    aspect.strengthRating(),
+                    aspect.strength));
         }
         return sb.toString();
     }
@@ -208,7 +237,7 @@ public class Resonance {
                         AstraEntity.findSymbolByName(astra_2), Mechanics.zodiacDegree(whose_a1.getAstraPosition(astra_2)),
                         whose_a1.getName(),
                         secondFormat(arc, true)));
-                sb.append(resoundsReport());
+                sb.append(resoundsReport2());
             }
             case SYNASTRY -> {
                 sb.append("%n* Дуга между %c %s (%s) и %c %s (%s) = %s%n".formatted(
@@ -217,17 +246,23 @@ public class Resonance {
                         AstraEntity.findSymbolByName(astra_2), Mechanics.zodiacDegree(whose_a2.getAstraPosition(astra_2)),
                         whose_a2.getName(),
                         secondFormat(arc, true)));
-                sb.append(resoundsReport());
+                sb.append(resoundsReport2());
             }
         }
         return sb.toString();
 
     }
 
-    private List<Resound> getResoundsByStrength() {
-        return resounds.stream()
-                .sorted(Comparator.comparing(Resound::getStrength).reversed())
+    private List<Aspect> getAspectsByStrength() {
+        return aspects.stream()
+                .sorted(Comparator.comparing(Aspect::getStrength).reversed())
                 .collect(Collectors.toList());
+    }
+
+
+    public static void main(String[] args) {
+        IntStream.range(0, 30)
+                .forEach(i -> System.out.println(Interpreter.multipliersExplicate(i)));
     }
 
 }
