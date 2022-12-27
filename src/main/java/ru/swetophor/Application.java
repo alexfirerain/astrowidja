@@ -67,6 +67,9 @@ public class Application {
 
         Synastry doubleChart = new Synastry(SCChart, TVChart);
         doubleChart.plotAspectTable();
+
+        Chart SCTVComposite = Chart.composite(SCChart, TVChart);
+        printChartStat(SCTVComposite);
     }
 
 

@@ -7,20 +7,20 @@ public enum AstraEntity {
     /*
         Астрологические объекты
      */
-    SOL("Солнце", '☉', "Sun", "Sol"),
     LUN("Луна", '☽', "Moon"),
     MER("Меркурий", '☿', "Mercury"),
     VEN("Венера", '♀', "Venus"),
+    SOL("Солнце", '☉', "Sun", "Sol"),
     MAR("Марс", '♂', "Mars"),
     CER("Церера", '⚳', "Ceres"),
+    LIL("Лилит", '⚸', "Lilith"),
     JUP("Юпитер", '♃', "Jupiter"),
+    RAH("Раху", '☊', "Rahu"),
     SAT("Сатурн", '♄', "Saturn"),
     CHI("Хирон", '⚷', "Chiron"),
     URA("Уран", '♅', "Uranus"),
     NEP("Нептун", '♆', "Neptune"),
-    PLU("Плутон", '♇', "Pluto"),
-    LIL("Лилит", '⚸', "Lilith"),
-    RAH("Раху", '☊', "Rahu");
+    PLU("Плутон", '♇', "Pluto");
 
     /*
         Структура объекта.

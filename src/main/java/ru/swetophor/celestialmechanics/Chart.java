@@ -6,9 +6,12 @@ import ru.swetophor.ChartType;
 import ru.swetophor.resogrid.Matrix;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.IntStream;
 
-import static ru.swetophor.celestialmechanics.Mechanics.zodiacFormat;
+import static ru.swetophor.celestialmechanics.AstraEntity.MER;
+import static ru.swetophor.celestialmechanics.AstraEntity.SOL;
+import static ru.swetophor.celestialmechanics.Mechanics.*;
 
 /**
  * Астрологическое описание момента времени,
@@ -58,6 +61,9 @@ public class Chart extends ChartObject {
 
     private void addAstra(Astra astra) {
         astra.setHeaven(this);
+        IntStream.range(0, astras.size())
+                .filter(i -> astras.get(i).getName().equals(astra.getName()))
+                .forEach(i -> astras.set(i, astra));
         astras.add(astra);
     }
 
@@ -109,5 +115,59 @@ public class Chart extends ChartObject {
             if (a.getName().equals(name))
                 return a.getZodiacPosition();
         throw new IllegalArgumentException("Astra " + name + " not found.");
+    }
+
+    public static Chart composite(Chart chart_a, Chart chart_b) {
+        if (chart_a == null || chart_b == null)
+            throw new IllegalArgumentException("карта для композита не найдена");
+        Chart composite = new Chart("Средняя карта %s и %s"
+                .formatted(chart_a.getName(), chart_b.getName()));
+
+        Astra sun = null, mercury = null, venus = null;
+        for (Astra astra : chart_a.getAstras()) {
+            Astra counterpart = chart_b.getAstra(astra.getName());
+            if (counterpart != null) {
+                composite.addAstra(new Astra(astra.getName(),
+                                            findMedian(astra.getZodiacPosition(),
+                                                    counterpart.getZodiacPosition())));
+                AstraEntity innerBody = AstraEntity.getEntityByName(astra.getName());
+                if (innerBody != null) {
+                    switch (innerBody) {
+                        case SOL -> sun = astra;
+                        case MER -> mercury = astra;
+                        case VEN -> venus = astra;
+                    }
+                }
+            }
+        }
+
+        if (sun != null) {
+            if (mercury != null &&
+                    getArc(sun.getZodiacPosition(), mercury.getZodiacPosition()) > 30.0) {
+
+                    mercury.setZodiacPosition(normalizeCoordinate(mercury.getZodiacPosition() + CIRCLE / 2));
+                    composite.addAstra(mercury);
+            }
+            if (venus != null &&
+                    getArc(sun.getZodiacPosition(), venus.getZodiacPosition()) > 60.0) {
+
+                    venus.setZodiacPosition(normalizeCoordinate(venus.getZodiacPosition() + CIRCLE / 2));
+                    composite.addAstra(venus);
+            }
+        }
+
+        return composite;
+    }
+
+    /**
+     * Отдаёт астру карты по ея имени.
+     * @param name имя астры, которую запрашивают.
+     * @return  астру с таким именем, если она есть в карте, иначе {@code пусто}.
+     */
+    private Astra getAstra(String name) {
+        for (Astra a : astras)
+            if (a.getName().equals(name))
+                return a;
+        return null;
     }
 }

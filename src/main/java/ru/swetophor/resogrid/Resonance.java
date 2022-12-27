@@ -3,6 +3,7 @@ package ru.swetophor.resogrid;
 import lombok.Getter;
 import lombok.Setter;
 import ru.swetophor.Interpreter;
+import ru.swetophor.Settings;
 import ru.swetophor.celestialmechanics.*;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -44,11 +45,11 @@ public class Resonance {
      */
     private String astra_2;
     /**
-     * Угловое расстояние меж точками.
+     * Угловое расстояние меж точками, т.е. дуга, резонансы которой считаются.
      */
     private double arc;
     /**
-     * Орбис, т.е. допуск, с которым аспект считается действующим.
+     * Принятый в карте орбис, т.е. допуск, с которым аспект считается действующим.
      */
     private double orb;
     /**
@@ -76,17 +77,17 @@ public class Resonance {
         int multiplier;               //
 
         /**
-        орбис для соединения в этой гармонике
+        разность дуги резонанса с чистым аспектом вида дальность/гармоника
          */
         double clearance;           //
 
         /**
-        тот же орбис в % от наиточнаго
+        разность дуги резонанса с чистым аспектом % от наиточнейшего
          */
         double strength;            //
 
         /**
-        он же через количество последующих гармоник, через кои проходит
+        точность аспекта через количество последующих гармоник, через кои проходит
          */
         int depth;
 
@@ -126,7 +127,7 @@ public class Resonance {
     }
 
     /**
-     * получение массива резонансов для двух астр (конструктор)
+     * Получение массива аспектов для дуги между двумя астрами (конструктор)
      * @param a первая астра резонанса.
      * @param b вторая астра резонанса.
      * @param orb первичный орбис резонанса.
@@ -151,8 +152,9 @@ public class Resonance {
             aspects = new ArrayList<>();
             for (int h = 1; h <= ultimateHarmonic; h++) {
                 double arcInHarmonic = normalizeArc(arc * h);
-                if (arcInHarmonic < orb && isNotRepeating(h))
+                if (arcInHarmonic < orb && isNotRepeating(h)) {
                     aspects.add(new Aspect(h, arcInHarmonic, arc));
+                }
             }
 
 //            IntStream.range(1, ultimateHarmonic + 1).forEach(h -> {
@@ -171,22 +173,39 @@ public class Resonance {
         int multiplier = 1;
         double orbHere = orb / resonance;
         while (multiplier < resonance / 2)
-            if (abs(multiplier * single - arc) < orbHere)
+            if (abs(multiplier * single - arc) < orbHere) {
                 break;
-            else
+            } else {
                 multiplier++;
+            }
         return multiplier;
     }
 
     /**
      * Вспомогательный метод отсечения кратных гармоник при заполнении списка отзвуков.
      * @param which число, которое проверяется на кратность уже найденным отзвукам.
-     * @return истинно, если проверяемое число не кратно никакому из уже найденных (кроме 1).
+     * @return истинно, если проверяемое число не кратно никакому из уже найденных (кроме 1),
+     * а также не является точным соединением, проходящим до данной гармоники.
      */
     private boolean isNotRepeating(int which) {
+        boolean isConjunction = false;
+
         for (Aspect next : aspects) {
-            if (next.numeric == 1) continue;
-            if(which % next.numeric == 0) return false;
+            int alreadyFoundHarmonic = next.numeric;
+
+            if (alreadyFoundHarmonic == 1) {
+                isConjunction = true;
+            }
+
+            if (isConjunction && arc > orb / which) {
+                continue;
+            }
+
+            if (which % alreadyFoundHarmonic != 0) {
+                continue;
+            }
+
+            return false;
         }
         return true;
     }
