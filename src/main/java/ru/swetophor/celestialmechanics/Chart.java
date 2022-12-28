@@ -4,11 +4,13 @@ package ru.swetophor.celestialmechanics;
 import lombok.Setter;
 import ru.swetophor.ChartType;
 import ru.swetophor.resogrid.Matrix;
+import ru.swetophor.resogrid.Resonance;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import static ru.swetophor.Interpreter.ResonanceDescription;
 import static ru.swetophor.celestialmechanics.Mechanics.*;
 
 /**
@@ -57,21 +59,25 @@ public class Chart extends ChartObject {
         calculateAspectTable();
     }
 
-    private void addAstra(Astra astra) {
+    /**
+     * Добавляет в карту астру. При этом если с таким именем астра
+     * уже присутствует, она обновляется, заменяется.
+     * @param astra добавяемая астра.
+     */
+    public void addAstra(Astra astra) {
         astra.setHeaven(this);
-        int bound = astras.size();
-        for (int i = 0; i < bound; i++) {
+        for (int i = 0; i < astras.size(); i++)
             if (astras.get(i).getName().equals(astra.getName())) {
                 astras.set(i, astra);
                 return;
             }
-        }
         astras.add(astra);
     }
 
     private void calculateAspectTable() {
         aspects = new Matrix(astras);
     }
+
     public String getAspectTable() {
         calculateAspectTable();
         return """
@@ -85,7 +91,7 @@ public class Chart extends ChartObject {
 
 
     public String getAstrasList() {
-        StringBuilder list = new StringBuilder("%nЗодиакальныя позиции (%s):%n".formatted(name));
+        StringBuilder list = new StringBuilder("%nЗодиакальные позиции (%s):%n".formatted(name));
         astras.forEach(next -> list.append(
                 "%s\t %s%n".formatted(
                                 next.getNameWithZodiacDegree(),
@@ -96,7 +102,8 @@ public class Chart extends ChartObject {
         return list.toString();
     }
 
-    @Override  public String toString() {
+    @Override
+    public String toString() {
         return "%s (%s №%d)".formatted(name, type, ID);
     }
 
@@ -130,8 +137,8 @@ public class Chart extends ChartObject {
             Astra counterpart = chart_b.getAstra(astra.getName());
             if (counterpart != null) {
                 Astra compositeAstra = new Astra(astra.getName(),
-                                 findMedian(astra.getZodiacPosition(),
-                                            counterpart.getZodiacPosition()));
+                        findMedian(astra.getZodiacPosition(),
+                                counterpart.getZodiacPosition()));
                 composite.addAstra(compositeAstra);
                 AstraEntity innerBody = AstraEntity.getEntityByName(compositeAstra.getName());
                 if (innerBody != null) {
@@ -148,14 +155,14 @@ public class Chart extends ChartObject {
             if (mercury != null &&
                     getArc(sun.getZodiacPosition(), mercury.getZodiacPosition()) > 30.0) {
 
-                    mercury.setZodiacPosition(normalizeCoordinate(mercury.getZodiacPosition() + CIRCLE / 2));
-                    composite.addAstra(mercury);
+                mercury.setZodiacPosition(normalizeCoordinate(mercury.getZodiacPosition() + CIRCLE / 2));
+                composite.addAstra(mercury);
             }
             if (venus != null &&
                     getArc(sun.getZodiacPosition(), venus.getZodiacPosition()) > 60.0) {
 
-                    venus.setZodiacPosition(normalizeCoordinate(venus.getZodiacPosition() + CIRCLE / 2));
-                    composite.addAstra(venus);
+                venus.setZodiacPosition(normalizeCoordinate(venus.getZodiacPosition() + CIRCLE / 2));
+                composite.addAstra(venus);
             }
         }
 
@@ -164,13 +171,17 @@ public class Chart extends ChartObject {
 
     /**
      * Отдаёт астру карты по ея имени.
+     *
      * @param name имя астры, которую запрашивают.
-     * @return  астру с таким именем, если она есть в карте, иначе {@code пусто}.
+     * @return астру с таким именем, если она есть в карте, иначе {@code пусто}.
      */
-    private Astra getAstra(String name) {
+    public Astra getAstra(String name) {
         for (Astra a : astras)
             if (a.getName().equals(name))
                 return a;
         return null;
     }
+
 }
+
+

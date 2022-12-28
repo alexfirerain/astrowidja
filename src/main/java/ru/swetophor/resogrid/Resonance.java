@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.floor;
 import static ru.swetophor.celestialmechanics.Mechanics.*;
 import static ru.swetophor.Interpreter.ResonanceDescription;
 import static ru.swetophor.resogrid.ResonanceType.*;
@@ -58,72 +57,7 @@ public class Resonance {
     /**
      * найденные в пределах орбиса резонансы по росту гармоники
      */
-    private ArrayList<Aspect> aspects;     //
-
-    /**
-     * один из действующих для данной дуги резонансов
-     */
-    class Aspect {
-
-        /**
-        гармоника
-         */
-        int numeric;              //
-
-        /**
-        дальность
-         */
-        int multiplier;               //
-
-        /**
-        разность дуги резонанса с чистым аспектом вида дальность/гармоника
-         */
-        double clearance;           //
-
-        /**
-        разность дуги резонанса с чистым аспектом % от наиточнейшего
-         */
-        double strength;            //
-
-        /**
-        точность аспекта через количество последующих гармоник, через кои проходит
-         */
-        int depth;
-
-        /**
-         * Выводит характеристику, насколько точен резонанс.
-         * @return строковое представление ранга точности.
-         */
-        String strengthLevel() {
-            if (depth <= 1) return "- приблизительный ";
-            else if (depth == 2) return "- уверенный ";
-            else if (depth <= 5) return "- глубокий ";
-            else if (depth <= 12) return "- точный ";
-            else if (depth <= 24) return "- глубоко точный ";
-            else return "- крайне точный ";
-        }
-
-        String strengthRating() {
-            if (depth <= 1) return "★";
-            else if (depth == 2) return "★★";
-            else if (depth <= 5) return "★★★";
-            else if (depth <= 12) return "★★★★";
-            else if (depth <= 24) return "★★★★★";
-            else return "✰✰✰✰✰";
-        }
-
-        Aspect(int numeric, double clearance, double fromArc) {
-            this.numeric = numeric;
-            this.multiplier = findMultiplier(numeric, fromArc);
-            this.clearance = clearance;
-            this.strength = ((orb - clearance) / orb) * 100;
-            this.depth = (int) floor(orb / clearance);
-        }
-
-        public double getStrength() {
-            return strength;
-        }
-    }
+    private List<Aspect> aspects;     //
 
     /**
      * Получение массива аспектов для дуги между двумя астрами (конструктор)
@@ -149,34 +83,24 @@ public class Resonance {
             this.ultimateHarmonic = ultimateHarmonic;
 
             aspects = new ArrayList<>();
-            for (int h = 1; h <= ultimateHarmonic; h++) {
+            IntStream.rangeClosed(1, ultimateHarmonic).forEach(h -> {
                 double arcInHarmonic = normalizeArc(arc * h);
-                if (arcInHarmonic < orb && isNewSimple(h)) {
-                    aspects.add(new Aspect(h, arcInHarmonic, arc));
-                }
-            }
-
-//            IntStream.range(1, ultimateHarmonic + 1).forEach(h -> {
-//                double arcInHarmonic = normalizeArc(arc * h);
-//                if (arcInHarmonic < orb && isNotRepeating(h))
-//                    resounds.add(new Resound(h, arcInHarmonic, arc));
-//            });
+                if (arcInHarmonic < orb && isNewSimple(h))
+                    aspects.add(new Aspect(h, arcInHarmonic, arc, orb));
+            });
         }
     }
 
     /**
      * вспомогательный метод нахождения крата аспекта
      */
-    private int findMultiplier(int resonance, double arc) {
+    public static int findMultiplier(int resonance, double arc, double orb) {
         double single = CIRCLE / resonance;
         int multiplier = 1;
         double orbHere = orb / resonance;
         while (multiplier < resonance / 2)
-            if (abs(multiplier * single - arc) < orbHere) {
-                break;
-            } else {
-                multiplier++;
-            }
+            if (abs(multiplier * single - arc) < orbHere) break;
+            else multiplier++;
         return multiplier;
     }
 
@@ -200,7 +124,7 @@ public class Resonance {
 
             if (isConjunction &&
                     arc > orb / aNewNumber &&
-                    findMultiplier(aNewNumber, arc) == 1)
+                    findMultiplier(aNewNumber, arc, orb) == 1)
                 continue;
 
             return false;
@@ -208,15 +132,15 @@ public class Resonance {
         return true;
     }
 
-    private String resoundsReport() {
+    private String resoundsInfo() {
         StringBuilder sb = new StringBuilder();
 
-        if (aspects.size() == 0) {
+        if (aspects.isEmpty()) {
             sb.append("Ни одного резонанса до %d при орбисе %s%n".formatted(ultimateHarmonic, orb));
         }
         for (Aspect aspect : getAspectsByStrength()) {
             sb.append(ResonanceDescription(aspect.numeric, aspect.multiplier));
-            sb.append("Резонанс %d (x%d) %s (%d) (%.2f%%, %s)%n".formatted(
+            sb.append("Резонанс %d (x%d) - %s как %d (%.2f%%, %s)%n".formatted(
                     aspect.numeric,
                     aspect.multiplier,
                     aspect.strengthLevel(),
@@ -227,35 +151,19 @@ public class Resonance {
         return sb.toString();
     }
 
-    private String resoundsReport2() {
-        StringBuilder sb = new StringBuilder();
-
-        if (aspects.size() == 0) {
-            sb.append("Ни одного резонанса до %d при орбисе %s%n".formatted(ultimateHarmonic, orb));
-        }
-        for (Aspect aspect : getAspectsByStrength()) {
-            sb.append(ResonanceDescription(aspect.numeric, aspect.multiplier));
-            sb.append("Резонанс %d/%d %s (%.0f%%) --- %.2f %n".formatted(
-                    aspect.multiplier,
-                    aspect.numeric,
-                    aspect.strengthRating(),
-                    aspect.strength,
-                    aspect.strength / Math.pow(Math.log(aspect.numeric + 1.0), 0.5)));
-        }
-        return sb.toString();
-    }
-
     public String resonancesOutput() {
         StringBuilder sb = new StringBuilder();
         switch (type) {
-            case SELF -> sb.append("%n%s (%s)%n".formatted(astra_1, whose_a1.getName()));
+            case SELF -> sb.append("%n%s %s (%s)%n".formatted(astra_1,
+                    whose_a1.getAstra(astra_1).getZodiacDegree(),
+                    whose_a1.getName()));
             case CHART -> {
                 sb.append("%n* Дуга между %c %s и %c %s (%s) = %s%n".formatted(
                         AstraEntity.findSymbolByName(astra_1), Mechanics.zodiacDegree(whose_a1.getAstraPosition(astra_1)),
                         AstraEntity.findSymbolByName(astra_2), Mechanics.zodiacDegree(whose_a1.getAstraPosition(astra_2)),
                         whose_a1.getName(),
                         secondFormat(arc, true)));
-                sb.append(resoundsReport2());
+                sb.append(resoundsReport(aspects));
             }
             case SYNASTRY -> {
                 sb.append("%n* Дуга между %c %s (%s) и %c %s (%s) = %s%n".formatted(
@@ -264,7 +172,7 @@ public class Resonance {
                         AstraEntity.findSymbolByName(astra_2), Mechanics.zodiacDegree(whose_a2.getAstraPosition(astra_2)),
                         whose_a2.getName(),
                         secondFormat(arc, true)));
-                sb.append(resoundsReport2());
+                sb.append(resoundsReport(aspects));
             }
         }
         return sb.toString();
@@ -275,6 +183,25 @@ public class Resonance {
         return aspects.stream()
                 .sorted(Comparator.comparing(Aspect::getStrength).reversed())
                 .collect(Collectors.toList());
+    }
+
+
+    public String resoundsReport(List<Aspect> resonances) {
+        StringBuilder sb = new StringBuilder();
+
+        if (resonances.isEmpty()) {
+            sb.append("Ни одного резонанса до %d при орбисе %s%n".formatted(ultimateHarmonic, orb));
+        }
+        for (Aspect aspect : resonances) {
+            sb.append(ResonanceDescription(aspect.numeric, aspect.multiplier));
+            sb.append("Резонанс %d/%d %s (%.0f%%) --- %.2f %n".formatted(
+                    aspect.multiplier,
+                    aspect.numeric,
+                    aspect.strengthRating(),
+                    aspect.strength,
+                    aspect.strength / Math.pow(Math.log(aspect.numeric + 1.0), 0.5)));
+        }
+        return sb.toString();
     }
 
 
