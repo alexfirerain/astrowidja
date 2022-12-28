@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static ru.swetophor.celestialmechanics.AstraEntity.MER;
-import static ru.swetophor.celestialmechanics.AstraEntity.SOL;
 import static ru.swetophor.celestialmechanics.Mechanics.*;
 
 /**
@@ -61,9 +59,13 @@ public class Chart extends ChartObject {
 
     private void addAstra(Astra astra) {
         astra.setHeaven(this);
-        IntStream.range(0, astras.size())
-                .filter(i -> astras.get(i).getName().equals(astra.getName()))
-                .forEach(i -> astras.set(i, astra));
+        int bound = astras.size();
+        for (int i = 0; i < bound; i++) {
+            if (astras.get(i).getName().equals(astra.getName())) {
+                astras.set(i, astra);
+                return;
+            }
+        }
         astras.add(astra);
     }
 
@@ -98,7 +100,7 @@ public class Chart extends ChartObject {
         return "%s (%s №%d)".formatted(name, type, ID);
     }
 
-    public ArrayList<Astra> getAstras() {
+    public List<Astra> getAstras() {
         return this.astras;
     }
 
@@ -127,15 +129,16 @@ public class Chart extends ChartObject {
         for (Astra astra : chart_a.getAstras()) {
             Astra counterpart = chart_b.getAstra(astra.getName());
             if (counterpart != null) {
-                composite.addAstra(new Astra(astra.getName(),
-                                            findMedian(astra.getZodiacPosition(),
-                                                    counterpart.getZodiacPosition())));
-                AstraEntity innerBody = AstraEntity.getEntityByName(astra.getName());
+                Astra compositeAstra = new Astra(astra.getName(),
+                                 findMedian(astra.getZodiacPosition(),
+                                            counterpart.getZodiacPosition()));
+                composite.addAstra(compositeAstra);
+                AstraEntity innerBody = AstraEntity.getEntityByName(compositeAstra.getName());
                 if (innerBody != null) {
                     switch (innerBody) {
-                        case SOL -> sun = astra;
-                        case MER -> mercury = astra;
-                        case VEN -> venus = astra;
+                        case SOL -> sun = compositeAstra;
+                        case MER -> mercury = compositeAstra;
+                        case VEN -> venus = compositeAstra;
                     }
                 }
             }

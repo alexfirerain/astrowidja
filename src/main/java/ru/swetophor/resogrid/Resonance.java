@@ -3,7 +3,6 @@ package ru.swetophor.resogrid;
 import lombok.Getter;
 import lombok.Setter;
 import ru.swetophor.Interpreter;
-import ru.swetophor.Settings;
 import ru.swetophor.celestialmechanics.*;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -152,7 +151,7 @@ public class Resonance {
             aspects = new ArrayList<>();
             for (int h = 1; h <= ultimateHarmonic; h++) {
                 double arcInHarmonic = normalizeArc(arc * h);
-                if (arcInHarmonic < orb && isNotRepeating(h)) {
+                if (arcInHarmonic < orb && isNewSimple(h)) {
                     aspects.add(new Aspect(h, arcInHarmonic, arc));
                 }
             }
@@ -183,27 +182,26 @@ public class Resonance {
 
     /**
      * Вспомогательный метод отсечения кратных гармоник при заполнении списка отзвуков.
-     * @param which число, которое проверяется на кратность уже найденным отзвукам.
+     * @param aNewNumber число, которое проверяется на кратность уже найденным отзвукам.
      * @return истинно, если проверяемое число не кратно никакому из уже найденных (кроме 1),
      * а также не является точным соединением, проходящим до данной гармоники.
      */
-    private boolean isNotRepeating(int which) {
+    private boolean isNewSimple(int aNewNumber) {
         boolean isConjunction = false;
 
         for (Aspect next : aspects) {
-            int alreadyFoundHarmonic = next.numeric;
+            int aFoundHarmonic = next.numeric;
 
-            if (alreadyFoundHarmonic == 1) {
+            if (aFoundHarmonic == 1)
                 isConjunction = true;
-            }
 
-            if (isConjunction && arc > orb / which) {
+            if (aNewNumber % aFoundHarmonic != 0)
                 continue;
-            }
 
-            if (which % alreadyFoundHarmonic != 0) {
+            if (isConjunction &&
+                    arc > orb / aNewNumber &&
+                    findMultiplier(aNewNumber, arc) == 1)
                 continue;
-            }
 
             return false;
         }
@@ -237,11 +235,12 @@ public class Resonance {
         }
         for (Aspect aspect : getAspectsByStrength()) {
             sb.append(ResonanceDescription(aspect.numeric, aspect.multiplier));
-            sb.append("Резонанс %d/%d %s (%.0f%%)%n".formatted(
+            sb.append("Резонанс %d/%d %s (%.0f%%) --- %.2f %n".formatted(
                     aspect.multiplier,
                     aspect.numeric,
                     aspect.strengthRating(),
-                    aspect.strength));
+                    aspect.strength,
+                    aspect.strength / Math.pow(Math.log(aspect.numeric + 1.0), 0.5)));
         }
         return sb.toString();
     }
