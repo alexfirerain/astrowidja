@@ -20,4 +20,5 @@ public class Settings {
     public static void disableHalfOrbForDoubles() { halfOrbsForDoubles = false; }
 
     public static void enableHalfOrbForDoubles() { halfOrbsForDoubles = true; }
+
 }

@@ -1,5 +1,9 @@
 package ru.swetophor.celestialmechanics;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 import static java.lang.Math.abs;
 import static java.lang.Math.round;
 import static java.lang.String.format;
@@ -191,5 +195,32 @@ public class Mechanics {
         coors[2] = inSeconds % 60;
         return coors;
     }
+
+    public static List<Integer> multipliersExplicate(int number) {
+        if (number < 0) throw new IllegalArgumentException("функция работает с положительными числами");
+        if (number == 0) return List.of(0);
+        if (number == 1) return List.of(1);
+        List<Integer> multipliers = new ArrayList<>();
+
+        int divider = 2;
+        while(number > 1) {
+            if (divider > number / divider) {
+                multipliers.add(number);
+                break;
+            }
+//            System.out.println(number + " / " + divider);
+            if (number % divider == 0) {
+                multipliers.add(divider);
+                number /= divider;
+            } else {
+                divider++;
+            }
+        }
+
+        multipliers.sort(Comparator.reverseOrder());
+
+        return multipliers;
+    }
+
 
 }

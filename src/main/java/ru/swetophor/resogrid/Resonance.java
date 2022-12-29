@@ -2,7 +2,6 @@ package ru.swetophor.resogrid;
 
 import lombok.Getter;
 import lombok.Setter;
-import ru.swetophor.Interpreter;
 import ru.swetophor.celestialmechanics.*;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -204,10 +203,5 @@ public class Resonance {
         return sb.toString();
     }
 
-
-    public static void main(String[] args) {
-        IntStream.range(0, 30)
-                .forEach(i -> System.out.println(Interpreter.multipliersExplicate(i)));
-    }
 
 }

@@ -1,7 +1,7 @@
 package ru.swetophor;
 
-import java.util.ArrayList;
-import java.util.Comparator;
+import ru.swetophor.celestialmechanics.Mechanics;
+
 import java.util.List;
 
 public class Interpreter {
@@ -60,7 +60,9 @@ public class Interpreter {
 
 
 
-            default: return standard(multipliersExplicate(harmonic), multiplier);
+            default: return standard(
+                    formatMultipliers(Mechanics.multipliersExplicate(harmonic)),
+                    multiplier);
         }
     }
 
@@ -72,30 +74,9 @@ public class Interpreter {
         return "<%d>%s : ".formatted(harm, mult == 1 ? "" : "[" + mult + "]");
     }
 
-    public static String multipliersExplicate(int number) {
-        if (number < 0) throw new IllegalArgumentException("функция работает с положительными числами");
-        if (number == 0) return "<0>";
-        if (number == 1) return "<1>";
-        List<Integer> multipliers = new ArrayList<>();
-
-        int divider = 2;
-        while(number > 1) {
-            if (divider > number / divider) {
-                multipliers.add(number);
-                break;
-            }
-//            System.out.println(number + " / " + divider);
-            if (number % divider == 0) {
-                multipliers.add(divider);
-                number /= divider;
-            } else {
-                divider++;
-            }
-        }
-
-        multipliers.sort(Comparator.reverseOrder());
+    public static String formatMultipliers(List<Integer> multipliers) {
         StringBuilder answer = new StringBuilder("<");
-        if (multipliers.size() > 0)
+        if (!multipliers.isEmpty())
             answer.append(multipliers.get(0));
         for (int i = 1; i < multipliers.size(); i++)
             answer.append("x")
@@ -103,4 +84,5 @@ public class Interpreter {
         answer.append(">");
         return answer.toString();
     }
+
 }
