@@ -49,8 +49,12 @@ public enum AstraEntity {
         return null;
     }
 
-    public static char findSymbolByName(String name) {
+    public static char findSymbolFor(String name) {
         AstraEntity astra = getEntityByName(name);
         return astra != null ? astra.symbol : '*';
+    }
+
+    public static char findSymbolFor(Astra astra) {
+        return findSymbolFor(astra.getName());
     }
 }

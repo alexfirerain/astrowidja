@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static ru.swetophor.celestialmechanics.Mechanics.normalizeCoordinate;
+import static ru.swetophor.celestialmechanics.Mechanics.zodiacDegree;
 
 /**
  * Прототип небесного те́ла — объект, имеющий:
@@ -98,10 +99,11 @@ public class Astra {
     }
 
     public String getZodiacDegree() {
-        return "%d°%s"
-                .formatted(
-                        (int) Math.ceil(zodiacPosition % 30),
-                        ZodiacSign.pointsZodium(zodiacPosition));
+        return zodiacDegree(zodiacPosition);
+    }
+
+    public char getSymbol() {
+        return AstraEntity.findSymbolFor(name);
     }
 
 }

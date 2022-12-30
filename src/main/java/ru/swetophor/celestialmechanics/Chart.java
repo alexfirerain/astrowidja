@@ -4,13 +4,11 @@ package ru.swetophor.celestialmechanics;
 import lombok.Setter;
 import ru.swetophor.ChartType;
 import ru.swetophor.resogrid.Matrix;
-import ru.swetophor.resogrid.Resonance;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static ru.swetophor.Interpreter.ResonanceDescription;
 import static ru.swetophor.celestialmechanics.Mechanics.*;
 
 /**
@@ -25,9 +23,11 @@ import static ru.swetophor.celestialmechanics.Mechanics.*;
 @Setter
 public class Chart extends ChartObject {
 
-    protected ArrayList<Astra> astras = new ArrayList<>();
+    protected List<Astra> astras = new ArrayList<>();
 
-    protected final ChartType type = ChartType.COSMOGRAM;
+    {
+        type = ChartType.COSMOGRAM;
+    }
     protected Matrix aspects;
 
     public Chart(String name) {
@@ -38,11 +38,10 @@ public class Chart extends ChartObject {
 
     public static Chart readFromString(String input) {
         String[] lines = input.lines().toArray(String[]::new);
-        Chart newChart;
         if (lines.length == 0)
             throw new IllegalArgumentException("текст не содержит строк");
 
-        newChart = new Chart(lines[0]);
+        Chart newChart = new Chart(lines[0]);
         IntStream.range(1, lines.length)
                 .mapToObj(i -> Astra.readFromString(lines[i]))
                 .forEach(newChart::addAstra);
@@ -62,7 +61,7 @@ public class Chart extends ChartObject {
     /**
      * Добавляет в карту астру. При этом если с таким именем астра
      * уже присутствует, она обновляется, заменяется.
-     * @param astra добавяемая астра.
+     * @param astra добавляемая астра.
      */
     public void addAstra(Astra astra) {
         astra.setHeaven(this);
@@ -111,9 +110,6 @@ public class Chart extends ChartObject {
         return this.astras;
     }
 
-    public ChartType getType() {
-        return this.type;
-    }
 
     public Matrix getAspects() {
         return this.aspects;

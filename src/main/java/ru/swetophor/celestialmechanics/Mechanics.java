@@ -176,7 +176,7 @@ public class Mechanics {
 
     public static String zodiacDegree(double position) {
 
-        return "%s°%s"
+        return "%d°%s"
                 .formatted(
                         (int) Math.ceil(position % 30),
                         pointsZodium(position));
@@ -223,4 +223,16 @@ public class Mechanics {
     }
 
 
+    /**
+     * вспомогательный метод нахождения крата аспекта
+     */
+    public static int findMultiplier(int resonance, double arc, double orb) {
+        double single = CIRCLE / resonance;
+        int multiplier = 1;
+        double orbHere = orb / resonance;
+        while (multiplier < resonance / 2)
+            if (abs(multiplier * single - arc) < orbHere) break;
+            else multiplier++;
+        return multiplier;
+    }
 }

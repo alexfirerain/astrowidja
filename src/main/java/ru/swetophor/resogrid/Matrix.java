@@ -5,9 +5,11 @@ import lombok.Setter;
 import ru.swetophor.Settings;
 import ru.swetophor.celestialmechanics.Astra;
 
-import java.util.ArrayList;
+import java.util.List;
+
 import static ru.swetophor.celestialmechanics.Mechanics.CIRCLE;
-import static ru.swetophor.resogrid.MatrixType.*;
+import static ru.swetophor.resogrid.MatrixType.COSMOGRAM;
+import static ru.swetophor.resogrid.MatrixType.SYNASTRY;
 
 /**
  * Двумерная таблица, получающая два массива астр
@@ -20,11 +22,11 @@ public class Matrix {
     /**
      * Множество астр, от которых вычисляются резонансы.
      */
-    protected ArrayList<Astra> datum1;
+    protected List<Astra> datum1;
     /**
      * Второе множество астр, к которым вычисляются резонансы от астр первого множества.
      */
-    protected ArrayList<Astra> datum2;
+    protected List<Astra> datum2;
     /**
      * Двумерный массив резонансов между астрами.
      */
@@ -78,7 +80,7 @@ public class Matrix {
      * @param edgeHarmonic  до какой максимальной гармоники проводится поиск
      * @param orbsDivider   делитель для определения начального орбиса.
      */
-    public Matrix(ArrayList<Astra> array1, ArrayList<Astra> array2, int edgeHarmonic, int orbsDivider) {
+    public Matrix(List<Astra> array1, List<Astra> array2, int edgeHarmonic, int orbsDivider) {
         this.edgeHarmonic = edgeHarmonic;
         this.orbsDivider = orbsDivider;
         type = SYNASTRY;
@@ -94,7 +96,7 @@ public class Matrix {
      * @param array_1  первый массив астр
      * @param array_2   второй массив астр
      */
-    public Matrix(ArrayList<Astra> array_1, ArrayList<Astra> array_2) {
+    public Matrix(List<Astra> array_1, List<Astra> array_2) {
         this(array_1, array_2, Settings.getEdgeHarmonic(), Settings.getOrbsDivider());
     }
 
@@ -103,7 +105,7 @@ public class Matrix {
      * Крайняя гармоника и делитель орбиса берутся из Настроек.
      * @param array     массив астр.
      */
-    public Matrix(ArrayList<Astra> array) {
+    public Matrix(List<Astra> array) {
         this(array, array);
         type = COSMOGRAM;
     }

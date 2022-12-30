@@ -1,7 +1,7 @@
 package ru.swetophor.resogrid;
 
 import static java.lang.Math.floor;
-import static ru.swetophor.resogrid.Resonance.findMultiplier;
+import static ru.swetophor.celestialmechanics.Mechanics.findMultiplier;
 
 /**
  * один из действующих для данной дуги резонансов

@@ -2,16 +2,17 @@ package ru.swetophor.resogrid;
 
 import lombok.Getter;
 import lombok.Setter;
-import ru.swetophor.celestialmechanics.*;
+import ru.swetophor.celestialmechanics.Astra;
+import ru.swetophor.celestialmechanics.Mechanics;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static java.lang.Math.abs;
-import static ru.swetophor.celestialmechanics.Mechanics.*;
 import static ru.swetophor.Interpreter.ResonanceDescription;
+import static ru.swetophor.celestialmechanics.Mechanics.*;
 import static ru.swetophor.resogrid.ResonanceType.*;
 
 /**
@@ -21,14 +22,10 @@ import static ru.swetophor.resogrid.ResonanceType.*;
 @Setter
 @Getter
 public class Resonance {
-    /**
-     * Ссылка на карту, в которой находится первая астра.
-     */
-    private final Chart whose_a1;
-    /**
-     * Ссылка на карту, в которой находится вторая астра.
-     */
-    private Chart whose_a2;
+
+
+    private String owner_1;
+    private String owner_2;
     /**
      * Тип резонанса:
      */
@@ -36,11 +33,11 @@ public class Resonance {
     /**
      * Название первой астры.
      */
-    private String astra_1;
+    private Astra astra_1;
     /**
      * Название второй астры.
      */
-    private String astra_2;
+    private Astra astra_2;
     /**
      * Угловое расстояние меж точками, т.е. дуга, резонансы которой считаются.
      */
@@ -66,17 +63,16 @@ public class Resonance {
      * @param ultimateHarmonic  до какой гармоники продолжать анализ.
      */
     Resonance(Astra a, Astra b, double orb, int ultimateHarmonic) {
-        astra_1 = a.getName();
-        whose_a1 = a.getHeaven();
+        astra_1 = a;
+        owner_1 = a.getHeaven().getName();
+        owner_2 = b.getHeaven().getName();
+
         if (a.equals(b)) {
             type = SELF;
         } else {
-            astra_2 = b.getName();
-            whose_a2 = b.getHeaven();
-            type = whose_a1.getID() == whose_a2.getID() ?
+            astra_2 = b;
+            type = a.getHeaven().getID() == b.getHeaven().getID() ?
                     CHART : SYNASTRY;
-            astra_1 = a.getName();
-            astra_2 = b.getName();
             arc = Mechanics.getArc(a, b);
             this.orb = orb;
             this.ultimateHarmonic = ultimateHarmonic;
@@ -91,34 +87,22 @@ public class Resonance {
     }
 
     /**
-     * вспомогательный метод нахождения крата аспекта
-     */
-    public static int findMultiplier(int resonance, double arc, double orb) {
-        double single = CIRCLE / resonance;
-        int multiplier = 1;
-        double orbHere = orb / resonance;
-        while (multiplier < resonance / 2)
-            if (abs(multiplier * single - arc) < orbHere) break;
-            else multiplier++;
-        return multiplier;
-    }
-
-    /**
      * Вспомогательный метод отсечения кратных гармоник при заполнении списка отзвуков.
      * @param aNewNumber число, которое проверяется на кратность уже найденным отзвукам.
-     * @return истинно, если проверяемое число не кратно никакому из уже найденных (кроме 1),
-     * а также не является точным соединением, проходящим до данной гармоники.
+     * @return {@code истинно}, если проверяемое число не кратно никакому из уже найденных (кроме 1),
+     * а также не является точным соединением, проходящим до данной гармоники. Следовательно,
+     * эту гармонику надо брать в набор. Если же {@code ложно}, брать её в набор не нужно.
      */
     private boolean isNewSimple(int aNewNumber) {
         boolean isConjunction = false;
 
         for (Aspect next : aspects) {
-            int aFoundHarmonic = next.numeric;
+            int aPreviousHarmonic = next.numeric;
 
-            if (aFoundHarmonic == 1)
+            if (aPreviousHarmonic == 1)
                 isConjunction = true;
 
-            if (aNewNumber % aFoundHarmonic != 0)
+            if (aNewNumber % aPreviousHarmonic != 0)
                 continue;
 
             if (isConjunction &&
@@ -153,25 +137,25 @@ public class Resonance {
     public String resonancesOutput() {
         StringBuilder sb = new StringBuilder();
         switch (type) {
-            case SELF -> sb.append("%n%s %s (%s)%n".formatted(astra_1,
-                    whose_a1.getAstra(astra_1).getZodiacDegree(),
-                    whose_a1.getName()));
+            case SELF -> sb.append("%n%c %s (%s)%n".formatted(
+                    astra_1.getSymbol(), astra_1.getZodiacDegree(),
+                    owner_1));
             case CHART -> {
                 sb.append("%n* Дуга между %c %s и %c %s (%s) = %s%n".formatted(
-                        AstraEntity.findSymbolByName(astra_1), Mechanics.zodiacDegree(whose_a1.getAstraPosition(astra_1)),
-                        AstraEntity.findSymbolByName(astra_2), Mechanics.zodiacDegree(whose_a1.getAstraPosition(astra_2)),
-                        whose_a1.getName(),
+                        astra_1.getSymbol(), astra_1.getZodiacDegree(),
+                        astra_2.getSymbol(), astra_2.getZodiacDegree(),
+                        owner_1,
                         secondFormat(arc, true)));
-                sb.append(resoundsReport(aspects));
+                sb.append(resoundsReport());
             }
             case SYNASTRY -> {
                 sb.append("%n* Дуга между %c %s (%s) и %c %s (%s) = %s%n".formatted(
-                        AstraEntity.findSymbolByName(astra_1), Mechanics.zodiacDegree(whose_a1.getAstraPosition(astra_1)),
-                        whose_a1.getName(),
-                        AstraEntity.findSymbolByName(astra_2), Mechanics.zodiacDegree(whose_a2.getAstraPosition(astra_2)),
-                        whose_a2.getName(),
+                        astra_1.getSymbol(), astra_1.getZodiacDegree(),
+                        owner_1,
+                        astra_2.getSymbol(), astra_2.getZodiacDegree(),
+                        owner_2,
                         secondFormat(arc, true)));
-                sb.append(resoundsReport(aspects));
+                sb.append(resoundsReport());
             }
         }
         return sb.toString();
@@ -185,11 +169,12 @@ public class Resonance {
     }
 
 
-    public String resoundsReport(List<Aspect> resonances) {
+    public static String resoundsReport(Resonance aspectBatch) {
         StringBuilder sb = new StringBuilder();
+        List<Aspect> resonances = aspectBatch.getAspects();
 
         if (resonances.isEmpty()) {
-            sb.append("Ни одного резонанса до %d при орбисе %s%n".formatted(ultimateHarmonic, orb));
+            sb.append("Ни одного резонанса до %d при орбисе %s%n".formatted(aspectBatch.getUltimateHarmonic(), aspectBatch.getOrb()));
         }
         for (Aspect aspect : resonances) {
             sb.append(ResonanceDescription(aspect.numeric, aspect.multiplier));
@@ -203,5 +188,8 @@ public class Resonance {
         return sb.toString();
     }
 
+    public String resoundsReport() {
+        return resoundsReport(this);
+    }
 
 }
