@@ -24,8 +24,6 @@ import static ru.swetophor.resogrid.ResonanceType.*;
 public class Resonance {
 
 
-    private String owner_1;
-    private String owner_2;
     /**
      * Тип резонанса:
      */
@@ -64,9 +62,6 @@ public class Resonance {
      */
     Resonance(Astra a, Astra b, double orb, int ultimateHarmonic) {
         astra_1 = a;
-        owner_1 = a.getHeaven().getName();
-        owner_2 = b.getHeaven().getName();
-
         if (a.equals(b)) {
             type = SELF;
         } else {
@@ -139,21 +134,21 @@ public class Resonance {
         switch (type) {
             case SELF -> sb.append("%n%c %s (%s)%n".formatted(
                     astra_1.getSymbol(), astra_1.getZodiacDegree(),
-                    owner_1));
+                    astra_1.getHeaven().getName()));
             case CHART -> {
                 sb.append("%n* Дуга между %c %s и %c %s (%s) = %s%n".formatted(
                         astra_1.getSymbol(), astra_1.getZodiacDegree(),
                         astra_2.getSymbol(), astra_2.getZodiacDegree(),
-                        owner_1,
+                        astra_1.getHeaven().getName(),
                         secondFormat(arc, true)));
                 sb.append(resoundsReport());
             }
             case SYNASTRY -> {
                 sb.append("%n* Дуга между %c %s (%s) и %c %s (%s) = %s%n".formatted(
                         astra_1.getSymbol(), astra_1.getZodiacDegree(),
-                        owner_1,
+                        astra_1.getHeaven().getName(),
                         astra_2.getSymbol(), astra_2.getZodiacDegree(),
-                        owner_2,
+                        astra_2.getHeaven().getName(),
                         secondFormat(arc, true)));
                 sb.append(resoundsReport());
             }
@@ -169,14 +164,13 @@ public class Resonance {
     }
 
 
-    public static String resoundsReport(Resonance aspectBatch) {
+    public String resoundsReport() {
         StringBuilder sb = new StringBuilder();
-        List<Aspect> resonances = aspectBatch.getAspects();
 
-        if (resonances.isEmpty()) {
-            sb.append("Ни одного резонанса до %d при орбисе %s%n".formatted(aspectBatch.getUltimateHarmonic(), aspectBatch.getOrb()));
+        if (aspects.isEmpty()) {
+            sb.append("Ни одного резонанса до %d при орбисе %s%n".formatted(ultimateHarmonic, orb));
         }
-        for (Aspect aspect : resonances) {
+        for (Aspect aspect : getAspectsByStrength()) {
             sb.append(ResonanceDescription(aspect.numeric, aspect.multiplier));
             sb.append("Резонанс %d/%d %s (%.0f%%) --- %.2f %n".formatted(
                     aspect.multiplier,
@@ -186,10 +180,6 @@ public class Resonance {
                     aspect.strength / Math.pow(Math.log(aspect.numeric + 1.0), 0.5)));
         }
         return sb.toString();
-    }
-
-    public String resoundsReport() {
-        return resoundsReport(this);
     }
 
 }

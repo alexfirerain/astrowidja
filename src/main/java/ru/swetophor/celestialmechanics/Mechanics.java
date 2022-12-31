@@ -235,4 +235,23 @@ public class Mechanics {
             else multiplier++;
         return multiplier;
     }
+
+
+    public static void main(String[] args) {
+        StringBuilder output = new StringBuilder();
+        for (int i = 0; i < 108; i++) {
+            output.append("%3d → ".formatted(i));
+            List<Integer> multi = multipliersExplicate(i);
+            for (int m = 0; m < multi.size(); m++) {
+                output.append(multi.get(m));
+                if (m != multi.size() - 1)
+                    output.append(" + ");
+            }
+            if (multi.size() > 1)
+                output.append(" = ").append(multi.stream().mapToInt(Integer::intValue).sum());
+            output.append("\n");
+        }
+        System.out.println(output);
+    }
+
 }
