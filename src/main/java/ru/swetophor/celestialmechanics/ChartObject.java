@@ -2,7 +2,6 @@ package ru.swetophor.celestialmechanics;
 
 import lombok.Setter;
 import ru.swetophor.Application;
-import ru.swetophor.ChartType;
 
 @Setter
 abstract public class ChartObject {

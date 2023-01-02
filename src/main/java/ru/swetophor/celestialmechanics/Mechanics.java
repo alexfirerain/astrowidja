@@ -17,7 +17,10 @@ public class Mechanics {
     public static final double CIRCLE = 360.0;
 
     /**
-     * вычисляет дугу между двумя точками на большом круге
+     * вычисляет эклиптическую дугу между двумя точками на большом круге
+     * @param a первая координата точки.
+     * @param b вторая координата точки.
+     * @return  наименьшую дугу между двумя указанными точками дуги.
      */
     public static double getArc(double a, double b){
         double arc = abs(normalizeCoordinate(a) - normalizeCoordinate(b));
@@ -27,7 +30,10 @@ public class Mechanics {
     }
 
     /**
-     * вычисляет дугу между астрами, переданными как объекты
+     *  вычисляет эклиптическую дугу между астрами, переданными как объекты
+     * @param a первая астра.
+     * @param b вторая астра.
+     * @return  наименьшую дугу между двумя указанными астрами.
      */
     public static double getArc(Astra a, Astra b){
         return getArc(a.getZodiacPosition(), b.getZodiacPosition());
@@ -40,9 +46,11 @@ public class Mechanics {
         return getArc(normalizeCoordinate(a), 0);
     }
 
-/**
-    Приводит координату в диапазон от 0 до 360°.
-*/
+    /**
+     * Приводит координату в диапазон от 0 до 360°.
+     * @param p нормализуемая координата.
+     * @return  координату от 0° до 360°, равную данной.
+     */
     public static double normalizeCoordinate(double p){
         p %= CIRCLE;
         return p < 0 ? p + CIRCLE : p;
@@ -153,7 +161,9 @@ public class Mechanics {
 
 
     /**
-     преобразует эклиптическую долготу в зодиакальную
+     *  преобразует эклиптическую долготу в зодиакальную
+     * @param position эклиптическая долгота.
+     * @return  строку, представляющую зодиакальную координату (знак + секундФормат без лишних нолей).
      */
     public static String zodiacFormat(double position) {
         return "%s\t%s"
@@ -161,19 +171,28 @@ public class Mechanics {
                         secondFormat(position % 30, true));
     }
 
+    /**
+     * Находит среднюю координату (мидпойнт) для двух зодиакальных позиций.
+     * @param positionA первая позиция.
+     * @param positionB вторая позиция.
+     * @return  среднюю координату между двумя заданными со стороны меньшей
+     * дуги между ними. Если дуга равна ровно половине Круга, возвращается точка,
+     * следующая через четверть после точки, переданной первой.
+     */
     public static double findMedian(double positionA, double positionB) {
         double arc = getArc(positionA, positionB);
         double minorPosition =
                 normalizeCoordinate(positionA + arc) == positionB ?
                 positionA : positionB;
 
-        double median = normalizeCoordinate(minorPosition + arc / 2);
-
-        if (arc == CIRCLE / 2)
-            median = -median;
-        return median;
+        return normalizeCoordinate(minorPosition + arc / 2);
     }
 
+    /**
+     * Выдаёт зодиакальный градус указанной зодиакальной позиции в виде «градус°символ»
+     * @param position зодиакальная позиция.
+     * @return  строковое представление градуса и знака Зодиака.
+     */
     public static String zodiacDegree(double position) {
 
         return "%d°%s"
@@ -196,6 +215,11 @@ public class Mechanics {
         return coors;
     }
 
+    /**
+     * Выдаёт список множителей данного числа (не считая единицы, естественно).
+     * @param number неотрицательное число, разлагаемое на множители.
+     * @return  список множителей, дающих исходное число, от большего к меньшему.
+     */
     public static List<Integer> multipliersExplicate(int number) {
         if (number < 0) throw new IllegalArgumentException("функция работает с положительными числами");
         if (number == 0) return List.of(0);
@@ -223,8 +247,13 @@ public class Mechanics {
     }
 
 
+
     /**
      * вспомогательный метод нахождения крата аспекта
+     * @param resonance какой гармоники анализируется дуга.
+     * @param arc   анализируемая дуга.
+     * @param orb   первичный орбис, используемый при расчёте аспектов.
+     * @return  множитель аспекта заданной гармоники для заданной дуги.
      */
     public static int findMultiplier(int resonance, double arc, double orb) {
         double single = CIRCLE / resonance;

@@ -1,4 +1,4 @@
-package ru.swetophor;
+package ru.swetophor.celestialmechanics;
 
 /**
  * Какой может быть карта с точки зрения

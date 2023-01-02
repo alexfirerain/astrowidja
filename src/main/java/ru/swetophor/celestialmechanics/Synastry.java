@@ -3,17 +3,18 @@ package ru.swetophor.celestialmechanics;
 import lombok.Getter;
 import lombok.Setter;
 import ru.swetophor.resogrid.Matrix;
-import ru.swetophor.ChartType;
 
 @Setter
 @Getter
 public class Synastry extends MultiChart {
 
-
     @Override
     public String toString() { return "%s (карта №%d)".formatted(name, ID); }
 
-    protected final ChartType type = ChartType.SYNASTRY;
+    {
+        type = ChartType.SYNASTRY;
+    }
+
     protected Matrix aspects;
 
     /**

@@ -2,6 +2,7 @@ package ru.swetophor.resogrid;
 
 import ru.swetophor.Settings;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.IntStream;
 
 import static java.lang.String.format;
@@ -54,7 +55,7 @@ public class WavePattern {
 
     private static void showPatternUpTo(int harmonicsEdge) {
         edgeOfPatternHarmonics = harmonicsEdge;
-        ArrayList<Aspect> patterns = new ArrayList <>();
+        List<Aspect> patterns = new ArrayList <>();
         patterns.add(new Aspect(1, 1));
 
         for (int harmonic = 1; harmonic <= edgeOfPatternHarmonics; harmonic++)
@@ -69,8 +70,8 @@ public class WavePattern {
                 secondFormatTablewise(next.getEnd(), true));
     }
 
-    private static ArrayList<Aspect> orderedAspects(ArrayList<Aspect> patterns) {
-        ArrayList<Aspect> orderedAspects = new ArrayList <>();
+    private static List<Aspect> orderedAspects(List<Aspect> patterns) {
+        List<Aspect> orderedAspects = new ArrayList <>();
             while (orderedAspects.size() < patterns.size()) {
                 int next = 0;
                 while (orderedAspects.contains(patterns.get(next)))
@@ -171,7 +172,7 @@ public class WavePattern {
     }
 
     private static class Rose {
-        static ArrayList<Aspect> patterns;
+        static List<Aspect> patterns;
         public static void showPatternUpTo(int harmonics) {
             createPattern(harmonics);
             StringBuilder sb = new StringBuilder();
@@ -187,7 +188,7 @@ public class WavePattern {
         }
 
         private static void createPattern(int harmonics) {
-            patterns = new ArrayList <>();
+//            patterns = new ArrayList <>();
             patterns.add(new Aspect(1, 1));            // до конца не удалось понять, почему нужна эта строка
 
             IntStream.rangeClosed(1, harmonics).forEach(
@@ -197,7 +198,7 @@ public class WavePattern {
             patterns = orderedAspects(patterns);
         }
 
-        private static void fillWavePattern(int harmonic, ArrayList<Aspect> patterns) {
+        private static void fillWavePattern(int harmonic, List<Aspect> patterns) {
             double single = normalizeCoordinate(CIRCLE / harmonic);
             multipliersIteration:
             for (int multiplier = 1; multiplier <= harmonic/2; multiplier++) {

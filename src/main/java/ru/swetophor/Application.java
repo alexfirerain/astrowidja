@@ -3,6 +3,10 @@ package ru.swetophor;
 
 import ru.swetophor.celestialmechanics.*;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
 import static ru.swetophor.Settings.*;
 
 
@@ -11,7 +15,7 @@ import static ru.swetophor.Settings.*;
  * программы как таковой
  ** ** ** ** ** ** ** ** ** ** ** ** ** ** **/
 public class Application {
-
+private static final Scanner keyboard = new Scanner(System.in);
 
     static String SC = """
                 СЧ
@@ -91,5 +95,25 @@ public class Application {
         """,
                 getOrbs(), orbsDivider, edgeHarmonic);
     }
+
+    static private final Map<String, ChartObject> table = new HashMap<>();
+
+    private static final String menu = """
+            1. загруженные карты
+            2. настройки
+            3. управление картами
+            4. ввод новых данных
+            """;
+
+    private static Chart enterChartData() {
+        System.out.print("Название новой карты: ");
+        Chart x = new Chart(keyboard.nextLine());
+        for (AstraEntity a : AstraEntity.values()) {
+            System.out.print(a.name + ": ");
+            x.addAstra(Astra.readFromString(keyboard.nextLine()));
+        }
+        return x;
+    }
+
 
 }

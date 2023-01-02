@@ -22,8 +22,6 @@ import static ru.swetophor.resogrid.ResonanceType.*;
 @Setter
 @Getter
 public class Resonance {
-
-
     /**
      * Тип резонанса:
      */
@@ -51,7 +49,7 @@ public class Resonance {
     /**
      * найденные в пределах орбиса резонансы по росту гармоники
      */
-    private List<Aspect> aspects;     //
+    private List<Aspect> aspects;
 
     /**
      * Получение массива аспектов для дуги между двумя астрами (конструктор)
