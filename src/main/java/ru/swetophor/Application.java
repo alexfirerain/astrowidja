@@ -74,12 +74,17 @@ private static final Scanner keyboard = new Scanner(System.in);
 
         Chart SCTVComposite = Chart.composite(SCChart, TVChart);
         printChartStat(SCTVComposite);
+
+
+        mainMenu();
     }
 
 
-    private static void printChartStat(Chart chart) {
-        System.out.println(chart.getAstrasList());
-        System.out.println(chart.getAspectTable());
+    private static void printChartStat(ChartObject chart) {
+        if (chart instanceof Chart) {
+            System.out.println(((Chart) chart).getAstrasList());
+            System.out.println(((Chart) chart).getAspectTable());
+        }
     }
 
     // TODO: вынести процедуру загрузки астр, запариться с чтением из файла.
@@ -94,16 +99,61 @@ private static final Scanner keyboard = new Scanner(System.in);
         Считаем резонансы с приближением в %.0f° (1/%d часть круга) до числа %d%n
         """,
                 getOrbs(), orbsDivider, edgeHarmonic);
+        System.out.println(MENU);
     }
 
     static private final Map<String, ChartObject> table = new HashMap<>();
 
-    private static final String menu = """
+    private static final String MENU = """
             1. загруженные карты
             2. настройки
             3. управление картами
-            4. ввод новых данных
+            4. показать карту
+            5. добавить карту с клавиатуры
+            0. выход
             """;
+
+    private static void mainMenu() {
+        boolean exit = false;
+        while(!exit) {
+            switch(keyboard.nextLine()) {
+                case "1" -> listCharts();
+                case "4" -> showChart();
+                case "5" -> addChart(enterChartData());
+                case "0" -> exit = true;
+            }
+        }
+    }
+
+    private static void showChart() {
+        System.out.print("Укажите карту по ИД или имени: ");
+        String order = keyboard.nextLine();
+        if (order.isBlank()) {
+            return;
+        }
+        if (order.matches("//d*")) {
+            try {
+                int i = Integer.parseInt(order);
+                table.values().stream()
+                        .filter(chart -> chart.getID() == i)
+                        .findFirst().ifPresentOrElse(
+                                Application::printChartStat,
+                                () -> System.out.println("Карты с таким номером не найдено."));
+            } catch (NumberFormatException e) {
+                System.out.println("Число не распознано.");
+            }
+        } else {
+            if (table.containsKey(order))
+                printChartStat(table.get(order));
+            else
+                System.out.println("Карты с таким именем не найдено.");
+        }
+        System.out.println(MENU);
+    }
+
+    private static void listCharts() {
+        table.values().forEach(System.out::println);
+    }
 
     private static Chart enterChartData() {
         System.out.print("Название новой карты: ");
@@ -111,8 +161,42 @@ private static final Scanner keyboard = new Scanner(System.in);
         for (AstraEntity a : AstraEntity.values()) {
             System.out.print(a.name + ": ");
             x.addAstra(Astra.readFromString(keyboard.nextLine()));
+            System.out.println();
         }
         return x;
+    }
+
+    private static void addChart(ChartObject chart) {
+        if (table.containsKey(chart.getName())) {
+            boolean fixed = false;
+            while (!fixed) {
+                System.out.println("Карта с таким именем уже построена:\n" +
+                        "1. заменить\n" +
+                        "2. сохранить под новым именем\n" +
+                        "0. отмена");
+                switch (keyboard.nextLine()) {
+                    case "2" -> {
+                        System.out.print("Новое имя: ");
+                        String name = keyboard.nextLine();
+                        System.out.println();
+                        while (table.containsKey(name)) {
+                            System.out.print("Новое имя: ");
+                            name = keyboard.nextLine();
+                            System.out.println();
+                        }
+                        chart.setName(name);
+                        fixed = true;
+                    }
+                    case "1" -> fixed = true;
+                    case "0" -> {
+                        System.out.println("Отмена загрузки карты: " + chart);
+                        return;
+                    }
+                }
+            }
+        }
+        table.put(chart.getName(), chart);
+        System.out.println("Карта загружена: " + chart);
     }
 
 

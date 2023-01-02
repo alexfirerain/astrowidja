@@ -102,7 +102,7 @@ public class Chart extends ChartObject {
 
     @Override
     public String toString() {
-        return "%s (%s №%d)".formatted(name, type, ID);
+        return "%s (%s, №%d)".formatted(name, type, ID);
     }
 
     public List<Astra> getAstras() {
