@@ -65,9 +65,9 @@ public class WavePattern {
 
         for (Aspect next : patterns) System.out.printf("%2d/%d\t%10s\t(%10s - %10s)%n",
                 next.multiplier, next.harmonic,
-                secondFormatTablewise(next.arc, true),
-                secondFormatTablewise(next.getBeginning(), true),
-                secondFormatTablewise(next.getEnd(), true));
+                secondFormatForTable(next.arc, true),
+                secondFormatForTable(next.getBeginning(), true),
+                secondFormatForTable(next.getEnd(), true));
     }
 
     private static List<Aspect> orderedAspects(List<Aspect> patterns) {
@@ -180,9 +180,9 @@ public class WavePattern {
                     "%2d/%d\t%10s\t(%10s - %10s)%n".formatted(
                     next.multiplier,
                     next.harmonic,
-                    secondFormatTablewise(next.arc, true),
-                    secondFormatTablewise(next.getBeginning(), true),
-                    secondFormatTablewise(next.getEnd(), true)))
+                    secondFormatForTable(next.arc, true),
+                    secondFormatForTable(next.getBeginning(), true),
+                    secondFormatForTable(next.getEnd(), true)))
             );
             System.out.println(sb);
         }

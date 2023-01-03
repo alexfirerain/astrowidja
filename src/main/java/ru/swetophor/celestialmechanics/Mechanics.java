@@ -120,7 +120,7 @@ public class Mechanics {
      *      но выдаёт строку длиной точно 10 символов,
      *      выровненную влево.
      */
-    public static String secondFormatTablewise(double inDegrees, boolean withoutExtraZeros) {
+    public static String secondFormatForTable(double inDegrees, boolean withoutExtraZeros) {
         int[] coors = degreesToCoors(inDegrees);
         StringBuilder formatHolder = new StringBuilder();
 
@@ -149,7 +149,7 @@ public class Mechanics {
      *      Выдаёт строку точно 10 знаков
      *          съ всеми избыточными нолями
      */
-    public static String secondFormatTablewise(double inDegrees) {
+    public static String secondFormatForTable(double inDegrees) {
         int[] coors = degreesToCoors(inDegrees);
         StringBuilder formatHolder = new StringBuilder();
 
@@ -273,7 +273,7 @@ public class Mechanics {
             List<Integer> multi = multipliersExplicate(i);
             for (int m = 0; m < multi.size(); m++) {
                 output.append(multi.get(m));
-                if (m != multi.size() - 1)
+                if (m < multi.size() - 1)
                     output.append(" + ");
             }
             if (multi.size() > 1)

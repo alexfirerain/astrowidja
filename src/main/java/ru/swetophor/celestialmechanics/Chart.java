@@ -148,13 +148,13 @@ public class Chart extends ChartObject {
 
         if (sun != null) {
             if (mercury != null &&
-                    getArc(sun.getZodiacPosition(), mercury.getZodiacPosition()) > 30.0) {
+                    getArc(sun, mercury) > 30.0) {
 
                 mercury.setZodiacPosition(normalizeCoordinate(mercury.getZodiacPosition() + CIRCLE / 2));
                 composite.addAstra(mercury);
             }
             if (venus != null &&
-                    getArc(sun.getZodiacPosition(), venus.getZodiacPosition()) > 60.0) {
+                    getArc(sun, venus) > 60.0) {
 
                 venus.setZodiacPosition(normalizeCoordinate(venus.getZodiacPosition() + CIRCLE / 2));
                 composite.addAstra(venus);

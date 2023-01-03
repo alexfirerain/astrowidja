@@ -3,6 +3,7 @@ package ru.swetophor;
 
 import ru.swetophor.celestialmechanics.*;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -64,18 +65,18 @@ private static final Scanner keyboard = new Scanner(System.in);
         welcome();
 
         Chart SCChart = Chart.readFromString(SC);
-        printChartStat(SCChart);
+//        printChartStat(SCChart);
 
         Chart TVChart = Chart.readFromString(TV);
-        printChartStat(TVChart);
+//        printChartStat(TVChart);
 
         Synastry doubleChart = new Synastry(SCChart, TVChart);
-        doubleChart.plotAspectTable();
+//        doubleChart.plotAspectTable();
 
         Chart SCTVComposite = Chart.composite(SCChart, TVChart);
-        printChartStat(SCTVComposite);
+//        printChartStat(SCTVComposite);
 
-
+        addChart(SCChart, TVChart, doubleChart, SCTVComposite);
         mainMenu();
     }
 
@@ -131,7 +132,7 @@ private static final Scanner keyboard = new Scanner(System.in);
         if (order.isBlank()) {
             return;
         }
-        if (order.matches("//d*")) {
+        if (order.matches("^\\d+")) {
             try {
                 int i = Integer.parseInt(order);
                 table.values().stream()
@@ -170,11 +171,13 @@ private static final Scanner keyboard = new Scanner(System.in);
         if (table.containsKey(chart.getName())) {
             boolean fixed = false;
             while (!fixed) {
-                System.out.println("Карта с таким именем уже построена:\n" +
-                        "1. заменить\n" +
-                        "2. сохранить под новым именем\n" +
-                        "0. отмена");
+                System.out.println("""
+                        Карта с таким именем уже построена:
+                        1. заменить
+                        2. сохранить под новым именем
+                        0. отмена""");
                 switch (keyboard.nextLine()) {
+                    case "1" -> fixed = true;
                     case "2" -> {
                         System.out.print("Новое имя: ");
                         String name = keyboard.nextLine();
@@ -187,7 +190,6 @@ private static final Scanner keyboard = new Scanner(System.in);
                         chart.setName(name);
                         fixed = true;
                     }
-                    case "1" -> fixed = true;
                     case "0" -> {
                         System.out.println("Отмена загрузки карты: " + chart);
                         return;
@@ -199,5 +201,9 @@ private static final Scanner keyboard = new Scanner(System.in);
         System.out.println("Карта загружена: " + chart);
     }
 
+    private static void addChart(ChartObject... charts) {
+        Arrays.stream(charts)
+                .forEach(Application::addChart);
+    }
 
 }

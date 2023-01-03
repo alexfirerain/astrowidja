@@ -3,7 +3,7 @@ package ru.swetophor.celestialmechanics;
 import java.util.Arrays;
 
 import static ru.swetophor.celestialmechanics.Mechanics.secondFormat;
-import static ru.swetophor.celestialmechanics.Mechanics.secondFormatTablewise;
+import static ru.swetophor.celestialmechanics.Mechanics.secondFormatForTable;
 
 public class FormatTest {
     static Astra[] astras =
@@ -36,17 +36,17 @@ public class FormatTest {
 
         System.out.println("\n* секундФорматТаблично без параметра *");
         Arrays.stream(astras)
-                .map(she -> secondFormatTablewise(she.getZodiacPosition()))
+                .map(she -> secondFormatForTable(she.getZodiacPosition()))
                 .forEach(System.out::println);
 
         System.out.println("\n* секундФорматТаблично без лишних нолей *");
         Arrays.stream(astras)
-                .map(she -> secondFormatTablewise(she.getZodiacPosition(), true))
+                .map(she -> Mechanics.secondFormatForTable(she.getZodiacPosition(), true))
                 .forEach(System.out::println);
 
         System.out.println("\n* секундФорматТаблично с лишними нолями *");
         Arrays.stream(astras)
-                .map(she -> secondFormatTablewise(she.getZodiacPosition(), false))
+                .map(she -> Mechanics.secondFormatForTable(she.getZodiacPosition(), false))
                 .forEach(System.out::println);
     }
 }

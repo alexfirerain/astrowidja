@@ -5,6 +5,7 @@ import lombok.Setter;
 import ru.swetophor.Settings;
 import ru.swetophor.celestialmechanics.Astra;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static ru.swetophor.celestialmechanics.Mechanics.CIRCLE;
@@ -22,11 +23,11 @@ public class Matrix {
     /**
      * Множество астр, от которых вычисляются резонансы.
      */
-    protected List<Astra> datum1;
+    protected Astra[] datum1;
     /**
      * Второе множество астр, к которым вычисляются резонансы от астр первого множества.
      */
-    protected List<Astra> datum2;
+    protected Astra[] datum2;
     /**
      * Двумерный массив резонансов между астрами.
      */
@@ -55,18 +56,14 @@ public class Matrix {
 
         switch (type) {
             case SYNASTRY -> {                                 // таблица всех астр одной на все астры другой
-                for (int i = 0; i < datum1.size(); i++)
-                    for (int j = 0; j < datum2.size(); j++) {
-                        sb.append(resonances[i][j].resonancesOutput());
-                        sb.append("\n");
-                    }
+                for (int i = 0; i < datum1.length; i++)
+                    for (int j = 0; j < datum2.length; j++)
+                        sb.append(resonances[i][j].resonancesOutput()).append("\n");
             }
             case COSMOGRAM -> {                               // полутаблица астр карты между собой
-                for (int i = 0; i < datum1.size(); i++)
-                    for (int j = i + 1; j < datum2.size(); j++) {
-                        sb.append(resonances[i][j].resonancesOutput());
-                        sb.append("\n");
-                    }
+                for (int i = 0; i < datum1.length; i++)
+                    for (int j = i + 1; j < datum2.length; j++)
+                        sb.append(resonances[i][j].resonancesOutput()).append("\n");
             }
         }
         return sb.toString();
@@ -83,11 +80,16 @@ public class Matrix {
     public Matrix(List<Astra> array1, List<Astra> array2, int edgeHarmonic, int orbsDivider) {
         this.edgeHarmonic = edgeHarmonic;
         this.orbsDivider = orbsDivider;
-        type = SYNASTRY;
+        datum1 = (Astra[]) array1.toArray();
+        datum2 = (Astra[]) array2.toArray();
+        type = Arrays.equals(datum1, datum2) ? COSMOGRAM : SYNASTRY;
         resonances = new Resonance[array1.size()][array2.size()];
-        datum1 = array1;
-        datum2 = array2;
-        fillTheMatrix();
+        for (int i = 0; i < datum1.length; i++)
+            for (int j = 0; j < datum2.length; j++)
+                resonances[i][j] = new Resonance(datum1[i],
+                                                datum2[j],
+                                                CIRCLE / this.orbsDivider,
+                                                this.edgeHarmonic);
     }
 
     /**
@@ -107,19 +109,6 @@ public class Matrix {
      */
     public Matrix(List<Astra> array) {
         this(array, array);
-        type = COSMOGRAM;
     }
 
-    /**
-     * Заполняет матрицу рассчитанными объектами Резонанса
-     * для каждой пары астр.
-     */
-    private void fillTheMatrix(){
-        for (int i = 0; i < datum1.size(); i++)
-            for (int j = 0; j < datum2.size(); j++)
-                resonances[i][j] = new Resonance(datum1.get(i),
-                                                datum2.get(j),
-                                                CIRCLE / orbsDivider,
-                                                edgeHarmonic);
-    }
 }

@@ -1,9 +1,7 @@
 package ru.swetophor.celestialmechanics;
 
-import lombok.Setter;
 import ru.swetophor.Application;
 
-@Setter
 abstract public class ChartObject {
     protected int ID;
     protected ChartType type;
@@ -28,5 +26,17 @@ abstract public class ChartObject {
 
     public String getName() {
         return this.name;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+
+    public void setType(ChartType type) {
+        this.type = type;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

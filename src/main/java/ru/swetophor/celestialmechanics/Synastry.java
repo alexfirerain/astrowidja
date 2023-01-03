@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import ru.swetophor.resogrid.Matrix;
 
+import java.util.ArrayList;
+
 @Setter
 @Getter
 public class Synastry extends MultiChart {
@@ -13,6 +15,7 @@ public class Synastry extends MultiChart {
 
     {
         type = ChartType.SYNASTRY;
+        moments = new ArrayList<>(2);
     }
 
     protected Matrix aspects;
