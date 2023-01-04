@@ -288,18 +288,37 @@ public class Mechanics {
     }
 
     public static void buildHeavens(int uptoNumber) {
+        StringBuilder report = new StringBuilder();
         int heaven = 0;
         for (int i = 1; i <= uptoNumber; i++) {
+            StringBuilder heavenBuilder = new StringBuilder();
             List<Integer> multi = multipliersExplicate(i);
+            int n = 0;
+            int heavenSum = 0;
             if (multi.size() == 1) {
-                System.out.println("Небо №" + heaven++);
+                heavenBuilder.append("\t%s Σ = %d (сложность %d)%n"
+                        .formatted(formatMultipliers(multi), multiSum(i), multi.size()));
+                n++;
+                heavenSum += multiSum(i);
+
+                while (multipliersExplicate(i + 1).size() > 1) {
+                    List<Integer> nextMulti = multipliersExplicate(++i);
+                    heavenBuilder.append("\t%s Σ = %d (сложность %d)%n"
+                            .formatted(formatMultipliers(nextMulti), multiSum(i), nextMulti.size()));
+                    n++;
+                    heavenSum += multiSum(i);
+                }
+                report.append("Небо №%d (высота = %.2f)%n"
+                        .formatted(heaven++, (double) heavenSum / (double) n))
+                      .append(heavenBuilder);
             }
-            System.out.printf("\t%s Σ = %d%n", formatMultipliers(multi), multiSum(i));
         }
+        System.out.println(report);
     }
 
+
     public static void main(String[] args) {
-        displayMultipliers(108);
+//        displayMultipliers(108);
         buildHeavens(108);
     }
 
