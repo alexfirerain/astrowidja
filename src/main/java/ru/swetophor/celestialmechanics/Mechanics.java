@@ -265,10 +265,14 @@ public class Mechanics {
         return multiplier;
     }
 
+    public static int multiSum(int number) {
+        return multipliersExplicate(number).stream()
+                .mapToInt(Integer::intValue).sum();
+    }
 
-    public static void main(String[] args) {
+    public static void displayMultipliers(int upto) {
         StringBuilder output = new StringBuilder();
-        for (int i = 0; i < 108; i++) {
+        for (int i = 0; i <= upto; i++) {
             output.append("%3d → ".formatted(i));
             List<Integer> multi = multipliersExplicate(i);
             for (int m = 0; m < multi.size(); m++) {
@@ -277,10 +281,36 @@ public class Mechanics {
                     output.append(" + ");
             }
             if (multi.size() > 1)
-                output.append(" = ").append(multi.stream().mapToInt(Integer::intValue).sum());
+                output.append(" = ").append(multiSum(i));
             output.append("\n");
         }
         System.out.println(output);
     }
 
+    public static void buildHeavens(int uptoNumber) {
+        int heaven = 0;
+        for (int i = 1; i <= uptoNumber; i++) {
+            List<Integer> multi = multipliersExplicate(i);
+            if (multi.size() == 1) {
+                System.out.println("Небо №" + heaven++);
+            }
+            System.out.printf("\t%s Σ = %d%n", formatMultipliers(multi), multiSum(i));
+        }
+    }
+
+    public static void main(String[] args) {
+        displayMultipliers(108);
+        buildHeavens(108);
+    }
+
+    public static String formatMultipliers(List<Integer> multipliers) {
+        StringBuilder answer = new StringBuilder("<");
+        if (!multipliers.isEmpty())
+            answer.append(multipliers.get(0));
+        for (int i = 1; i < multipliers.size(); i++)
+            answer.append("x")
+                    .append(multipliers.get(i));
+        answer.append(">");
+        return answer.toString();
+    }
 }

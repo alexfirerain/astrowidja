@@ -72,18 +72,18 @@ public class Matrix {
     /**
      * вычисление матрицы для двух массивов (конструктор)
      *  с заданием крайней гармоники и делителя орбиса
-     * @param array1    первый массив астр
-     * @param array2    второй массив астр
+     * @param astras_1    первый массив астр
+     * @param astras_2    второй массив астр
      * @param edgeHarmonic  до какой максимальной гармоники проводится поиск
      * @param orbsDivider   делитель для определения начального орбиса.
      */
-    public Matrix(List<Astra> array1, List<Astra> array2, int edgeHarmonic, int orbsDivider) {
+    public Matrix(List<Astra> astras_1, List<Astra> astras_2, int edgeHarmonic, int orbsDivider) {
         this.edgeHarmonic = edgeHarmonic;
         this.orbsDivider = orbsDivider;
-        datum1 = (Astra[]) array1.toArray();
-        datum2 = (Astra[]) array2.toArray();
+        datum1 = astras_1.toArray(Astra[]::new);
+        datum2 = astras_2.toArray(Astra[]::new);
         type = Arrays.equals(datum1, datum2) ? COSMOGRAM : SYNASTRY;
-        resonances = new Resonance[array1.size()][array2.size()];
+        resonances = new Resonance[astras_1.size()][astras_2.size()];
         for (int i = 0; i < datum1.length; i++)
             for (int j = 0; j < datum2.length; j++)
                 resonances[i][j] = new Resonance(datum1[i],
@@ -95,20 +95,20 @@ public class Matrix {
     /**
      * вычисление матрицы из двух массивов б/доп-параметров
      * Крайняя гармоника и делитель первообраза берутся из Настроек
-     * @param array_1  первый массив астр
-     * @param array_2   второй массив астр
+     * @param astras_1  первый массив астр
+     * @param astras_2   второй массив астр
      */
-    public Matrix(List<Astra> array_1, List<Astra> array_2) {
-        this(array_1, array_2, Settings.getEdgeHarmonic(), Settings.getOrbsDivider());
+    public Matrix(List<Astra> astras_1, List<Astra> astras_2) {
+        this(astras_1, astras_2, Settings.getEdgeHarmonic(), Settings.getOrbsDivider());
     }
 
     /**
      * из одного массива (сам на себя) б/доп-параметров.
      * Крайняя гармоника и делитель орбиса берутся из Настроек.
-     * @param array     массив астр.
+     * @param astras     массив астр.
      */
-    public Matrix(List<Astra> array) {
-        this(array, array);
+    public Matrix(List<Astra> astras) {
+        this(astras, astras);
     }
 
 }

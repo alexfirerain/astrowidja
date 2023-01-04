@@ -2,8 +2,6 @@ package ru.swetophor;
 
 import ru.swetophor.celestialmechanics.Mechanics;
 
-import java.util.List;
-
 public class Interpreter {
     public static String ResonanceDescription(int harmonic, int multiplier) {
         switch (harmonic) {
@@ -61,7 +59,7 @@ public class Interpreter {
 
 
             default: return standard(
-                    formatMultipliers(Mechanics.multipliersExplicate(harmonic)),
+                    Mechanics.formatMultipliers(Mechanics.multipliersExplicate(harmonic)),
                     multiplier);
         }
     }
@@ -72,17 +70,6 @@ public class Interpreter {
 
     private static String standard(int harm, int mult) {
         return "<%d>%s : ".formatted(harm, mult == 1 ? "" : "[" + mult + "]");
-    }
-
-    public static String formatMultipliers(List<Integer> multipliers) {
-        StringBuilder answer = new StringBuilder("<");
-        if (!multipliers.isEmpty())
-            answer.append(multipliers.get(0));
-        for (int i = 1; i < multipliers.size(); i++)
-            answer.append("x")
-                    .append(multipliers.get(i));
-        answer.append(">");
-        return answer.toString();
     }
 
 }
