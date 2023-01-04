@@ -5,8 +5,8 @@ import lombok.Setter;
 import ru.swetophor.resogrid.Matrix;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.IntStream;
 
 import static ru.swetophor.celestialmechanics.Mechanics.*;
 
@@ -41,10 +41,11 @@ public class Chart extends ChartObject {
             throw new IllegalArgumentException("текст не содержит строк");
 
         Chart newChart = new Chart(lines[0]);
-        IntStream.range(1, lines.length)
-                .mapToObj(i -> Astra.readFromString(lines[i]))
+        Arrays.stream(lines, 1, lines.length)
+                .filter(line -> !line.isBlank()
+                        && !line.startsWith("//"))
+                .map(Astra::readFromString)
                 .forEach(newChart::addAstra);
-
 
         return newChart;
     }
@@ -105,6 +106,7 @@ public class Chart extends ChartObject {
         return "%s (%s, №%d)".formatted(name, type, ID);
     }
 
+    @Override
     public List<Astra> getAstras() {
         return this.astras;
     }

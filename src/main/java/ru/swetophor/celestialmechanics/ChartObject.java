@@ -2,13 +2,15 @@ package ru.swetophor.celestialmechanics;
 
 import ru.swetophor.Application;
 
+import java.util.List;
+
 abstract public class ChartObject {
     protected int ID;
     protected ChartType type;
     protected String name;
 
     public ChartObject() {
-        ID = ++Application.IDs;
+        ID = ++Application.id;
     }
 
     public ChartObject(String name) {
@@ -39,4 +41,7 @@ abstract public class ChartObject {
     public void setName(String name) {
         this.name = name;
     }
+
+    public abstract List<Astra> getAstras();
+
 }

@@ -3,12 +3,18 @@ package ru.swetophor;
 
 import ru.swetophor.celestialmechanics.*;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
 import static ru.swetophor.Settings.*;
+import static ru.swetophor.celestialmechanics.Mechanics.degreesToCoors;
 
 
 /** ** ** ** ** ** ** ** ** ** ** ** ** ** **
@@ -16,7 +22,20 @@ import static ru.swetophor.Settings.*;
  * программы как таковой
  ** ** ** ** ** ** ** ** ** ** ** ** ** ** **/
 public class Application {
-private static final Scanner keyboard = new Scanner(System.in);
+    private static final Scanner keyboard = new Scanner(System.in);
+
+    private static final String baseDir = "base";
+    static {
+        Path basePath = Path.of(baseDir);
+        if (!Files.exists(basePath)) {
+            try {
+                Files.createDirectory(basePath);
+                System.out.printf("Создали папку '%s'%n", baseDir);
+            } catch (IOException e) {
+                System.out.printf("Не удалось создать папку %s: %s%n", baseDir, e.getLocalizedMessage());
+            }
+        }
+    }
 
     static String SC = """
                 СЧ
@@ -76,7 +95,12 @@ private static final Scanner keyboard = new Scanner(System.in);
         Chart SCTVComposite = Chart.composite(SCChart, TVChart);
 //        printChartStat(SCTVComposite);
 
-        addChart(SCChart, TVChart, doubleChart, SCTVComposite);
+//        addChart(SCChart, TVChart, doubleChart, SCTVComposite);
+
+        loadFromFile("autosave.awb");
+
+//        saveTableToFile(baseDir + "\\autosave.awb", table);
+
         mainMenu();
     }
 
@@ -90,7 +114,7 @@ private static final Scanner keyboard = new Scanner(System.in);
 
     // TODO: вынести процедуру загрузки астр, запариться с чтением из файла.
 
-    static public int IDs = 0;
+    static public int id = 0;
 
     private static void welcome() {
         System.out.printf("""
@@ -106,12 +130,14 @@ private static final Scanner keyboard = new Scanner(System.in);
     static private final Map<String, ChartObject> table = new HashMap<>();
 
     private static final String MENU = """
-            1. загруженные карты
-            2. настройки
-            3. управление картами
-            4. показать карту
-            5. добавить карту с клавиатуры
-            0. выход
+            ╔═════════════════════════════════╗
+            ║ 1. загруженные карты            ║
+            ║ 2. настройки                    ║
+            ║ 3. управление картами           ║
+            ║ 4. показать карту               ║
+            ║ 5. добавить карту с клавиатуры  ║
+            ║ 0. выход                        ║
+            ╚═════════════════════════════════╝
             """;
 
     private static void mainMenu() {
@@ -153,7 +179,10 @@ private static final Scanner keyboard = new Scanner(System.in);
     }
 
     private static void listCharts() {
-        table.values().forEach(System.out::println);
+        if (table.isEmpty())
+            System.out.println("Ни одной карты не загружено.");
+        else
+            table.values().forEach(System.out::println);
     }
 
     private static Chart enterChartData() {
@@ -167,12 +196,17 @@ private static final Scanner keyboard = new Scanner(System.in);
         return x;
     }
 
+    /**
+     * Добавляет карту в реестр карт. Если карта с таким именем уже
+     * присутствует, запрашивает решение у юзера.
+     * @param chart добавляемая карта.
+     */
     private static void addChart(ChartObject chart) {
         if (table.containsKey(chart.getName())) {
             boolean fixed = false;
             while (!fixed) {
                 System.out.println("""
-                        Карта с таким именем уже построена:
+                        Карта с таким именем уже записана:
                         1. заменить
                         2. сохранить под новым именем
                         0. отмена""");
@@ -201,9 +235,56 @@ private static final Scanner keyboard = new Scanner(System.in);
         System.out.println("Карта загружена: " + chart);
     }
 
+    /**
+     * Добавляет в реестр произвольное количество карт из аргументов.
+     * Если какая-то карта совпадает с уже записанной, у юзера
+     * запрашивается решение.
+     * @param charts добавляемые карты.
+     */
     private static void addChart(ChartObject... charts) {
         Arrays.stream(charts)
                 .forEach(Application::addChart);
+    }
+
+    public static void loadFromFile(String source) {
+        try {
+            Arrays.stream(Files
+                    .readString(Path.of(baseDir, source))
+                    .split("#"))
+                    .filter(s -> !s.isBlank() && !s.startsWith("//"))
+                    .map(Chart::readFromString)
+                    .forEach(Application::addChart);
+        } catch (IOException e) {
+            System.out.printf("Не удалось прочесть файл '%s'%n", source);
+        }
+
+        System.out.println(MENU);
+    }
+
+    public static void saveTableToFile(String target, Map<String, ChartObject> charts) {
+        StringBuilder content = new StringBuilder();
+        charts.values().stream()
+                .filter(chart -> chart.getType() == ChartType.COSMOGRAM)
+                .forEach(chart -> {
+            content.append("#%s%n"
+                    .formatted(chart.getName()));
+            chart.getAstras()
+                    .forEach(astra -> {
+                        int[] coors = degreesToCoors(astra.getZodiacPosition());
+                        content.append("%s %s %s %s%n"
+                                    .formatted(astra.getName(), coors[0], coors[1], coors[2]));
+            });
+            content.append("\n");
+        });
+        try (PrintWriter out = new PrintWriter(target)) {
+            // TODO: if exists
+            out.println(content);
+        } catch (FileNotFoundException e) {
+            System.out.printf("Запись в файл %s обломалась: %s%n", target, e);
+        }
+        System.out.printf("Строка %s записана в %s%n", content, target);
+
+        System.out.println(MENU);
     }
 
 }

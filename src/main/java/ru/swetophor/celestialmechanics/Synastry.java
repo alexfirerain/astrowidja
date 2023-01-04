@@ -5,6 +5,7 @@ import lombok.Setter;
 import ru.swetophor.resogrid.Matrix;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Setter
 @Getter
@@ -43,5 +44,28 @@ public class Synastry extends MultiChart {
         System.out.println(aspects.resultsOutput());
     }
 
+    public Chart getChartA() {
+        return moments.get(0);
+    }
 
+    public Chart getChartB() {
+        return moments.get(1);
+    }
+
+    @Override
+    public List<Astra> getAstras() {
+        List<Astra> r = new ArrayList<>();
+        getChartA().getAstras().forEach(a -> {
+            a.setName("%s (%s)"
+                    .formatted(a.getName(), a.getHeaven()));
+            r.add(a);
+        });
+        getChartB().getAstras().forEach(a -> {
+            a.setName("%s (%s)"
+                    .formatted(a.getName(), a.getHeaven()));
+            r.add(a);
+        });
+
+        return r;
+    }
 }
