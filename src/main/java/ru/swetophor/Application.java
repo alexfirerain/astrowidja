@@ -17,10 +17,10 @@ import static ru.swetophor.Settings.*;
 import static ru.swetophor.celestialmechanics.Mechanics.degreesToCoors;
 
 
-/** ** ** ** ** ** ** ** ** ** ** ** ** ** **
+/**
  * Основной сценарий, описывающий работу
  * программы как таковой
- ** ** ** ** ** ** ** ** ** ** ** ** ** ** **/
+ */
 public class Application {
     private static final Scanner keyboard = new Scanner(System.in);
 
@@ -150,6 +150,7 @@ public class Application {
                 case "0" -> exit = true;
             }
         }
+        System.out.println("Спасибо за ведание резонансов!");
     }
 
     private static void showChart() {
