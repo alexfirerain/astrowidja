@@ -77,6 +77,7 @@ public class Chart extends ChartObject {
         aspects = new Matrix(astras);
     }
 
+    @Override
     public String getAspectTable() {
         calculateAspectTable();
         return """
@@ -89,6 +90,7 @@ public class Chart extends ChartObject {
     }
 
 
+    @Override
     public String getAstrasList() {
         StringBuilder list = new StringBuilder("%nЗодиакальные позиции (%s):%n".formatted(name));
         astras.forEach(next -> list.append(

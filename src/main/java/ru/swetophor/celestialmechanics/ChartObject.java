@@ -44,4 +44,7 @@ abstract public class ChartObject {
 
     public abstract List<Astra> getAstras();
 
+    public abstract String getAstrasList();
+    public abstract String getAspectTable();
+
 }

@@ -68,4 +68,24 @@ public class Synastry extends MultiChart {
 
         return r;
     }
+
+    @Override
+    public String getAstrasList() {
+        // TODO: сделать рядом две колонки
+        return getChartA().getAstrasList() + getChartB().getAstrasList();
+    }
+
+    @Override
+    public String getAspectTable() {
+        return """
+                        **************************************
+                        * %s: %s и %s (№%d) *
+                        **************************************
+                        """.formatted(
+                                type,
+                                moments.get(0).name,
+                                moments.get(1).name,
+                                ID) +
+                aspects.resultsOutput();
+    }
 }

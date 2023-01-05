@@ -8,10 +8,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import static ru.swetophor.Settings.*;
 import static ru.swetophor.celestialmechanics.Mechanics.degreesToCoors;
@@ -95,24 +93,25 @@ public class Application {
         Chart SCTVComposite = Chart.composite(SCChart, TVChart);
 //        printChartStat(SCTVComposite);
 
-//        addChart(SCChart, TVChart, doubleChart, SCTVComposite);
+        addChart(SCChart, TVChart, doubleChart, SCTVComposite);
 
         loadFromFile("autosave.awb");
 
-//        saveTableToFile(baseDir + "\\autosave.awb", table);
+        mainCycle();
 
-        mainMenu();
+        saveTableToFile(baseDir +
+                "\\сохранение " +
+                new SimpleDateFormat("E d MMMM 'yy HH-mm")
+                        .format(new Date()) +
+                ".awb",
+                table);
     }
 
 
     private static void printChartStat(ChartObject chart) {
-        if (chart instanceof Chart) {
-            System.out.println(((Chart) chart).getAstrasList());
-            System.out.println(((Chart) chart).getAspectTable());
-        }
+            System.out.println(chart.getAstrasList());
+            System.out.println(chart.getAspectTable());
     }
-
-    // TODO: вынести процедуру загрузки астр, запариться с чтением из файла.
 
     static public int id = 0;
 
@@ -139,8 +138,11 @@ public class Application {
             ║ 0. выход                        ║
             ╚═════════════════════════════════╝
             """;
+    private static void displayMainMenu() {
+        System.out.println(MENU);
+    }
 
-    private static void mainMenu() {
+    private static void mainCycle() {
         boolean exit = false;
         while(!exit) {
             switch(keyboard.nextLine()) {
@@ -186,13 +188,30 @@ public class Application {
             table.values().forEach(System.out::println);
     }
 
+    /**
+     * Создаёт карту на основе юзерского ввода.
+     * Предлагает ввести координаты в виде "градусы минуты секунды"
+     * для каждой стандартной АстроСущности. Затем предлагает вводить
+     * дополнительные астры в виде "название градусы минуты секунды".
+     * Пустой ввод означает пропуск астры или отказ от доплнительного ввода.
+     * @return  одиночную карту, созданную на основе ввода.
+     */
     private static Chart enterChartData() {
         System.out.print("Название новой карты: ");
         Chart x = new Chart(keyboard.nextLine());
         for (AstraEntity a : AstraEntity.values()) {
             System.out.print(a.name + ": ");
-            x.addAstra(Astra.readFromString(keyboard.nextLine()));
+            String input = keyboard.nextLine();
+            if (input.isBlank())
+                continue;
+            x.addAstra(Astra.readFromString(a.name + " " + input));
             System.out.println();
+        }
+        System.out.println("Ввод дополнительных астр в формате 'название градусы минуты секунды'");
+        String input = keyboard.nextLine();
+        while (!input.isBlank()) {
+            x.addAstra(Astra.readFromString(input));
+            input = keyboard.nextLine();
         }
         return x;
     }
@@ -248,44 +267,52 @@ public class Application {
     }
 
     public static void loadFromFile(String source) {
+        Path file = Path.of(baseDir, source);
+        if (!Files.exists(file)) {
+            System.out.printf("Не удалось найти файл '%s'%n", source);
+            return;
+        }
         try {
             Arrays.stream(Files
-                    .readString(Path.of(baseDir, source))
+                    .readString(file)
                     .split("#"))
-                    .filter(s -> !s.isBlank() && !s.startsWith("//"))
+                    .filter(s -> !s.isBlank())
                     .map(Chart::readFromString)
                     .forEach(Application::addChart);
         } catch (IOException e) {
             System.out.printf("Не удалось прочесть файл '%s'%n", source);
         }
 
-        System.out.println(MENU);
+        displayMainMenu();
     }
 
     public static void saveTableToFile(String target, Map<String, ChartObject> charts) {
         StringBuilder content = new StringBuilder();
         charts.values().stream()
-                .filter(chart -> chart.getType() == ChartType.COSMOGRAM)
-                .forEach(chart -> {
-            content.append("#%s%n"
-                    .formatted(chart.getName()));
-            chart.getAstras()
+            .filter(chart -> chart.getType() == ChartType.COSMOGRAM)
+            .forEach(chart -> {
+                content.append("#%s%n"
+                               .formatted(chart.getName()));
+                chart.getAstras()
                     .forEach(astra -> {
                         int[] coors = degreesToCoors(astra.getZodiacPosition());
                         content.append("%s %s %s %s%n"
-                                    .formatted(astra.getName(), coors[0], coors[1], coors[2]));
+                                       .formatted(astra.getName(),
+                                                    coors[0],
+                                                    coors[1],
+                                                    coors[2]));
+                    });
+                content.append("\n");
             });
-            content.append("\n");
-        });
         try (PrintWriter out = new PrintWriter(target)) {
             // TODO: if exists
             out.println(content);
         } catch (FileNotFoundException e) {
             System.out.printf("Запись в файл %s обломалась: %s%n", target, e);
         }
-        System.out.printf("Строка %s записана в %s%n", content, target);
+        System.out.printf("Строка%n%s%n записана в %s%n", content, target);
 
-        System.out.println(MENU);
+        displayMainMenu();
     }
 
 }
