@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static ru.swetophor.celestialmechanics.Mechanics.normalizeCoordinate;
-import static ru.swetophor.celestialmechanics.Mechanics.zodiacDegree;
+import static ru.swetophor.celestialmechanics.Mechanics.*;
 
 /**
  * Прототип небесного те́ла — объект, имеющий:
@@ -106,4 +105,12 @@ public class Astra {
         return AstraEntity.findSymbolFor(name);
     }
 
+    public String getString() {
+        int[] coors = degreesToCoors(zodiacPosition);
+        return "%s %s %s %s%n"
+                .formatted(name,
+                        coors[0],
+                        coors[1],
+                        coors[2]);
+    }
 }

@@ -3,6 +3,7 @@ package ru.swetophor;
 
 import ru.swetophor.celestialmechanics.*;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -10,9 +11,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static ru.swetophor.Settings.*;
-import static ru.swetophor.celestialmechanics.Mechanics.degreesToCoors;
 
 
 /**
@@ -99,12 +101,7 @@ public class Application {
 
         mainCycle();
 
-        saveTableToFile(baseDir +
-                "\\сохранение " +
-                new SimpleDateFormat("E d MMMM 'yy HH-mm")
-                        .format(new Date()) +
-                ".awb",
-                table);
+        saveTableToFile(autosaveName());
     }
 
 
@@ -123,14 +120,16 @@ public class Application {
         Считаем резонансы с приближением в %.0f° (1/%d часть круга) до числа %d%n
         """,
                 getOrbs(), orbsDivider, edgeHarmonic);
-        System.out.println(MENU);
     }
 
-    static private final Map<String, ChartObject> table = new HashMap<>();
+    /**
+     * Стол, на котором лежат карты, загруженные в АстроВидью.
+     */
+    static private final Map<String, ChartObject> DESK = new HashMap<>();
 
     private static final String MENU = """
             ╔═════════════════════════════════╗
-            ║ 1. загруженные карты            ║
+            ║ 1. карты на столе               ║
             ║ 2. настройки                    ║
             ║ 3. управление картами           ║
             ║ 4. показать карту               ║
@@ -145,8 +144,10 @@ public class Application {
     private static void mainCycle() {
         boolean exit = false;
         while(!exit) {
+            displayMainMenu();
             switch(keyboard.nextLine()) {
                 case "1" -> listCharts();
+                case "3" -> manageCharts();
                 case "4" -> showChart();
                 case "5" -> addChart(enterChartData());
                 case "0" -> exit = true;
@@ -155,37 +156,52 @@ public class Application {
         System.out.println("Спасибо за ведание резонансов!");
     }
 
+    private static void manageCharts() {
+        System.out.println("В базе присутствуют следующие файлы и карты:");
+        System.out.println("* * * * * * * * * * * * * * * * * * * * * * * *");
+        String content = reportBasesContent();
+        if (content == null) content = "Не удалось получить содержимое базы.";
+        content.lines()
+                .map(line -> "* " + line)
+                .forEach(System.out::println);
+        System.out.println("* * * * * * * * * * * * * * * * * * * * * * * *");
+
+    }
+
+    /**
+     * Запрашивает карту по имени или номеру на столе,
+     * если она найдена, выводит её статистику на экран.
+     */
     private static void showChart() {
         System.out.print("Укажите карту по ИД или имени: ");
         String order = keyboard.nextLine();
-        if (order.isBlank()) {
+        if (order.isBlank())
             return;
-        }
-        if (order.matches("^\\d+")) {
+        if (order.matches("^\\d+"))
             try {
                 int i = Integer.parseInt(order);
-                table.values().stream()
+                DESK.values().stream()
                         .filter(chart -> chart.getID() == i)
                         .findFirst().ifPresentOrElse(
                                 Application::printChartStat,
-                                () -> System.out.println("Карты с таким номером не найдено."));
+                                () -> System.out.println("Карты с номером " + order + " не найдено."));
             } catch (NumberFormatException e) {
                 System.out.println("Число не распознано.");
             }
-        } else {
-            if (table.containsKey(order))
-                printChartStat(table.get(order));
-            else
-                System.out.println("Карты с таким именем не найдено.");
-        }
-        System.out.println(MENU);
+        else if (DESK.containsKey(order))
+            printChartStat(DESK.get(order));
+        else
+            System.out.println("Карты с именем " + order + " не найдено.");
     }
 
+    /**
+     * Выводит на экран список карт, лежащих на столе, то есть загруженных в программу.
+     */
     private static void listCharts() {
-        if (table.isEmpty())
+        if (DESK.isEmpty())
             System.out.println("Ни одной карты не загружено.");
         else
-            table.values().forEach(System.out::println);
+            DESK.values().forEach(System.out::println);
     }
 
     /**
@@ -193,7 +209,7 @@ public class Application {
      * Предлагает ввести координаты в виде "градусы минуты секунды"
      * для каждой стандартной АстроСущности. Затем предлагает вводить
      * дополнительные астры в виде "название градусы минуты секунды".
-     * Пустой ввод означает пропуск астры или отказ от доплнительного ввода.
+     * Пустой ввод означает пропуск астры или отказ от дополнительного ввода.
      * @return  одиночную карту, созданную на основе ввода.
      */
     private static Chart enterChartData() {
@@ -222,21 +238,23 @@ public class Application {
      * @param chart добавляемая карта.
      */
     private static void addChart(ChartObject chart) {
-        if (table.containsKey(chart.getName())) {
+        if (DESK.containsKey(chart.getName())) {
             boolean fixed = false;
             while (!fixed) {
-                System.out.println("""
-                        Карта с таким именем уже записана:
+                System.out.printf("""
+                        
+                        Карта с именем %s уже записана:
                         1. заменить
                         2. сохранить под новым именем
-                        0. отмена""");
+                        0. отмена
+                        """, chart.getName());
                 switch (keyboard.nextLine()) {
                     case "1" -> fixed = true;
                     case "2" -> {
                         System.out.print("Новое имя: ");
                         String name = keyboard.nextLine();
                         System.out.println();
-                        while (table.containsKey(name)) {
+                        while (DESK.containsKey(name)) {
                             System.out.print("Новое имя: ");
                             name = keyboard.nextLine();
                             System.out.println();
@@ -251,7 +269,7 @@ public class Application {
                 }
             }
         }
-        table.put(chart.getName(), chart);
+        DESK.put(chart.getName(), chart);
         System.out.println("Карта загружена: " + chart);
     }
 
@@ -266,53 +284,100 @@ public class Application {
                 .forEach(Application::addChart);
     }
 
-    public static void loadFromFile(String source) {
-        Path file = Path.of(baseDir, source);
-        if (!Files.exists(file)) {
-            System.out.printf("Не удалось найти файл '%s'%n", source);
+    /**
+     * Прочитывает карты из файла в попке базы данных.
+     * @param file имя файла в папке базы данных.
+     */
+    public static void loadFromFile(String file) {
+        Path source = Path.of(baseDir, file);
+        if (!Files.exists(source)) {
+            System.out.printf("Не удалось найти файл '%s'%n", file);
             return;
         }
         try {
-            Arrays.stream(Files
-                    .readString(file)
+            Arrays.stream(Files.readString(source)
                     .split("#"))
                     .filter(s -> !s.isBlank())
                     .map(Chart::readFromString)
                     .forEach(Application::addChart);
         } catch (IOException e) {
-            System.out.printf("Не удалось прочесть файл '%s'%n", source);
+            System.out.printf("Не удалось прочесть файл '%s'%n", file);
         }
 
-        displayMainMenu();
     }
 
-    public static void saveTableToFile(String target, Map<String, ChartObject> charts) {
+    public static void saveTableToFile(String target) {
         StringBuilder content = new StringBuilder();
-        charts.values().stream()
+        DESK.values().stream()
             .filter(chart -> chart.getType() == ChartType.COSMOGRAM)
             .forEach(chart -> {
                 content.append("#%s%n"
                                .formatted(chart.getName()));
-                chart.getAstras()
-                    .forEach(astra -> {
-                        int[] coors = degreesToCoors(astra.getZodiacPosition());
-                        content.append("%s %s %s %s%n"
-                                       .formatted(astra.getName(),
-                                                    coors[0],
-                                                    coors[1],
-                                                    coors[2]));
-                    });
+                chart.getAstras().stream()
+                        .map(Astra::getString)
+                        .forEach(content::append);
                 content.append("\n");
             });
-        try (PrintWriter out = new PrintWriter(target)) {
+        try (PrintWriter out = new PrintWriter(Path.of(baseDir, target).toFile())) {
             // TODO: if exists
             out.println(content);
         } catch (FileNotFoundException e) {
             System.out.printf("Запись в файл %s обломалась: %s%n", target, e);
         }
         System.out.printf("Строка%n%s%n записана в %s%n", content, target);
+    }
 
-        displayMainMenu();
+    private static List<String> getBaseContent() {
+        File base = new File(baseDir);
+
+        if (base.listFiles() == null)
+            return null;
+        return Arrays.stream(Objects.requireNonNull(base.listFiles()))
+                    .filter(x -> !x.isDirectory())
+                    .map(File::getName)
+                    .filter(name -> name.endsWith(".awb") || name.endsWith(".awc"))
+                    .collect(Collectors.toList());
+    }
+
+    private static String reportBasesContent() {
+        List<String> files = getBaseContent();
+        if (files == null)
+            return null;
+        StringBuilder output = new StringBuilder();
+        for (String filename : files) {
+            output.append(filename).append("\n");
+            try {
+                String[] names = Files.readString(Path.of(baseDir, filename))
+                        .lines()
+                        .filter(line -> line.startsWith("#") && line.length() > 1)
+                        .map(line -> line.substring(1))
+                        .toArray(String[]::new);
+
+                if (filename.endsWith(".awb"))
+                    IntStream.rangeClosed(1, names.length)
+                        .mapToObj(i -> "\t%3d. %s%n"
+                                .formatted(i, names[i - 1]))
+                        .forEach(output::append);
+
+                if (filename.endsWith(".awc") && names.length > 0)
+                    output.append(names[0]);
+
+            } catch (IOException e) {
+                System.out.println("Файл " + filename + " не читается: " + e.getLocalizedMessage());
+            }
+        }
+
+        return output.toString();
+    }
+
+    private static void moveChartsToFile(String source, String target, int... charts) {
+
+    }
+
+    private static String autosaveName() {
+        return "сохранение %s.awb"
+                .formatted(new SimpleDateFormat("E d MMMM .yy HH-mm")
+                .format(new Date()));
     }
 
 }
