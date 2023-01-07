@@ -380,4 +380,52 @@ public class Application {
                 .format(new Date()));
     }
 
+    private static String coatWithStars(String text,
+                                        int minWidth,
+                                        int maxWidth,
+                                        char leftTop,
+                                        char horizontal,
+                                        char rightTop,
+                                        char vertical,
+                                        char leftBottom,
+                                        char rightBottom) {
+        String[] lines = text.lines().toArray(String[]::new);
+        int width = Math.min(maxWidth,
+                    Math.max(minWidth,
+                        Arrays.stream(lines)
+                                .mapToInt(String::length)
+                                .max()
+                                .orElse(0)));
+        StringBuilder output = new StringBuilder();
+        output.append(leftTop)
+                .append(String.valueOf(horizontal)
+                        .repeat(width + 2))
+                .append(rightTop);
+        for (String line : lines) {
+            if (line.length() <= width) {
+                output.append(vertical)
+                        .append(" ")
+                        .append(complementString(line, width))
+                        .append(" ")
+                        .append(vertical);
+            }
+
+        }
+
+        return output.toString();
+    }
+
+    private static String complementString(String string, int length) {
+        return length - string.length() <= 0 ?
+                string :
+                string + " "
+                        .repeat(length - string.length());
+
+    }
+
+    private static String buildBorderString(char beginning, char body, char ending) {
+
+    }
+
+
 }
