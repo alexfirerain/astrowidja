@@ -4254,51 +4254,53 @@ margin-left:19.85pt;margin-right:0cm">
 
 </div>
 
-<p class="MsoNormal"><span lang="EN-US">This is the first function that should be called
-before any other function of the Swiss Ephemeris. Even if you don’t want to set
-an ephemeris path and use the Moshier ephemeris, it is nevertheless recommended
-to call </span><span class="functions"><span lang="EN-US">swe_set_ephe_path</span></span><span class="sourcecode"><span lang="EN-US">(NULL)</span></span><span lang="EN-US">, because
-this function makes important initializations. If you don’t do that, the Swiss Ephemeris
-may work, but the results may be not 100% consistent.</span></p>
+<p class="MsoNormal"><span lang="EN-US">Это первая функция, которая должна вызываться
+прежде любой другой функции Swiss Ephemeris. Даже если ты не хочешь устанавливать
+путь эфемерид и использоваться эфемериды Moshier, тем не менее рекомендуется
+вызвать </span><span class="functions"><span lang="EN-US">swe_set_ephe_path</span></span><span class="sourcecode"><span lang="EN-US">(NULL)</span></span><span lang="EN-US">, ибо
+эта функция осуществляет важные инициализации. Если ты не хочешь этого делать, Swiss Ephemeris
+может работать, но результат может быть не на 100% консистентным.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">If the environment variable </span><span class="sourcecode"><span lang="EN-US">SE_EPHE_PATH</span></span><span lang="EN-US"> exists
-in the environment where Swiss Ephemeris is used, its content is used to find the
-ephemeris files. The variable can contain a directory name, or a list of directory
-names separated by </span><span class="sourcecode"><span lang="EN-US">;</span></span><span lang="EN-US"> (semicolon) on Windows or </span><span class="sourcecode"><span lang="EN-US">:</span></span><span lang="EN-US"> (colon) on Unix.</span></p>
+<p class="MsoNormal"><span lang="EN-US">если переменная среды </span><span class="sourcecode"><span lang="EN-US">SE_EPHE_PATH</span></span><span lang="EN-US"> присутствует
+в окружении, где используется Swiss Ephemeris, её содержание используется, чтобы находить
+файлы эфемерид. Эта переменная может содержать имя папки или список имён папок,
+разделённый </span><span class="sourcecode"><span lang="EN-US">;</span></span><span lang="EN-US"> (точкой с запятой) на Windows или </span><span class="sourcecode"><span lang="EN-US">:</span></span><span lang="EN-US"> (двоеточием) на Unix.</span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">void </span></span><span class="functions"><span lang="EN-US">swe_set_ephe_path</span></span><span class="sourcecode"><span lang="EN-US">(</span></span></p>
 
 <p class="MsoNormal" style="text-indent:1.0cm"><span class="sourcecode"><span lang="EN-US">char *path);</span></span></p>
 
-<p class="MsoNormal"><span lang="EN-US">Usually an application will want to set its
-own ephemeris, e.g. as follows:</span></p>
+<p class="MsoNormal"><span lang="EN-US">Обычно приложение будет хотеть установить свои
+собственные эфемериды, например так:</span></p>
 
 <p class="MsoNormal" style="text-indent:1.0cm"><span class="functions"><span lang="EN-US">swe_set_ephe_path</span></span><span class="sourcecode"><span lang="EN-US">(”C:\\SWEPH\\EPHE”);</span></span></p>
 
-<p class="MsoNormal"><span lang="EN-US">The argument can be a single directory name
-or a list of directories, which are then searched in sequence. The argument of this
-call is ignored if the environment variable </span><span class="sourcecode"><span lang="EN-US">SE_EPHE_PATH</span></span><span lang="EN-US"> exists and is not empty.<br>
-If you want to make sure that your program overrides any environment variable setting,
-you can use </span><span class="functions"><span lang="EN-US">putenv()</span></span><span lang="EN-US"> to set it to an empty string.</span></p>
+<p class="MsoNormal"><span lang="EN-US">Аргумент мжет быть единичным именем папки
+или списком папок, которые затем ищутся по очереди. Аргумнт этого
+вызова игнорируется, если переменная среды </span><span class="sourcecode"><span lang="EN-US">SE_EPHE_PATH</span></span><span lang="EN-US"> существует и не пуста.<br>
+Если ты хочешь удостоверить, что твоя программа переопределяет настройки переменных среды,
+можешь использовать </span><span class="functions"><span lang="EN-US">putenv()</span></span><span lang="EN-US">, чтобы установить её в пустую строку.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">If the path is longer than <b><span style="color:red">256 bytes</span></b>, </span><span class="functions"><span lang="EN-US">swe_set_ephe_path()</span></span><span lang="EN-US"> sets the path </span><span class="FileName"><span lang="EN-US">\SWEPH\EPHE</span></span><span lang="EN-US"> instead.</span></p>
+<p class="MsoNormal"><span lang="EN-US">Если путь длиннее, чем <b><span style="color:red">256 байт</span></b>, </span>
+    <span class="functions"><span lang="EN-US">swe_set_ephe_path()</span></span><span lang="EN-US"> устанавливает путь </span>
+    <span class="FileName"><span lang="EN-US">\SWEPH\EPHE</span></span><span lang="EN-US"> вместо него.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">If no environment variable exists and </span><span class="functions"><span lang="EN-US">swe_set_ephe_path()</span></span><span lang="EN-US"> is never called, the built-in ephemeris path is used. On Windows it
-is </span><span class="FileName"><span lang="EN-US">”\sweph\ephe”</span></span><span lang="EN-US"> relative to the current working drive, on Unix it is </span><span class="FileName"><span lang="EN-US">"/users/ephe".</span></span></p>
+<p class="MsoNormal"><span lang="EN-US">Если переменных среды нет, и </span><span class="functions">
+    <span lang="EN-US">swe_set_ephe_path()</span></span><span lang="EN-US"> никогда не вызывается, используется встроенный путь к эфемеридам. На Windows это
+ </span><span class="FileName"><span lang="EN-US">”\sweph\ephe”</span></span><span lang="EN-US"> относительно текущего рабочего диска, на Unix это </span><span class="FileName"><span lang="EN-US">"/users/ephe".</span></span></p>
 
-<p class="MsoNormal"><span lang="EN-US">Asteroid ephemerides are looked for in the subdirectories
-</span><span class="FileName"><span lang="EN-US">ast0, ast1, ast2 .. ast9 </span></span><span lang="EN-US">of the ephemeris directory and, if not found there, in the ephemeris
-directory itself. Asteroids with numbers 0 – 999 are expected in directory </span><span class="FileName"><span lang="EN-US">ast0</span></span><span lang="EN-US">, those with
-numbers 1000 – 1999 in directory </span><span class="FileName"><span lang="EN-US">ast1</span></span><span lang="EN-US"> etc.</span></p>
+<p class="MsoNormal"><span lang="EN-US">Эфемериды астероидов ищутся в подпапках
+</span><span class="FileName"><span lang="EN-US">ast0, ast1, ast2 .. ast9 </span></span><span lang="EN-US">папки эфемерид и, если там не найдены, в самой
+папке эфемерид. Астероиды с номерами 0 – 999 ожидаются в папке </span><span class="FileName"><span lang="EN-US">ast0</span></span><span lang="EN-US">, с номерами 1000 – 1999 в папке </span><span class="FileName"><span lang="EN-US">ast1</span></span><span lang="EN-US"> и т.д.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">The environment variable </span><span class="sourcecode"><span lang="EN-US">SE_EPHE_PATH</span></span><span lang="EN-US"> is
-most convenient when a user has several applications installed which all use the
-Swiss Ephemeris but would normally expect the ephemeris files in different application-specific
-directories. The use can override this by setting the environment variable, which
-forces all the different applications to use the same ephemeris directory. This
-allows him to use only one set of installed ephemeris files for all different applications.
-A developer should accept this override feature and allow the sophisticated users
-to exploit it.</span></p>
+<p class="MsoNormal"><span lang="EN-US">Переменная среды </span><span class="sourcecode"><span lang="EN-US">SE_EPHE_PATH</span></span><span lang="EN-US">
+наиболее удобна, когда у юзера установлено несколько приложений, которые все испльзуют
+Swiss Ephemeris, но в норме ожидают файлы эфемерид в различных специфичных для себя
+папках. Юзер может это переопределить, установив переменную среды, которая
+заставит все различные приложения использовать одну и ту же папку с эфемеридами. Это
+позволит ему использовать только один набор установленных файлов эфемерид для всех приложений.
+Разработчику следует принять эту возможность переопределения и позволить изощрённым пользователям
+её эксплуатировать.</span></p>
 
 <div style="border:none;border-bottom:solid windowtext 1.5pt;padding:0cm 0cm 1.0pt 0cm;
 margin-left:19.85pt;margin-right:0cm">
@@ -4315,8 +4317,8 @@ margin-left:19.85pt;margin-right:0cm">
 
 <p class="MsoNormal" style="text-indent:1.0cm"><span class="sourcecode"><span lang="EN-US">void);</span></span></p>
 
-<p class="MsoNormal"><span lang="EN-US">At the end of your computations you can release
-all resources (open files and allocated memory) used by the Swiss Ephemeris DLL.</span></p>
+<p class="MsoNormal"><span lang="EN-US">В конце своих вычислений ты можешь release
+all resources (открытые файлы и занятую память), использованные Swiss Ephemeris DLL.</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">After </span><span class="functions"><span lang="EN-US">swe_close()</span></span><span lang="EN-US">, <b><span style="color:red">no</span></b> Swiss Ephemeris functions should be used unless
 you call </span><span class="functions"><span lang="EN-US">swe_set_ephe_path()</span></span><span lang="EN-US"> again and, if required, </span><span class="functions"><span lang="EN-US">swe_set_jpl_file()</span></span><span lang="EN-US">.</span></p>
@@ -4336,9 +4338,9 @@ file */</span></span></p>
 
 <p class="MsoNormal" style="text-indent:1.0cm"><span class="sourcecode"><span lang="EN-US">char *fname);</span></span></p>
 
-<p class="MsoNormal"><span lang="EN-US">If you work with the JPL ephemeris, SwissEph
-uses the default file name which is defined in </span><span class="FileName"><span lang="EN-US">swephexp.h</span></span><span lang="EN-US"> as </span><span class="sourcecode"><span lang="EN-US">SE_FNAME_DFT</span></span><span lang="EN-US">. Currently,
-it has the value </span><span class="FileName"><span lang="EN-US">”de406.eph” or ”de431.eph”</span></span><span lang="EN-US">.</span></p>
+<p class="MsoNormal"><span lang="EN-US">Если ты работаешь с эфемеридамии JPL, SwissEph
+использует имя файла по умолчанию, которое определено в </span><span class="FileName"><span lang="EN-US">swephexp.h</span></span><span lang="EN-US"> as </span><span class="sourcecode"><span lang="EN-US">SE_FNAME_DFT</span></span><span lang="EN-US">. В настоящее время
+оно имеет значение </span><span class="FileName"><span lang="EN-US">”de406.eph” или ”de431.eph”</span></span><span lang="EN-US">.</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">If a different JPL ephemeris file is required,
 call the function </span><span class="functions"><span lang="EN-US">swe_set_jpl_file()</span></span><i><span lang="EN-US"> </span></i><span lang="EN-US">to make the file name known to the software,
@@ -4349,7 +4351,7 @@ e.g.</span></p>
 <p class="MsoNormal"><span lang="EN-US">This file must reside in the ephemeris path
 you are using for all your ephemeris files.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">If the file name is longer than 256 byte, </span><span class="functions"><span lang="EN-US">swe_set_jpl_file()</span></span><span lang="EN-US"> cuts the file name to a length of 256 bytes. The error will become visible
+<p class="MsoNormal"><span lang="EN-US">Если имя файла длиннее, чем 256 байт, </span><span class="functions"><span lang="EN-US">swe_set_jpl_file()</span></span><span lang="EN-US"> cuts the file name to a length of 256 bytes. The error will become visible
 after the first call of </span><span class="functions"><span lang="EN-US">swe_calc()</span></span><span lang="EN-US">, when it will return zero positions and an error message.</span></p>
 
 <div style="border:none;border-bottom:solid windowtext 1.5pt;padding:0cm 0cm 1.0pt 0cm;
@@ -4468,9 +4470,9 @@ swe_calc_ut(), swe_calc(), and swe_calc_pctr()</span></a></h1>
 
 </div>
 
-<p class="MsoNormal"><span lang="EN-US">Before calling one of these functions or any
-other Swiss Ephemeris function, <b><span style="color:red">it is strongly recommended</span></b>
-to call the function </span><span class="functions"><span lang="EN-US">swe_set_ephe_path()</span></span><span lang="EN-US">. Even if you don’t want to set an ephemeris path and use the Moshier
+<p class="MsoNormal"><span lang="EN-US">Прежде чем вызывать одну из этих функций или любых
+других функций Swiss Ephemeris, <b><span style="color:red">убедительно рекомендуется</span></b>
+вызвать функцию </span><span class="functions"><span lang="EN-US">swe_set_ephe_path()</span></span><span lang="EN-US">. Если ты не хочешь устанавливать путь к эфемеридам and use the Moshier
 ephemeris, it is nevertheless recommended to call </span><span class="functions"><span lang="EN-US">swe_set_ephe_path</span></span><span class="sourcecode"><span lang="EN-US">(NULL)</span></span><span lang="EN-US">, because <b>this</b> <b>function
 makes important initializations</b>. If you don’t do that, the Swiss Ephemeris may
 work but the results <span style="color:red">may be not 100% consistent</span>.</span></p>
