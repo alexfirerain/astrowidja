@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -101,7 +100,7 @@ public class Application {
 
         mainCycle();
 
-        saveTableToFile(autosaveName());
+        saveTableToFile(Shell.autosaveName());
     }
 
 
@@ -113,12 +112,8 @@ public class Application {
     static public int id = 0;
 
     private static void welcome() {
-        System.out.printf("""
-        *********************************
-        * Начато исполнение АстроВидьи! *
-        *********************************
-        Считаем резонансы с приближением в %.0f° (1/%d часть круга) до числа %d%n
-        """,
+        System.out.printf("%sСчитаем резонансы с приближением в %.0f° (1/%d часть круга) до числа %d%n%n",
+                Shell.frameText("Начато исполнение АстроВидьи!", 30, '*'),
                 getOrbs(), orbsDivider, edgeHarmonic);
     }
 
@@ -127,18 +122,17 @@ public class Application {
      */
     static private final Map<String, ChartObject> DESK = new HashMap<>();
 
-    private static final String MENU = """
-            ╔═════════════════════════════════╗
-            ║ 1. карты на столе               ║
-            ║ 2. настройки                    ║
-            ║ 3. управление картами           ║
-            ║ 4. показать карту               ║
-            ║ 5. добавить карту с клавиатуры  ║
-            ║ 0. выход                        ║
-            ╚═════════════════════════════════╝
-            """;
     private static void displayMainMenu() {
-        System.out.println(MENU);
+        System.out.println(Shell.frameText("""
+            1. карты на столе
+            2. настройки
+            3. управление картами
+            4. показать карту
+            5. добавить карту с клавиатуры
+            0. выход
+                """, 20, 60,
+                '╔', '═', '╗',
+                '║', '╚', '╝'));
     }
 
     private static void mainCycle() {
@@ -158,13 +152,12 @@ public class Application {
 
     private static void manageCharts() {
         System.out.println("В базе присутствуют следующие файлы и карты:");
-        System.out.println("* * * * * * * * * * * * * * * * * * * * * * * *");
+
         String content = reportBasesContent();
-        if (content == null) content = "Не удалось получить содержимое базы.";
-        content.lines()
-                .map(line -> "* " + line)
-                .forEach(System.out::println);
-        System.out.println("* * * * * * * * * * * * * * * * * * * * * * * *");
+        if (content == null)
+            content = "Не удалось получить содержимое базы.";
+
+        System.out.println(Shell.frameText(content, 40, '*'));
 
     }
 
@@ -354,16 +347,17 @@ public class Application {
                         .toArray(String[]::new);
 
                 if (filename.endsWith(".awb"))
-                    IntStream.rangeClosed(1, names.length)
-                        .mapToObj(i -> "\t%3d. %s%n"
-                                .formatted(i, names[i - 1]))
+                    IntStream.range(0, names.length)
+                        .mapToObj(i -> " %3d. %s%n"
+                                .formatted(i + 1, names[i]))
                         .forEach(output::append);
 
                 if (filename.endsWith(".awc") && names.length > 0)
                     output.append(names[0]);
 
             } catch (IOException e) {
-                System.out.println("Файл " + filename + " не читается: " + e.getLocalizedMessage());
+                output.append("Файл %s не читается: %s"
+                        .formatted(filename, e.getLocalizedMessage()));
             }
         }
 
@@ -373,59 +367,5 @@ public class Application {
     private static void moveChartsToFile(String source, String target, int... charts) {
 
     }
-
-    private static String autosaveName() {
-        return "сохранение %s.awb"
-                .formatted(new SimpleDateFormat("E d MMMM .yy HH-mm")
-                .format(new Date()));
-    }
-
-    private static String coatWithStars(String text,
-                                        int minWidth,
-                                        int maxWidth,
-                                        char leftTop,
-                                        char horizontal,
-                                        char rightTop,
-                                        char vertical,
-                                        char leftBottom,
-                                        char rightBottom) {
-        String[] lines = text.lines().toArray(String[]::new);
-        int width = Math.min(maxWidth,
-                    Math.max(minWidth,
-                        Arrays.stream(lines)
-                                .mapToInt(String::length)
-                                .max()
-                                .orElse(0)));
-        StringBuilder output = new StringBuilder();
-        output.append(leftTop)
-                .append(String.valueOf(horizontal)
-                        .repeat(width + 2))
-                .append(rightTop);
-        for (String line : lines) {
-            if (line.length() <= width) {
-                output.append(vertical)
-                        .append(" ")
-                        .append(complementString(line, width))
-                        .append(" ")
-                        .append(vertical);
-            }
-
-        }
-
-        return output.toString();
-    }
-
-    private static String complementString(String string, int length) {
-        return length - string.length() <= 0 ?
-                string :
-                string + " "
-                        .repeat(length - string.length());
-
-    }
-
-    private static String buildBorderString(char beginning, char body, char ending) {
-
-    }
-
 
 }
