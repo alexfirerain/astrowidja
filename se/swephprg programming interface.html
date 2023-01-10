@@ -4372,7 +4372,7 @@ of your Swiss Ephemeris version */</span></span></p>
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">/* svers is a string
 variable with sufficient space to contain the version number (255 char) */</span></span></p>
 
-<p class="MsoNormal"><span lang="EN-US">The function returns a pointer to the string
+<p class="MsoNormal"><span lang="EN-US">The function возвращает a pointer to the string
 svers, i.e. to the version number of the Swiss Ephemeris that your software is using.<a name="_Hlk477399311"></a></span></p>
 
 <div style="border:none;border-bottom:solid windowtext 1.5pt;padding:0cm 0cm 1.0pt 0cm;
@@ -4393,7 +4393,7 @@ path of the DLL or executable */</span></span></p>
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">/* spath is a string
 variable with sufficient space to contain the library path (255 char) */</span></span></p>
 
-<p class="MsoNormal"><span lang="EN-US">The function returns a pointer to the string
+<p class="MsoNormal"><span lang="EN-US">The function возвращает a pointer to the string
 spath, which contains the path in which the executable resides. If it is running
 with a DLL, then spath contains the path of the DLL.</span></p>
 
@@ -4410,7 +4410,7 @@ margin-left:19.85pt;margin-right:0cm">
 the start and end date of an *se1 ephemeris file after a call of swe_calc().</span></span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US" style="font-family:
-&quot;Segoe UI&quot;,sans-serif;color:windowtext">The function returns data from internal
+&quot;Segoe UI&quot;,sans-serif;color:windowtext">The function возвращает data from internal
 file structures sweph.fidat used in the <i>last call</i> to swe_calc() or swe_fixstar().
 Data returned are (currently) 0 with JPL files and fixed star files. Thus, the function
 is only useful for ephemerides of planets or asteroids that are based on *.se1 files.
@@ -4695,10 +4695,10 @@ margin-left:39.7pt;margin-right:14.45pt">
 
 <p class="MsoNormal"><span lang="EN-US">e.g. Eros : </span><span class="sourcecode"><span lang="EN-US">ipl = SE_AST_OFFSET + 433 (= 10433)</span></span></p>
 
-<p class="MsoNormal"><span lang="EN-US">The names of the asteroids and their catalogue
-numbers can be found in </span><span class="FileName"><span lang="EN-US">seasnam.txt.</span></span></p>
+<p class="MsoNormal"><span lang="EN-US">Имена астероидов и их номера по
+каталогу можно найти в </span><span class="FileName"><span lang="EN-US">seasnam.txt.</span></span></p>
 
-<p class="MsoNormal"><span lang="EN-US">Examples are:</span></p>
+<p class="MsoNormal"><span lang="EN-US">Примеры:</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Astraea</span></p>
 
@@ -4714,11 +4714,11 @@ numbers can be found in </span><span class="FileName"><span lang="EN-US">seasnam
 
 <p class="MsoNormal"><span lang="EN-US">30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Urania</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">42&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Isis&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; not identical
-with "Isis-Transpluto"</span></p>
+<p class="MsoNormal"><span lang="EN-US">42&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Isis&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; не идентична
+ "Изиде-Трансплутону"</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">153&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Hilda&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; has an own asteroid
-belt at 4 AU</span></p>
+<p class="MsoNormal"><span lang="EN-US">153&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Hilda&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; имеет собственный астероидный
+пояс на 4 а.е.</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">227&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Philosophia</span></p>
 
@@ -4740,8 +4740,8 @@ Cupido</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">944&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Hidalgo</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">1181&nbsp;&nbsp;&nbsp; Lilith&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; not identical with
-Dark Moon 'Lilith'</span></p>
+<p class="MsoNormal"><span lang="EN-US">1181&nbsp;&nbsp;&nbsp; Lilith&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; не идентична с
+Чёрной Луной 'Лилит'</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">1221&nbsp;&nbsp;&nbsp; Amor</span></p>
 
@@ -4777,48 +4777,49 @@ from Witte's Zeus</span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">se09999s.se1&nbsp;&nbsp; </span></span><span lang="EN-US">short ephemeris of asteroid number 9999, 1500 – 2100 CE</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">The larger file is about 10 times the size of
-the short ephemeris. If the user does not want an ephemeris for the time before
-1500 he might prefer to work with the short files. If so, just copy the files ending
-with </span><span class="FileName"><span lang="EN-US">”s.se1”</span></span><span lang="EN-US"> to your hard disk. </span><span class="functions"><span lang="EN-US">swe_calc()</span></span><i><span lang="EN-US"> </span></i><span lang="EN-US">tries the long one and on failure automatically
-takes the short one.</span></p>
+<p class="MsoNormal"><span lang="EN-US">The larger file примерно в 10 раз больше файла
+коротких эфемерид. Если юзер не хочет эфемерид для периода до
+1500, он может предпочесть работать с короткими файлами. Если так, просто скопируй файлы с именем, оканчивающимся
+на </span><span class="FileName"><span lang="EN-US">”s.se1”</span></span><span lang="EN-US"> на свой диск. </span><span class="functions">
+    <span lang="EN-US">swe_calc()</span></span><i><span lang="EN-US"> </span></i><span lang="EN-US">пытается длинные и, в случае неуспеха, автоматически
+берёт короткие.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">Asteroid ephemerides are looked for in the subdirectories
-</span><span class="FileName"><span lang="EN-US">ast0, ast1, ast2 .. ast9 etc.</span></span><span lang="EN-US"> of the ephemeris directory and, if not found there, in the ephemeris
-directory itself. Asteroids with numbers 0 – 999 are expected in directory </span><span class="FileName"><span lang="EN-US">ast0</span></span><span lang="EN-US">, those with
-numbers 1000 – 1999 in directory </span><span class="FileName"><span lang="EN-US">ast1</span></span><span lang="EN-US"> etc.</span></p>
+<p class="MsoNormal"><span lang="EN-US">Эфемериды астероидов ищутся в подпапках
+</span><span class="FileName"><span lang="EN-US">ast0, ast1, ast2 .. ast9 etc.</span></span><span lang="EN-US"> of the ephemeris directory and, если там не найдены, в самой
+папке эфемерид. Астероиды с номерами 0 – 999 ожидаются в папке </span><span class="FileName"><span lang="EN-US">ast0</span></span><span lang="EN-US">, с номерами
+ 1000 – 1999 в папке </span><span class="FileName"><span lang="EN-US">ast1</span></span><span lang="EN-US"> и т.д.</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">Note that not all <a name="_Hlk477863570">asteroids</a>
 </span><span class="FileName"><span lang="EN-US">can be computed</span></span><span lang="EN-US" style="color:black"> </span><span lang="EN-US">for the whole period of
 Swiss Ephemeris. The orbits of some <span style="color:black">of </span>them are
-extremely sensitive to perturbations by major planets. E.g. <a name="_Hlk478116834"><b>CHIRON</b></a>, cannot be computed for the time before <b>650
-CE</b> and after <b>4650 CE</b> because of close encounters with Saturn. Outside
-this time range, Swiss Ephemeris returns the error code, an error message, and a
-position value 0. Be aware, that the user will <b>have to handle</b><i> </i>this
-case in his program. Computing Chiron transits for Jesus or Alexander the Great
-will not work.</span></p>
+extremely sensitive to perturbations by major planets. E.g. <a name="_Hlk478116834"><b>CHIRON</b></a>, невозможно рассчитать для времени д <b>650
+от Р.Х.</b> и после <b>4650 от Р.Х.</b> из-за близкого прохождения к Сатурну. За пределами
+этого временного отрезка, Swiss Ephemeris возвращает код ошибки, сообщение об ошибке и
+значение положения 0. Имей в виду, что юзеру <b>придётся иметь дело</b><i> </i>с этим
+в его программе. Рассчёт транзитов Хирона для Иисуса или Александра Македонского
+не сработает.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">The same is true for Pholus before <b>3850 BCE</b>,
-and for many other asteroids, as e.g. 1862 Apollo. He becomes chaotic before the
-year <b>1870 CE</b>, when he approaches Venus very closely. Swiss Ephemeris does
-not provide positions of Apollo for earlier centuries !</span></p>
+<p class="MsoNormal"><span lang="EN-US">То же верно в отношении Фола до <b>3850 до Р.Х.</b>
+и для многих других астероидов, как рапример 1862 Apollo. Он становится хаотичным до
+года <b>1870 от Р.Х.</b>, когда очень близко приближается к Венере. Swiss Ephemeris не
+предоставляет положений Аполлона для предыдущих столетий !</span></p>
 
-<p class="MsoNormal"><b><span lang="EN-US" style="color:red">NOTE</span></b><span lang="EN-US"> on asteroid names:</span></p>
+<p class="MsoNormal"><b><span lang="EN-US" style="color:red">NOTE</span></b><span lang="EN-US"> по поводу имён астероидов:</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">Asteroid names are listed in the file </span><span class="FileName"><span lang="EN-US">seasnam.txt</span></span><span lang="EN-US">. This
-file is in the ephemeris directory.</span></p>
+<p class="MsoNormal"><span lang="EN-US">Имена астероидов перечислены в файле </span><span class="FileName"><span lang="EN-US">seasnam.txt</span></span><span lang="EN-US">. Этот
+лежит в папке с эфемеридами.</span></p>
 
 <div style="border:none;border-bottom:solid windowtext 1.0pt;padding:0cm 0cm 1.0pt 0cm;
 margin-left:39.7pt;margin-right:14.45pt">
 
 <h3 style="margin-top:12.0pt;margin-right:0cm;margin-bottom:12.0pt;margin-left:
 0cm;text-indent:0cm"><a name="_Toc112948962"><span lang="EN-US">3.2.2.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><span dir="LTR"></span><span lang="EN-US">Planetary moons and body centers</span></a></h3>
+</span></span><span dir="LTR"></span><span lang="EN-US">Планетарные луны и центры тел</span></a></h3>
 
 </div>
 
-<p class="MsoNormal"><span lang="EN-US">Ephemerides of planetary moons and centers of
-body (COB) were introduced with Swiss Ephemeris version 2.10.</span></p>
+<p class="MsoNormal"><span lang="EN-US">Эфемериды планетарных лун и центров
+тел (ЦТ) появились в Swiss Ephemeris версии 2.10.</span></p>
 
 <p class="MsoNormal" style="margin-bottom:0cm;margin-bottom:.0001pt"><span lang="EN-US">Their Swiss Ephemeris body numbers are between SE_PLMOON_OFFSET (= 9000)
 and SE_AST_OFFSET (= 10000) and are constructed as follows:&nbsp; </span></p>
@@ -4854,8 +4855,8 @@ of body: 9899 </span></span></p>
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">Moons of Pluto: &nbsp;&nbsp;&nbsp; 9901
 – 99xx;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Center of body: 9999 </span></span></p>
 
-<p class="MsoNormal"><span lang="EN-US">A full list of existing planetary moons is found
-here: https://en.wikipedia.org/wiki/List_of_natural_satellites .</span></p>
+<p class="MsoNormal"><span lang="EN-US">Полный список известных планетных лун находится
+здесь: https://en.wikipedia.org/wiki/List_of_natural_satellites .</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">The ephemeris files of the planetary moons and
 COB are in <b>the subdirectory sat. </b>Like the subdirectories of asteroids, the
@@ -4935,40 +4936,40 @@ is:</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">The maximum differences between barycenter and
-center of body (COB) are:</span></p>
+<p class="MsoNormal"><span lang="EN-US">Максиамальные различия между барицентром и
+цетром тела (ЦТ, англ. COB) суть:</span></p>
 
 <p class="MsoNormal" align="left" style="margin-bottom:0cm;margin-bottom:.0001pt;
-text-align:left;layout-grid-mode:both;text-autospace:ideograph-numeric ideograph-other"><span class="sourcecode"><span lang="EN-US">Mars&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; (0.2 m, irrelevant to us)</span></span></p>
+text-align:left;layout-grid-mode:both;text-autospace:ideograph-numeric ideograph-other"><span class="sourcecode"><span lang="EN-US">Марс&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; (0.2 m, для нас иррелевантно)</span></span></p>
 
 <p class="MsoNormal" align="left" style="margin-bottom:0cm;margin-bottom:.0001pt;
-text-align:left;layout-grid-mode:both;text-autospace:ideograph-numeric ideograph-other"><span class="sourcecode"><span lang="EN-US">Jupiter&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 0.075&nbsp; arcsec  (jd 2468233.5)</span></span></p>
+text-align:left;layout-grid-mode:both;text-autospace:ideograph-numeric ideograph-other"><span class="sourcecode"><span lang="EN-US">Юпитер&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 0.075&nbsp; arcsec  (jd 2468233.5)</span></span></p>
 
 <p class="MsoNormal" align="left" style="margin-bottom:0cm;margin-bottom:.0001pt;
-text-align:left;layout-grid-mode:both;text-autospace:ideograph-numeric ideograph-other"><span class="sourcecode"><span lang="EN-US">Saturn&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.053&nbsp; arcsec  (jd 2463601.5)</span></span></p>
+text-align:left;layout-grid-mode:both;text-autospace:ideograph-numeric ideograph-other"><span class="sourcecode"><span lang="EN-US">Сатурн&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.053&nbsp; arcsec  (jd 2463601.5)</span></span></p>
 
 <p class="MsoNormal" align="left" style="margin-bottom:0cm;margin-bottom:.0001pt;
-text-align:left;layout-grid-mode:both;text-autospace:ideograph-numeric ideograph-other"><span class="sourcecode"><span lang="EN-US">Uranus&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.0032 arcsec  (jd 2446650.5)</span></span></p>
+text-align:left;layout-grid-mode:both;text-autospace:ideograph-numeric ideograph-other"><span class="sourcecode"><span lang="EN-US">Уран&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.0032 arcsec  (jd 2446650.5)</span></span></p>
 
 <p class="MsoNormal" align="left" style="margin-bottom:0cm;margin-bottom:.0001pt;
-text-align:left;layout-grid-mode:both;text-autospace:ideograph-numeric ideograph-other"><span class="sourcecode"><span lang="EN-US">Neptune &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.0036 arcsec  (jd 2449131.5)</span></span></p>
+text-align:left;layout-grid-mode:both;text-autospace:ideograph-numeric ideograph-other"><span class="sourcecode"><span lang="EN-US">Нептун &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.0036 arcsec  (jd 2449131.5)</span></span></p>
 
 <p class="MsoNormal" align="left" style="margin-bottom:0cm;margin-bottom:.0001pt;
-text-align:left;layout-grid-mode:both;text-autospace:ideograph-numeric ideograph-other"><span class="sourcecode"><span lang="EN-US">Pluto&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 0.088&nbsp; arcsec  (jd 2437372.5)</span></span></p>
+text-align:left;layout-grid-mode:both;text-autospace:ideograph-numeric ideograph-other"><span class="sourcecode"><span lang="EN-US">Плутон&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 0.088&nbsp; arcsec  (jd 2437372.5)</span></span></p>
 
 <p class="MsoNormal" align="left" style="margin-bottom:0cm;margin-bottom:.0001pt;
-text-align:left;layout-grid-mode:both;text-autospace:ideograph-numeric ideograph-other"><span class="sourcecode"><span lang="EN-US">(from one-day-step calculations over 150 years)</span></span></p>
+text-align:left;layout-grid-mode:both;text-autospace:ideograph-numeric ideograph-other"><span class="sourcecode"><span lang="EN-US">(из вычислений на 150 лет с шагом в один день)</span></span></p>
 
 <p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">If you prefer using COB rather than barycenters,
-you should understand that: </span></p>
+<p class="MsoNormal"><span lang="EN-US">Если предпочитаешь использовать ЦТ, а не барицентры,
+тебе следует иметь в виду, что: </span></p>
 
-<p class="MsoNormal"><span lang="EN-US">- The performance is not as good for COB as
-for barycenters. With transit calculations you could run into troubles.</span></p>
+<p class="MsoNormal"><span lang="EN-US">- Производительность не так хороша для ЦТ, как
+для барицентров. У тебя могут возникнуть сложности с рассчётом транзитов.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">- The ephemerides are limited to the time range
-1900 to 2047.</span></p>
+<p class="MsoNormal"><span lang="EN-US">- Эфемериды ограничены периодом с
+1900 по 2047.</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
 
@@ -4977,86 +4978,88 @@ margin-left:39.7pt;margin-right:14.45pt">
 
 <h3 style="margin-top:12.0pt;margin-right:0cm;margin-bottom:12.0pt;margin-left:
 0cm;text-indent:0cm"><a name="_Toc112948963"></a><a name="_Hlk477320919"><span lang="EN-US">3.2.3.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><span dir="LTR"></span><span lang="EN-US">Fictitious planets</span></a></h3>
+</span></span><span dir="LTR"></span><span lang="EN-US">Фиктивные планеты</span></a></h3>
 
 </div>
 
-<p class="MsoNormal"><span lang="EN-US">Fictitious planets have numbers greater than
-or equal to 40. The user can define his or her own fictitious planets. The orbital
-elements of these planets must be written into the file </span><span class="FileName"><span lang="EN-US">seorbel.txt</span></span><span lang="EN-US">. The
-function </span><span class="functions"><span lang="EN-US">swe_calc()</span></span><i><span lang="EN-US"> </span></i><span lang="EN-US">looks for the file </span><span class="FileName"><span lang="EN-US">seorbel.txt</span></span><span lang="EN-US"> in the
-ephemeris path set by </span><span class="functions"><span lang="EN-US">swe_set_ephe_path()</span></span><span lang="EN-US">. If no orbital elements file is found, </span><span class="functions"><span lang="EN-US">swe_calc()</span></span><i><span lang="EN-US"> </span></i><span lang="EN-US">uses the built-in orbital elements of the above mentioned <a href="https://www.astro.com/swisseph/swephprg.htm#_Hlk477832724">Uranian planets </a>and some other bodies. The planet number
-of a fictitious planet is defined as</span></p>
+<p class="MsoNormal"><span lang="EN-US">Фиктивные планеты имеют номера больше
+или равно 40. Юзер может определить свои собственные фиктивные планеты. Орбитальные
+элементы этих планет должны быть записаны в файл </span><span class="FileName"><span lang="EN-US">seorbel.txt</span></span><span lang="EN-US">. Функция
+ </span><span class="functions"><span lang="EN-US">swe_calc()</span></span><i><span lang="EN-US"> </span></i>
+    <span lang="EN-US">ищет файл </span><span class="FileName"><span lang="EN-US">seorbel.txt</span></span><span lang="EN-US"> в пути
+к эфемеридам, установленном с помощью </span><span class="functions"><span lang="EN-US">swe_set_ephe_path()</span></span><span lang="EN-US">. Если файла с орбитальными элементами не найдено, </span>
+    <span class="functions"><span lang="EN-US">swe_calc()</span></span><i><span lang="EN-US"> </span></i><span lang="EN-US">использует встроенные орбитальные элементы вышеупомянутых <a href="https://www.astro.com/swisseph/swephprg.htm#_Hlk477832724">уранических планет </a>и некоторых других тел. Планетный номер
+для фиктивной планеты определяется как</span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">ipl = SE_FICT_OFFSET_1
 </span></span><span lang="EN-US">+ number_of_elements_set;</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">e.g. for Kronos: </span><span class="sourcecode"><span lang="EN-US">ipl = 39 + 4 = 43</span></span><span lang="EN-US">.</span></p>
+<p class="MsoNormal"><span lang="EN-US">напр. для Кроноса: </span><span class="sourcecode"><span lang="EN-US">ipl = 39 + 4 = 43</span></span><span lang="EN-US">.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">The file </span><span class="FileName"><span lang="EN-US">seorbel.txt</span></span><span lang="EN-US"> has the following structure:</span></p>
+<p class="MsoNormal"><span lang="EN-US">The file </span><span class="FileName"><span lang="EN-US">seorbel.txt</span></span><span lang="EN-US"> имеет следующую структуру:</span></p>
 
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># Orbital elements of
-fictitious planets</span></span></p>
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># Орбитальные элементы
+фиктивных планет</span></span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># 27 Jan. 2000</span></span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">#</span></span></p>
 
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># This file is part of
-the Swiss Ephemeris, from Version 1.60 on.</span></span></p>
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># Этот файл является частью
+Swiss Ephemeris, начиная с версии 1.60.</span></span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">#</span></span></p>
 
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># Warning! These planets
-do not exist!</span></span></p>
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># Предупреждение! Эти планеты
+не существуют!</span></span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">#</span></span></p>
 
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># The user can add his
-or her own elements.</span></span></p>
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># Юзер может добавить свои
+свои собственные элементы.</span></span></p>
 
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># 960 is the maximum
-number of fictitious planets.</span></span></p>
-
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">#</span></span></p>
-
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># The elements order
-is as follows:</span></span></p>
-
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># 1. epoch of elements
-(Julian day)</span></span></p>
-
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># 2. equinox (Julian
-day or "J1900" or "B1950" or "J2000" or “JDATE”)</span></span></p>
-
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># 3. mean anomaly at
-epoch</span></span></p>
-
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># 4. semi-axis</span></span></p>
-
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># 5. eccentricity</span></span></p>
-
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># 6. argument of perihelion
-(ang. distance of perihelion from node)</span></span></p>
-
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># 7. ascending node</span></span></p>
-
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># 8. inclination</span></span></p>
-
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># 9. name of planet</span></span></p>
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># 960 максимальное
+количество фиктивных планет.</span></span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">#</span></span></p>
 
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># use '#' for comments</span></span></p>
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># Порядок элементов
+следующий:</span></span></p>
 
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># to compute a body with
-swe_calc(), use planet number</span></span></p>
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># 1. эпоха элементов
+(юлианская дата)</span></span></p>
+
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># 2. равноденствие (юлианская
+дата, либо "J1900" или "B1950" или "J2000" или “JDATE”)</span></span></p>
+
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># 3. средняя аномалия на
+эпоху</span></span></p>
+
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># 4. полуось</span></span></p>
+
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># 5. эксцентриситет</span></span></p>
+
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># 6. аргумент перигелия
+(угл. расстояние до перигелия от узла)</span></span></p>
+
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># 7. восходящий узел</span></span></p>
+
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># 8. наклонение</span></span></p>
+
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># 9. название планеты</span></span></p>
+
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">#</span></span></p>
+
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># используй '#' для комментариев</span></span></p>
+
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># чтобы рассчитать тело с помощью
+swe_calc(), используй номер планеты</span></span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># ipl = SE_FICT_OFFSET_1
 + number_of_elements_set,</span></span></p>
 
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># e.g. number of Kronos
-is ipl = 39 + 4 = 43</span></span></p>
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US"># напр. номер Кроноса
+ipl = 39 + 4 = 43</span></span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">#</span></span></p>
 
@@ -5064,28 +5067,28 @@ is ipl = 39 + 4 = 43</span></span></p>
 refined by James Neely</span></span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">J1900, J1900, 163.7409,
-40.99837, 0.00460, 171.4333, 129.8325, 1.0833, Cupido # 1</span></span></p>
+40.99837, 0.00460, 171.4333, 129.8325, 1.0833, Купидон # 1</span></span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">J1900, J1900, 27.6496,
-50.66744, 0.00245, 148.1796, 161.3339, 1.0500, Hades # 2</span></span></p>
+50.66744, 0.00245, 148.1796, 161.3339, 1.0500, Гадес # 2</span></span></p>
 
 <p class="MsoNormal"><span class="sourcecode">J1900, J1900, 165.1232, 59.21436, 0.00120,
-299.0440, 0.0000, 0.0000, Zeus # 3</span></p>
+299.0440, 0.0000, 0.0000, Зевс # 3</span></p>
 
 <p class="MsoNormal"><span class="sourcecode">J1900, J1900, 169.0193, 64.81960, 0.00305,
-208.8801, 0.0000, 0.0000, Kronos # 4</span></p>
+208.8801, 0.0000, 0.0000, Кронос # 4</span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">J1900, J1900, 138.0533,
-70.29949, 0.00000, 0.0000, 0.0000, 0.0000, Apollon # 5</span></span></p>
+70.29949, 0.00000, 0.0000, 0.0000, 0.0000, Аполлон # 5</span></span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">J1900, J1900, 351.3350,
-73.62765, 0.00000, 0.0000, 0.0000, 0.0000, Admetos # 6</span></span></p>
+73.62765, 0.00000, 0.0000, 0.0000, 0.0000, Адмет # 6</span></span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">J1900, J1900, 55.8983,
-77.25568, 0.00000, 0.0000, 0.0000, 0.0000, Vulcanus # 7</span></span></p>
+77.25568, 0.00000, 0.0000, 0.0000, 0.0000, Вулкан # 7</span></span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">J1900, J1900, 165.5163,
-83.66907, 0.00000, 0.0000, 0.0000, 0.0000, Poseidon # 8</span></span></p>
+83.66907, 0.00000, 0.0000, 0.0000, 0.0000, Посейдон # 8</span></span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">#</span></span></p>
 
@@ -5147,8 +5150,8 @@ from Astronomical Journal 96(4), Oct. 1988</span></span></p>
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">J2000,JDATE, 242.2205555,
 0.05279142865925, 0.0, 0.0, 0.0, 0.0, Selena/White Moon, geo # 17</span></span></p>
 
-<p class="MsoNormal"><span lang="EN-US">All orbital elements except epoch and equinox
-may have T terms, where:</span></p>
+<p class="MsoNormal"><span lang="EN-US">Все орбитальные элементы кроме эпохи и равноденствия
+могут иметь T terms, где:</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">T = (tjd – epoch) / 36525.</span></p>
 
@@ -5156,9 +5159,9 @@ may have T terms, where:</span></p>
 set (not the ”Uranian” Vulcanus but the intramercurian hypothetical planet Vulcan).)
 ”T * T”, ”T2”, ”T3” are also allowed.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">The equinox can either be entered as a Julian
-day or as ”J1900” or ”B1950” or ”J2000” or, if the equinox of date is required,
-as ”JDATE”. If you use T terms, note that precession has to be taken into account
+<p class="MsoNormal"><span lang="EN-US">Равноденствие можно ввести либо как Юлианский
+день, либо как ”J1900” или ”B1950” или ”J2000” или, если требуется равноденствие на дату,
+как ”JDATE”. If you use T terms, note that precession has to be taken into account
 with JDATE, whereas it has to be neglected with fixed equinoxes.</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">No T term is required with the mean anomaly,
@@ -5167,37 +5170,38 @@ and gravity. However, a mean anomaly T term had to be added with Vulcan because
 its speed is not in agreement with the laws of physics. In such cases, the software
 takes the speed given in the elements and does not compute it internally.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">From Version 1.62 on, the software also accepts
-orbital elements for fictitious bodies that move about the Earth. As an example,
-study the last elements set in the excerpt of </span><span class="FileName"><span lang="EN-US">seorbel.txt</span></span><span lang="EN-US"> above. After the name of the
-body, ”, geo” has to be added.</span></p>
+<p class="MsoNormal"><span lang="EN-US">Начиная с версии 1.62, программулина также принимает
+орбитальные элементы для фиктивных тел, обращающихся о Земле. В качестве примера,
+study the last elements set in the excerpt of </span><span class="FileName"><span lang="EN-US">seorbel.txt</span></span><span lang="EN-US"> above. После имени
+тела нужно добавить ”, geo”.</span></p>
 
 <div style="border:none;border-bottom:solid windowtext 1.0pt;padding:0cm 0cm 1.0pt 0cm;
 margin-left:39.7pt;margin-right:14.45pt">
 
 <h3 style="margin-top:12.0pt;margin-right:0cm;margin-bottom:12.0pt;margin-left:
 0cm;text-indent:0cm"><a name="_Toc112948964"></a><a name="_Hlk477320958"><span lang="EN-US">3.2.4.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><span dir="LTR"></span><span lang="EN-US">Obliquity and nutation</span></a></h3>
+</span></span><span dir="LTR"></span><span lang="EN-US">Наклонение и нутация</span></a></h3>
 
 </div>
 
-<p class="MsoNormal"><span lang="EN-US">A <a name="_Hlk477832844">special body number
-</a></span><span class="sourcecode"><span lang="EN-US">SE_ECL_NUT</span></span><span lang="EN-US"> is provided to compute the obliquity of the ecliptic and the nutation.
-Of course nutation is already added internally to the planetary coordinates by </span><span class="functions"><span lang="EN-US">swe_calc()</span></span><span lang="EN-US"> but sometimes
-it will be needed as a separate value.</span></p>
+<p class="MsoNormal"><span lang="EN-US">Специальный <a name="_Hlk477832844">номер тела
+</a></span><span class="sourcecode"><span lang="EN-US">SE_ECL_NUT</span></span><span lang="EN-US"> предоставляется, чтоб вычислить наклон эклиптики и нутацию.
+Разумеется, нутация уже добавлена внутренне к планетным координатам нашей </span><span class="functions"><span lang="EN-US">swe_calc()</span></span><span lang="EN-US">, но иногда
+понадобится как отдельная величина.</span></p>
 
-<p class="MsoNormal"><span class="sourcecode"><span lang="FR-CH">iflgret = </span></span><span class="functions"><span lang="FR-CH">swe_calc</span></span><span class="sourcecode"><span lang="FR-CH">(tjd_et, SE_ECL_NUT, 0, x, serr);</span></span></p>
+<p class="MsoNormal"><span class="sourcecode"><span lang="FR-CH">iflgret = </span></span><span class="functions"><span lang="FR-CH">swe_calc</span></span>
+    <span class="sourcecode"><span lang="FR-CH">(tjd_et, SE_ECL_NUT, 0, x, serr);</span></span></p>
 
-<p class="MsoNormal"><span lang="EN-US">x is an array of 6 doubles as usual. They will
-be filled as follows:</span></p>
+<p class="MsoNormal"><span lang="EN-US">x is an array of 6 doubles as usual. Они будут
+заполнены следующим образом:</span></p>
 
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">x[0] = </span></span><span lang="EN-US">true obliquity of the Ecliptic (includes nutation)</span></p>
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">x[0] = </span></span><span lang="EN-US">истинное наклонение Эклиптики (включает нутацию)</span></p>
 
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">x[1] = </span></span><span lang="EN-US">mean obliquity of the Ecliptic</span></p>
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">x[1] = </span></span><span lang="EN-US">среднее наклонение Эклиптики</span></p>
 
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">x[2] = </span></span><span lang="EN-US">nutation in longitude</span></p>
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">x[2] = </span></span><span lang="EN-US">нутация по долготе</span></p>
 
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">x[3] = </span></span><span lang="EN-US">nutation in obliquity</span></p>
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">x[3] = </span></span><span lang="EN-US">нутация по наклонению</span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">x[4] = x[5] = 0</span></span></p>
 
@@ -5226,13 +5230,14 @@ polar coordinates (longitude, latitude, and distance) relative to the true<b> </
 
 <p class="MsoNormal"><span lang="EN-US">If the speed of the body is required, set </span><span class="sourcecode"><span lang="EN-US">iflag = SEFLG_SPEED</span></span><span lang="EN-US">.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">For mathematical points as the mean lunar node
-and the mean apogee, there is no apparent position. </span><span class="functions"><span lang="EN-US">swe_calc()</span></span><i><span lang="EN-US"> </span></i><span lang="EN-US">returns true positions for these points.</span></p>
+<p class="MsoNormal"><span lang="EN-US">Для математических точек, таких как средний лунный узел
+или средний апогей, видимого положения не существует. </span><span class="functions"><span lang="EN-US">swe_calc()</span></span><i>
+    <span lang="EN-US"> </span></i><span lang="EN-US">возвращает истинное положение для этих точек.</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">If you need another kind of computation, use
 the flags explained in the following paragraphs (c.f.</span><span class="FileName"><span lang="EN-US"> swephexp.h</span></span><span lang="EN-US">). Their
-names begin with ‚</span><span class="sourcecode"><span lang="EN-US">SEFLG_‘</span></span><span lang="EN-US">. To combine them, you have to concatenate them (inclusive-or) as in
-the following example:</span></p>
+names begin with ‚</span><span class="sourcecode"><span lang="EN-US">SEFLG_‘</span></span><span lang="EN-US">. Чтобы объединить их, тебе придётся их конкатенировать (inclusive-or), как в
+следующем примере:</span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">iflag = SEFLG_SPEED |
 SEFLG_TRUEPOS; (or: iflag = SEFLG_SPEED + SEFLG_TRUEPOS;) // C</span></span></p>
@@ -5340,25 +5345,28 @@ margin-left:39.7pt;margin-right:14.45pt">
 
 <p class="MsoNormal"><span lang="EN-US">The flags to choose an ephemeris are: (s. </span><span class="FileName"><span lang="EN-US">swephexp.h</span></span><span lang="EN-US">)</span></p>
 
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">SEFLG_JPLEPH /* use JPL
-ephemeris */</span></span></p>
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">SEFLG_JPLEPH /* использовать эфемериды JPL
+ */</span></span></p>
 
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">SEFLG_SWIEPH /* use Swiss
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">SEFLG_SWIEPH /* использовать Swiss
 Ephemeris */</span></span></p>
 
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">SEFLG_MOSEPH /* use Moshier
-ephemeris */</span></span></p>
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">SEFLG_MOSEPH /* использовать эфемериды Moshier
+ */</span></span></p>
 
-<p class="MsoNormal"><span lang="EN-US">If none of this flags is specified, </span><span class="functions"><span lang="EN-US">swe_calc()</span></span><span lang="EN-US"> tries
-to compute the default ephemeris. The default ephemeris is defined in</span><span class="FileName"><span lang="EN-US"> swephexp.h:</span></span></p>
+<p class="MsoNormal"><span lang="EN-US">Если ни один из флагов не указан, </span><span class="functions">
+    <span lang="EN-US">swe_calc()</span></span><span lang="EN-US"> пытается
+рассчитать эфемериды по умолчанию. Эфемериды по умолчанию определены в</span><span class="FileName"><span lang="EN-US"> swephexp.h:</span></span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">#define SEFLG_DEFAULTEPH
 SEFLG_SWIEPH</span></span></p>
 
-<p class="MsoNormal"><span lang="EN-US">In this case the default ephemeris is Swiss
-Ephemeris. If you have <a name="_Hlk477833574">not specified</a> an ephemeris in<b>
-</b></span><span class="sourcecode"><span lang="EN-US">iflag</span></span><span lang="EN-US">, </span><span class="functions"><span lang="EN-US">swe_calc()</span></span><span lang="EN-US"> tries to compute a Swiss Ephemeris position. If it does not find the
-required Swiss Ephemeris file either, it computes a Moshier position.</span></p>
+<p class="MsoNormal"><span lang="EN-US">В данном случае эфемеридами по умолчанию являются Swiss
+Ephemeris. Если у тебя <a name="_Hlk477833574">не указаны</a> эфемериды в<b>
+</b></span><span class="sourcecode">
+    <span lang="EN-US">iflag</span></span><span lang="EN-US">, </span><span class="functions">
+    <span lang="EN-US">swe_calc()</span></span><span lang="EN-US"> попытается рассчитать положение по Swiss Ephemeris. Если она не найдёт
+и файла необходимых Swiss Ephemeris, рассчитает положение по Moshier.</span></p>
 
 <div style="border:none;border-bottom:solid windowtext 1.0pt;padding:0cm 0cm 1.0pt 0cm;
 margin-left:39.7pt;margin-right:14.45pt">
@@ -5374,76 +5382,76 @@ the speed flag </span><span class="sourcecode"><span lang="EN-US">SEFLG_SPEED</s
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">iflag |= SEFLG_SPEED;</span></span></p>
 
-<p class="MsoNormal"><span lang="EN-US">The computation of speed is usually cheap, so
-you may set this bit by default even if you do not need the speed.</span></p>
+<p class="MsoNormal"><span lang="EN-US">Вычисление скорости обычно дёшево, так что
+можешь установить этот бит по умолчанию, даже если тебе не нужна скорость.</span></p>
 
 <div style="border:none;border-bottom:solid windowtext 1.0pt;padding:0cm 0cm 1.0pt 0cm;
 margin-left:39.7pt;margin-right:14.45pt">
 
 <h3 style="margin-top:12.0pt;margin-right:0cm;margin-bottom:12.0pt;margin-left:
 0cm;text-indent:0cm"><a name="_Toc112948969"></a><a name="_Hlk477321265"><span lang="EN-US">3.3.4.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><span dir="LTR"></span><span lang="EN-US">Coordinate systems</span></a><span lang="EN-US">, degrees and radians</span></h3>
+</span></span><span dir="LTR"></span><span lang="EN-US">Системы координат</span></a><span lang="EN-US">, градусы и радианы</span></h3>
 
 </div>
 
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">SEFLG_EQUATORIAL</span></span><span lang="EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; returns <a name="_Hlk477833734">equatorial positions</a>:
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">SEFLG_EQUATORIAL</span></span><span lang="EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; возвращает <a name="_Hlk477833734">экваториальные положения</a>:
 right ascension and declination.</span></p>
 
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">SEFLG_XYZ</span></span><span lang="EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; returns <a name="_Hlk477833826">x, y, z </a>coordinates
-instead of longitude, latitude, and distance.</span></p>
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">SEFLG_XYZ</span></span><span lang="EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; возвращает <a name="_Hlk477833826">x, y, z </a>координаты
+вместо долготы, широты и расстояния.</span></p>
 
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">SEFLG_RADIANS</span></span><span lang="EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; returns position in <a name="_Hlk477833841">radians,
-not degrees</a>.</span></p>
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">SEFLG_RADIANS</span></span><span lang="EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; возвращает положение в <a name="_Hlk477833841">радианах,
+не в градусах</a>.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">E.g. to compute right ascension and declination,
-write:</span></p>
+<p class="MsoNormal"><span lang="EN-US">К примеру, чтобы рассчитать прямое восхождение и склонение,
+напиши:</span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">iflag = SEFLG_SWIEPH
 | SEFLG_SPEED | SEFLG_EQUATORIAL;</span></span></p>
 
-<p class="MsoNormal"><b><span lang="EN-US" style="color:red">NOTE</span></b><span lang="EN-US"> concerning equatorial coordinates: With sidereal modes </span><span class="sourcecode"><span lang="EN-US">SE_SIDM_J2000</span></span><span lang="EN-US">,
+<p class="MsoNormal"><b><span lang="EN-US" style="color:red">NOTE</span></b><span lang="EN-US"> касаемо экваториальных координат: Со звёздными режимами </span><span class="sourcecode"><span lang="EN-US">SE_SIDM_J2000</span></span><span lang="EN-US">,
 </span><span class="sourcecode"><span lang="EN-US">SE_SIDM_B1950</span></span><span lang="EN-US">, </span><span class="sourcecode"><span lang="EN-US">SE_SIDM_J1900</span></span><span lang="EN-US">, </span><span class="sourcecode"><span lang="EN-US">SE_SIDM_GALALIGN_MARDYKS</span></span><span lang="EN-US"> or if the sidereal flag </span><span class="sourcecode"><span lang="EN-US">SE_SIDBIT_ECL_T0</span></span><span lang="EN-US"> is set, the function
-provides right ascension and declination relative to the mean equinox of the reference
-epoch (J2000, B1950, J1900, etc.).</span></p>
+provides right ascension and declination относительно среднего равноденствия референсной эпохи
+ (J2000, B1950, J1900, и т.д.).</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">With other sidereal modes or ayanamshas right
-ascension and declination are given relative to the mean equinox of date.</span></p>
+<p class="MsoNormal"><span lang="EN-US">С иными звёздными режимами или аянамшами прямое
+восхождение и склонение даются относительно среднего равноденствия на дату.</span></p>
 
 <div style="border:none;border-bottom:solid windowtext 1.0pt;padding:0cm 0cm 1.0pt 0cm;
 margin-left:39.7pt;margin-right:14.45pt">
 
 <h3 style="margin-top:12.0pt;margin-right:0cm;margin-bottom:12.0pt;margin-left:
 0cm;text-indent:0cm"><a name="_Toc112948970"><span lang="EN-US">3.3.5.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><span dir="LTR"></span><span lang="EN-US">Specialties (going beyond common
-interest)</span></a></h3>
+</span></span><span dir="LTR"></span><span lang="EN-US">Specialties (выходя за пределы обычного
+интереса)</span></a></h3>
 
 </div>
 
 <h4 style="text-indent:0cm"><a name="_Hlk477321411"><span lang="EN-US">5.1.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span dir="LTR"></span><span lang="EN-US">True or apparent positions</span></a></h4>
 
-<p class="MsoNormal"><span lang="EN-US">Common ephemerides supply <a name="_Hlk477833007">apparent</a> geocentric positions. Since the journey of the
-light from a planet to the Earth takes some time, the planets are never seen where
-they actually are, but where they were a few minutes or hours before. Astrology
-uses to work with the positions <b>we see</b>. (More precisely: with the positions
-we would see, if we stood at the center of the Earth and could see the sky. Actually,
-the geographical position of the observer could be of importance as well and <a href="https://www.astro.com/swisseph/swephprg.htm#_Hlk477833975">topocentric positions</a><i> </i>could be computed, but this
-is usually not taken into account in astrology.). The geocentric position for the
-Earth (</span><span class="sourcecode"><span lang="EN-US">SE_EARTH</span></span><span lang="EN-US">) is returned as zero.</span></p>
+<p class="MsoNormal"><span lang="EN-US">Обычные эфемериды supply <a name="_Hlk477833007">видимые</a> геоцентрические положения. Поскольку путешествие
+света о планеты до Земли занимает некоторое время, планеты никогда не видны там, где
+они фактически находятся, но где они были несколько минут или часов назад. Астрология
+uses работать с положениями, которые <b>мы видим</b>. (Более строго: с положениями,
+которые мы видели бы, стой мы в центре Земле и моги видеть небо. Фактически,
+географическое положение наблюдателя тоже может иметь значение и <a href="https://www.astro.com/swisseph/swephprg.htm#_Hlk477833975">топоцентрические положения</a><i> </i>могут быть раассчитаны, но
+обычно не рассматрниваются в астрологии.). Геоцентрическое положение для
+Земли (</span><span class="sourcecode"><span lang="EN-US">SE_EARTH</span></span><span lang="EN-US">) возвращается как ноль.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">To compute the <a name="_Hlk477834072"><b>true</b><i>
-</i>geometrical position</a> of a planet, disregarding light-time, you have to add
-the flag </span><span class="sourcecode"><span lang="EN-US">SEFLG_TRUEPOS</span></span><span lang="EN-US" style="color:navy">.</span></p>
+<p class="MsoNormal"><span lang="EN-US">Дабы рассчитать <a name="_Hlk477834072"><b>true</b><i>
+</i>геометрическое положение</a> планеты, без учёта скорости света, нужно добавить
+флаг </span><span class="sourcecode"><span lang="EN-US">SEFLG_TRUEPOS</span></span><span lang="EN-US" style="color:navy">.</span></p>
 
 <h4 style="text-indent:0cm"><a name="_Hlk477321643"><span lang="EN-US">5.2.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span dir="LTR"></span><span lang="EN-US">Topocentric positions</span></a></h4>
 
-<p class="MsoNormal"><span lang="EN-US">To compute <a name="_Hlk477833975">topocentric
-positions</a>, i.e. positions referred to the place of the observer (the birth place)
-rather than to the center of the Earth, do as follows:</span></p>
+<p class="MsoNormal"><span lang="EN-US">Дабы рассчитать <a name="_Hlk477833975">топоцентрические
+положения</a>, т.е. положения, относящиеся к месту наблюдателя (месту рождения),
+а не к центру Земли, делай следующее:</span></p>
 
 <p class="ListBullet1" style="margin-left:14.2pt;text-indent:-14.15pt"><span lang="EN-US" style="font-family:Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span><span dir="LTR"></span><span lang="EN-US">call </span><span class="functions"><span lang="EN-US">swe_set_topo</span></span><span lang="EN-US">(geo_lon,
-geo_lat, altitude_above_sea) (The geographic longitude and latitude must be в градусах,
-the altitude in meters.)</span></p>
+geo_lat, altitude_above_sea) (Географические долгота и широта дложны быть в градусах,
+высота в метрах.)</span></p>
 
 <p class="ListBullet1" style="margin-left:14.2pt;text-indent:-14.15pt"><span lang="EN-US" style="font-family:Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span><span dir="LTR"></span><span lang="EN-US">add the flag </span><span class="sourcecode"><span lang="EN-US">SEFLG_TOPOCTR</span></span><span lang="EN-US"> to
@@ -5462,34 +5470,37 @@ coordinates are returned as zero; <b>no error message appears</b>.</span></p>
 
 <h4 style="text-indent:0cm"><a name="_Hlk477321673"><span lang="EN-US">5.4.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span dir="LTR"></span><span lang="EN-US">Barycentric positions</span></a></h4>
 
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">SEFLG_BARYCTR</span></span><span lang="EN-US"> yields coordinates as referred to the solar system barycenter. However,
-this option <b>is not completely implemented</b>. It was used for program tests
-during development. It works only with the JPL and the Swiss Ephemeris, <b>not with
-the Moshier</b> ephemeris; and <b>only with physical bodies</b>, but not with the
-nodes and the apogees.</span></p>
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">SEFLG_BARYCTR</span></span><span lang="EN-US"> yields coordinates as referred к барицентру Солнечной системы. Однако
+эта возможность <b>не до конца воплощена</b>. Она применялась для тестирования программы
+во время разработки. Она работает только с JPL и Swiss Ephemeris, <b>не
+с эфемеридами Moshier</b>; и <b>только с физическими телами</b>, но не с
+узлами и апогеями.</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">Moreover, the barycentric Sun of Swiss Ephemeris
-has ”only” a precision of 0.1”. Higher accuracy would have taken a lot of storage,
-on the other hand it is not needed for precise geocentric and heliocentric positions.
-For more precise barycentric positions the JPL ephemeris file should be used.</span></p>
+has ”only” a precision of 0.1”. Большая точность потребовала бы много места,
+с другой стороны, она не нужна для точных геоцентрических и гелиоцентрических позиций.
+Для более точных барицентрических позиций следует использовать файл эфемерид JPL.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">A barycentric position can be computed </span><span class="FileName"><span lang="EN-US">for all planets</span></span><span lang="EN-US"> including
-the sun and moon. For the lunar nodes and lunar apogees the coordinates are returned
-as zero; no error message appears.</span></p>
+<p class="MsoNormal"><span lang="EN-US">Барицентрическая позиция может рассчитываться </span><span class="FileName"><span lang="EN-US">для всех планет</span></span><span lang="EN-US">, включая
+Солнце и Луну. Для лунных узлов и лунных апогеев координаты возвращаются
+как ноль; никаких сообщений об ошибке не выходит.</span></p>
 
-<h4 style="text-indent:0cm"><a name="_Hlk477321696"><span lang="EN-US">5.5.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span dir="LTR"></span><span lang="EN-US">Astrometric positions</span></a></h4>
+<h4 style="text-indent:0cm"><a name="_Hlk477321696"><span lang="EN-US">5.5.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span dir="LTR"></span><span lang="EN-US">Астрометрические положения</span></a></h4>
 
-<p class="MsoNormal"><span lang="EN-US">For astrometric positions, which are sometimes
-given in the Astronomical Almanac, the light-time correction is computed, but annual
-aberration and the light-deflection by the sun neglected. This can be done with
-</span><span class="sourcecode"><span lang="EN-US">SEFLG_NOABERR</span></span><span lang="EN-US"> and </span><span class="sourcecode"><span lang="EN-US">SEFLG_NOGDEFL</span></span><span lang="EN-US">. For positions related to the mean equinox of 2000, you must set </span><span class="sourcecode"><span lang="EN-US">SEFLG_J2000</span></span><span lang="EN-US"> and
-</span><span class="sourcecode"><span lang="EN-US">SEFLG_NONUT</span></span><span lang="EN-US">, as well.</span></p>
+<p class="MsoNormal"><span lang="EN-US">For astrometric positions, которые иногда
+даются в Astronomical Almanac, the light-time correction is computed, but annual
+aberration and the light-deflection by the sun neglected. Это можно сделать with
+</span><span class="sourcecode"><span lang="EN-US">SEFLG_NOABERR</span></span><span lang="EN-US"> и </span>
+    <span class="sourcecode"><span lang="EN-US">SEFLG_NOGDEFL</span></span>
+    <span lang="EN-US">. For positions related к среднему равноденствию 2000, тебе надо установить </span>
+    <span class="sourcecode"><span lang="EN-US">SEFLG_J2000</span></span><span lang="EN-US"> и
+</span><span class="sourcecode"><span lang="EN-US">SEFLG_NONUT</span></span><span lang="EN-US"> также.</span></p>
 
 <h4 style="text-indent:0cm"><a name="_Hlk477321511"><span lang="EN-US">5.6.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span dir="LTR"></span><span lang="EN-US">True or mean </span></a><a name="_Hlk477833149"><span lang="EN-US">equinox of date</span></a></h4>
 
-<p class="MsoNormal"><span class="functions"><span lang="EN-US">swe_calc()</span></span><span lang="EN-US"> usually computes the positions as referred to the true equinox of the
-date (i.e. with nutation). If you want the mean equinox, you can turn nutation off,
-using the flag bit </span><span class="sourcecode"><span lang="EN-US">SEFLG_NONUT</span></span><span lang="EN-US">.</span></p>
+<p class="MsoNormal"><span class="functions"><span lang="EN-US">swe_calc()</span></span><span lang="EN-US"> обыкновенно вычисляет положения as referred к истинному равноденствию of the
+date (т.е. с нутацией). Если хочешь среднее равноденствие, можешь отключить нутацию,
+исползуя сигнальный бит </span><span class="sourcecode"><span lang="EN-US">SEFLG_NONUT</span></span><span lang="EN-US">.</span></p>
 
 <h4 style="text-indent:0cm"><a name="_Hlk477321486"><span lang="EN-US">5.7.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span dir="LTR"></span><span lang="EN-US">J2000 positions</span></a><span lang="EN-US"> and
 positions referred to other equinoxes</span></h4>
@@ -5499,7 +5510,7 @@ positions referred to other equinoxes</span></h4>
     <span class="sourcecode"><span lang="EN-US">SEFLG_J2000</span></span><span lang="EN-US"> yields
 data referred to the equinox J2000. For positions referred to other equinoxes, </span>
     <span class="sourcecode"><span lang="EN-US">SEFLG_SIDEREAL</span></span><span lang="EN-US">
-должен быть установлен and the equinox specified by </span><span class="functions"><span lang="EN-US">swe_set_sid_mode()</span></span>
+должен быть установлен, и равноденствие указано с помощью </span><span class="functions"><span lang="EN-US">swe_set_sid_mode()</span></span>
     <span lang="EN-US">. За дополнительной информацией
 читай описание этой функции.</span></p>
 
@@ -5564,7 +5575,7 @@ margin-left:19.85pt;margin-right:0cm">
 
 </div>
 
-<p class="MsoNormal"><span class="functions"><span lang="EN-US">swe_calc()</span></span><i><span lang="EN-US"> </span></i><span lang="EN-US">returns the coordinates of position and
+<p class="MsoNormal"><span class="functions"><span lang="EN-US">swe_calc()</span></span><i><span lang="EN-US"> </span></i><span lang="EN-US">возвращает the coordinates of position and
 velocity in the following order:</span></p>
 
 <table class="MsoNormalTable" border="0" cellspacing="0" cellpadding="0" style="margin-left:-.25pt;border-collapse:collapse">
@@ -5648,7 +5659,7 @@ velocity in the following order:</span></p>
 
 <p class="MsoNormal" style="margin-top:12.0pt"><span lang="EN-US">Если тебе нужны <a name="_Hlk477324768">прямоугольные координаты </a>(</span>
     <span class="sourcecode"><span lang="EN-US">SEFLG_XYZ</span></span><span lang="EN-US">), </span>
-    <span class="functions"><span lang="EN-US">swe_calc()</span></span><span lang="EN-US"> returns
+    <span class="functions"><span lang="EN-US">swe_calc()</span></span><span lang="EN-US"> возвращает
 </span><span class="FileName"><span lang="EN-US">x, y, z, dx, dy, dz</span></span><span lang="EN-US"> in </span>
     <span class="FileName"><span lang="EN-US">AU</span></span><span lang="EN-US">.</span></p>
 
@@ -5674,7 +5685,7 @@ margin-left:19.85pt;margin-right:0cm">
     <span lang="EN-US"> (as well as </span><span class="functions"><span lang="EN-US">swe_calc_ut()</span></span>
     <span lang="EN-US">, </span><span class="functions"><span lang="EN-US">swe_fixstar()</span></span>
     <span lang="EN-US">, и </span><span class="functions"><span lang="EN-US">swe_fixstar_ut()</span></span>
-    <span lang="EN-US">) returns a 32-bit integer value. Это значение &gt;= 0, если вызов
+    <span lang="EN-US">) возвращает a 32-bit integer value. Это значение &gt;= 0, если вызов
 функции был успешен, и &lt; 0, если случалась фатальная ошибка. In addition an error
 string or a warning can be returned in the string parameter serr.</span></p>
 
@@ -5782,8 +5793,8 @@ of planets over positions</span></a></h1>
 
 </div>
 
-<p class="MsoNormal"><span lang="EN-US">These functions find the crossing of the
-Sun over a given ecliptic position:</span></p>
+<p class="MsoNormal"><span lang="EN-US">Эти функции находят пересечение
+Солнца с заданной эклиптической позицией:</span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="FR-CH">double </span></span><span class="functions"><span lang="FR-CH">swe_solcross</span></span><span class="sourcecode"><span lang="FR-CH">(</span></span></p>
 
@@ -5811,14 +5822,14 @@ Sun over a given ecliptic position:</span></p>
 crossing, in Ephemeris Time or Universal Time.</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">В случае ошибки возвращается значение jx &lt; tjd.
-Because the crossing search is always forward in time, returning an
-earlier time is an indication of error. In addition, string serr will contain
-error details.</span></p>
+Поскольку поиск пересечения всегда направлен вперёд во времени, возвращение
+более раннего времени является признаком ошибки. В добавок, string serr будет содержать
+подробности об ошибке.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">The precision is 1 milliarcsecond, i.e. at
-the returned time the Sun is closer than 0.001 arcsec to x2cross.</span></p>
+<p class="MsoNormal"><span lang="EN-US">Точность равна 1 milliarcsecond, т.е. at
+the returned time the Sun ближе, чем 0.001 arcsec to x2cross.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">These flag bits in iflag can be useful:</span></p>
+<p class="MsoNormal"><span lang="EN-US">Эти сигнальные биты в iflag могут быть полезны:</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SEFLG_TRUEPOS</span></p>
 
@@ -6017,10 +6028,10 @@ in the asteroid file.</span></p>
 переименуй его в </span><span class="FileName"><span lang="EN-US">seasnam.txt</span></span><span lang="EN-US"> и помести в свою папку с эфемеридами.</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">Файл </span><span class="FileName"><span lang="EN-US">seasnam.txt</span></span><span lang="EN-US"> need not be ordered in any
-way. There must be one asteroid per line, first its catalogue number, then its name.
-The asteroid number may or may not be in brackets.</span></p>
+way. Там должен быть один астероид на строку, сначала его номер по каталогу, затем имя.
+Имя астероиды может быть или не быть in brackets.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">Example:</span></p>
+<p class="MsoNormal"><span lang="EN-US">Пример:</span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">(3192) A'Hearn</span></span></p>
 
@@ -6043,8 +6054,8 @@ The asteroid number may or may not be in brackets.</span></p>
 
 </div>
 
-<p class="MsoNormal"><span lang="EN-US">The following functions are used to calculate
-positions of fixed stars.</span></p>
+<p class="MsoNormal"><span lang="EN-US">Следующие функции используются, чтобы вычислять
+положения неподвижных звёзд.</span></p>
 
 <div style="border:none;border-bottom:solid windowtext 1.5pt;padding:0cm 0cm 1.0pt 0cm;
 margin-left:19.85pt;margin-right:0cm">
@@ -6076,7 +6087,7 @@ introduced with SE 2.07. Они делают то же, что</span><span class
 будет намного лучше, <i>если выполняется большое количество вычислений неподвижных звёзд</i>.</span>
 Если производительность в ваших старых проектах была проблемой, мы рекомендум замену старых
 фукций на новые. However, the output should be checked carefully, because
-the behavior of old and new functions is not exactly identical. (объясняется ниже)</span></p>
+поведение старых и новых функций не совсем идентично. (объясняется ниже)</span></p>
 
 <div style="border:none;border-bottom:solid windowtext 1.5pt;padding:0cm 0cm 1.0pt 0cm;
 margin-left:19.85pt;margin-right:0cm">
@@ -6151,12 +6162,12 @@ in long., speed in lat., and speed in dist.</span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">serr[256]</span></span><span lang="EN-US"> = character string to contain error messages in case of error.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">The fixed stars functions only work if the fixed
-stars data file sefstars.txt is found in the ephemeris path. If the file sefstars.txt
-is not found, the old file fixstars.cat is searched and used instead, if present.
-However, <b><span style="color:red">it is strongly recommended to</span></b> *<b><span style="color:red">not</span></b>* use the old file anymore. The data in the file
-are outdated, and the algorithms are also not as accurate as those used with the
-file sefstars.txt.</span></p>
+<p class="MsoNormal"><span lang="EN-US">Функции неподвижных звёзд работают, лишь если файл
+звёздных данных sefstars.txt найден в пути к эфемеридам. Если файл sefstars.txt
+не найден, ищется и используется fixstars.cat заместо него, если наличествует.
+Как бы то ни было, <b><span style="color:red">убедительно рекомендуется</span></b> *<b><span style="color:red">не</span></b>* использовать больше старый файл. Данные в файле
+устарели, и алгоритмы также не так хороши, как использованные в
+файле sefstars.txt.</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">The parameter </span><a name="_Hlk477835149"><span class="sourcecode"><span lang="EN-US">star</span></span></a><span lang="EN-US"> must provide
 for at least 41 characters for the returned star name. If a star is found, its name
@@ -6189,8 +6200,8 @@ whose traditional name fits the given name. Все имена приводятс
 т.е. “aldeb%”. (Старые функции treat each search string as ending with a wildcard.)</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">The ‘%’ can only be used at the end of the search
-string and only with the traditional star name, не с номенклатурными именами (i.e.
-not with Bayer or Flamsteed designations).</span></p>
+string и только с традиционными именами звёзд, не с номенклатурными именами (т.е.
+не с Bayer or Flamsteed designations).</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">Учти, что эта функция переписывает переменную
 </span><span class="sourcecode"><span lang="EN-US">star</span></span><span lang="EN-US">. И полное традиционное имя, и номенклатурное имя копируются
@@ -6199,23 +6210,24 @@ swe_fixstar() перепишет её как “Aldebaran,alTau”. Новая �
 used for a new search of the same star.</span></p>
 
 <p class="ListBullet1" style="margin-left:14.2pt;text-indent:-14.2pt"><span lang="EN-US" style="font-family:Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><span dir="LTR"></span><span class="sourcecode"><span lang="EN-US">star</span></span><span lang="EN-US"> contains a comma, followed by a nomenclature name, e.g. ",alTau":
-the search string is understood to be the nomenclature name (the second field in
-a star record). Letter case is observed in the comparison for nomenclature names.</span></p>
+</span></span><span dir="LTR"></span><span class="sourcecode"><span lang="EN-US">star</span></span><span lang="EN-US"> содержит запятую, закоторой следует номенклатурное имя, напр. ",alTau":
+строка поиска is understood to be the nomenclature name (второе поле в
+записи о звезде). Регистр букв соблюдается при сравнении для номенклатурных имён.</span></p>
 
 <p class="ListBullet1" style="margin-left:14.2pt;text-indent:-14.2pt"><span lang="EN-US" style="font-family:Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><span dir="LTR"></span><span class="sourcecode"><span lang="EN-US">star</span></span><span lang="EN-US"> contains a positive number (in ASCII string format, e.g. "234"):</span></p>
+</span></span><span dir="LTR"></span><span class="sourcecode"><span lang="EN-US">star</span></span><span lang="EN-US"> содержит положительное число (в строковом формате ASCII, например "234"):</span></p>
 
-<p class="MsoNormal"><span lang="EN-US" style="color:red">Changed behavior: </span><span lang="EN-US">The numbering of stars follows a sorted list of nomenclature names. (With
-the old functions, the n-th star of the fixed star file is returned.)</span></p>
+<p class="MsoNormal"><span lang="EN-US" style="color:red">Изменено поведение: </span><span lang="EN-US">Нумерация звёзд следует сортированному списку номенклатурных имён. (Со
+старыми функциями, N-ная звезда из файла неподвижных звёзд возвращается.)</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">Behavior of old functions </span><span class="functions"><span lang="EN-US">swe_fixstar()</span></span><span lang="EN-US"> and
+<p class="MsoNormal"><span lang="EN-US">Поведение старых функций </span><span class="functions"><span lang="EN-US">swe_fixstar()</span></span><span lang="EN-US"> и
 </span><span class="functions"><span lang="EN-US">swe_fixstar_ut()</span></span><span lang="EN-US">:</span></p>
 
 <p class="ListBullet1" style="margin-left:14.2pt;text-indent:-14.2pt"><span lang="EN-US" style="font-family:Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><span dir="LTR"></span><span class="sourcecode"><span lang="EN-US">star</span></span><span lang="EN-US"> contains a traditional name: the first star in the file </span><span class="FileName"><span lang="EN-US">sefstars.txt</span></span><span lang="EN-US"> is used
-whose traditional name fits the given name. All names are mapped to lower case before
-comparison and white spaces are removed.</span></p>
+</span></span><span dir="LTR"></span><span class="sourcecode"><span lang="EN-US">star</span></span><span lang="EN-US"> содержит традициное имя: the first star in the file </span>
+    <span class="FileName"><span lang="EN-US">sefstars.txt</span></span><span lang="EN-US"> is used
+whose traditional name fits the given name. Перед сравнением все имена приводятся к нижнему регистру,
+и пробелы удаляются.</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">If </span><span class="sourcecode"><span lang="EN-US">star</span></span><span lang="EN-US"> has </span><span class="sourcecode"><span lang="EN-US">n</span></span><span lang="EN-US"> characters, only
 the first </span><span class="sourcecode"><span lang="EN-US">n</span></span><span lang="EN-US"> characters of the traditional name field are compared.</span></p>
@@ -6417,7 +6429,7 @@ margin-left:19.85pt;margin-right:0cm">
 <p class="MsoNormal" style="text-indent:1.0cm"><span class="sourcecode"><span lang="EN-US">char* serr);</span></span></p>
 
 <p class="MsoNormal"><span lang="EN-US">Function calculates the magnitude of a fixed
-star. The function returns OK or ERR. The magnitude value is returned in the parameter
+star. The function возвращает OK or ERR. The magnitude value is returned in the parameter
 </span><span class="sourcecode"><span lang="EN-US">mag</span></span><span lang="EN-US">.</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">For the definition and use of the parameter
@@ -6576,7 +6588,7 @@ or a node, you should use the function swe_nod_aps() or swe_nod_aps_ut(). </span
 osculating orbital elements (Kepler elements) of a planet</span></span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">* or asteroid or the
-EMB. The function returns error,</span></span></p>
+EMB. The function возвращает error,</span></span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">* if called for the Sun,
 the lunar nodes, or the apsides.</span></span></p>
@@ -6796,7 +6808,7 @@ planets and stars:</span></p>
 <p class="ListBullet1" style="margin-left:14.2pt;text-indent:-14.2pt"><a name="_Hlk17585527"><span lang="EN-US" style="font-family:Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span dir="LTR"></span><span class="functions"><span lang="EN-US">swe_rise_trans()</span></span><span lang="EN-US">;</span></a></p>
 
 <p class="ListBullet1" style="margin-left:14.2pt;text-indent:-14.2pt"><span lang="EN-US" style="font-family:Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><span dir="LTR"></span><span class="functions"><span lang="EN-US">swe_rise_trans_true_hor</span></span><span class="functions"><span lang="EN-US">()</span></span><b><span lang="EN-US"> </span></b><span lang="EN-US">returns rising and setting times for a local horizon with altitude !=
+</span></span><span dir="LTR"></span><span class="functions"><span lang="EN-US">swe_rise_trans_true_hor</span></span><span class="functions"><span lang="EN-US">()</span></span><b><span lang="EN-US"> </span></b><span lang="EN-US">возвращает rising and setting times for a local horizon with altitude !=
 0.</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">Planetary phenomena:</span></p>
@@ -6923,7 +6935,7 @@ for a given geographic position, use </span><span class="functions"><span lang="
 
 <p class="MsoNormal" style="margin-left:1.0cm"><span class="sourcecode"><span lang="EN-US">char *serr);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* return error string */</span></span></p>
 
-<p class="MsoNormal" style="margin-left:35.45pt"><span lang="EN-US">The function returns:</span></p>
+<p class="MsoNormal" style="margin-left:35.45pt"><span lang="EN-US">The function возвращает:</span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">/* retflag -1 (ERR) при
 ошибке (например если обламывается swe_calc() для Солнца или Луны)</span></span></p>
@@ -7088,7 +7100,7 @@ eclipse */</span></span></p>
 
 <p class="MsoNormal"><span lang="EN-US">If your code does not work, <span style="color:red">please study the sample code</span> in </span><span class="FileName"><span lang="EN-US">swetest.c</span></span><span lang="EN-US">.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">The function returns:</span></p>
+<p class="MsoNormal"><span lang="EN-US">The function возвращает:</span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">/* retflag -1 (ERR) on
 error (e.g. if swe_calc() for sun или moon fails)</span></span></p>
@@ -7252,7 +7264,7 @@ penumbra</a> are not implemented yet.</span></p>
 
 <p class="MsoNormal" style="margin-left:1.0cm"><span class="sourcecode"><span lang="EN-US">char *serr);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* return error string */</span></span></p>
 
-<p class="MsoNormal"><span lang="EN-US">The function returns:</span></p>
+<p class="MsoNormal"><span lang="EN-US">The function возвращает:</span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">/* -1 (ERR)&nbsp;&nbsp;&nbsp; on error
 (e.g. if swe_calc() for sun или moon fails)</span></span></p>
@@ -7462,7 +7474,7 @@ one wants to find occultations for the same time range, one has to run the same
 loop for each of these object. If the events have to be listed in chronological
 order, one has to sort them before output.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">The function returns:</span></p>
+<p class="MsoNormal"><span lang="EN-US">The function возвращает:</span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">/* retflag </span></span></p>
 
@@ -7609,7 +7621,7 @@ end of the ephemeris.</span></span></p>
 
 <p class="MsoNormal"><span lang="EN-US">An explanation of the </span><span class="sourcecode"><span lang="EN-US">ifl |= SE_ECL_ONE_TRY</span></span><span lang="EN-US"> is given above in paragraph about the function </span><span class="functions"><span lang="EN-US">swe_lun_occult_when_loc()</span></span><span lang="EN-US">.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">The function returns:</span></p>
+<p class="MsoNormal"><span lang="EN-US">The function возвращает:</span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">/* retflag </span></span></p>
 
@@ -7701,7 +7713,7 @@ interesting as soon as the limits of the umbra (and penumbra) will be implemente
 
 <p class="MsoNormal" style="margin-left:1.0cm"><span class="sourcecode"><span lang="EN-US">char *serr);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* return error string */</span></span></p>
 
-<p class="MsoNormal"><span lang="EN-US">The function returns:</span></p>
+<p class="MsoNormal"><span lang="EN-US">The function возвращает:</span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">/* -1 (ERR)&nbsp;&nbsp;&nbsp; on error
 (e.g. if swe_calc() for sun или moon fails)</span></span></p>
@@ -7833,7 +7845,7 @@ above sea.</span></span></p>
 
 <p class="MsoNormal"><span lang="EN-US">If your code does not work, <span style="color:red">please study the sample code</span> in </span><span class="FileName"><span lang="EN-US">swetest.c</span></span><span lang="EN-US">.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">The function returns:</span></p>
+<p class="MsoNormal"><span lang="EN-US">The function возвращает:</span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">/* retflag SE_ECL_TOTAL
 or SE_ECL_PENUMBRAL или SE_ECL_PARTIAL</span></span></p>
@@ -7947,7 +7959,7 @@ lunar eclipse */</span></span></p>
 
 <p class="MsoNormal"><span lang="EN-US">If your code does not work, <span style="color:red">please study the sample code</span> in </span><span class="FileName"><span lang="EN-US">swetest.c</span></span><span lang="EN-US">.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">The function returns:</span></p>
+<p class="MsoNormal"><span lang="EN-US">The function возвращает:</span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">/* retflag -1 (ERR) on
 error (e.g. if swe_calc() for sun или moon fails)</span></span></p>
@@ -8010,7 +8022,7 @@ margin-left:19.85pt;margin-right:0cm">
 
 <p class="MsoNormal" style="margin-left:1.0cm"><span class="sourcecode"><span lang="EN-US">char *serr);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* return error string */</span></span></p>
 
-<p class="MsoNormal"><span lang="EN-US">The function returns:</span></p>
+<p class="MsoNormal"><span lang="EN-US">The function возвращает:</span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">/* retflag -1 (ERR) on
 error (e.g. if swe_calc() for sun или moon fails)</span></span></p>
@@ -8065,7 +8077,7 @@ margin-left:19.85pt;margin-right:0cm">
 <a name="_Hlk477837700">rising, setting and meridian transits</a> for all planets,
 asteroids, the moon, and the fixed stars. The function </span><span class="functions"><span lang="EN-US">swe_rise_trans_true_hor()</span></span><span lang="EN-US"> does the same for a local horizon that has an </span><span class="sourcecode"><span lang="EN-US">altitude != 0</span></span><span lang="EN-US">.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">The function returns a rising time of an object:</span></p>
+<p class="MsoNormal"><span lang="EN-US">The function возвращает a rising time of an object:</span></p>
 
 <p class="ListBullet1" style="margin-left:14.2pt;text-indent:-14.2pt"><span lang="EN-US" style="font-family:Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span><span dir="LTR"></span><span lang="EN-US">if at t0 the object is below
@@ -8076,7 +8088,7 @@ the horizon and a rising takes place before the next culmination of the object;<
 the horizon and a rising takes place between the next lower and upper culminations
 of the object.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">And it returns a setting time of an object,</span></p>
+<p class="MsoNormal"><span lang="EN-US">And it возвращает a setting time of an object,</span></p>
 
 <p class="ListBullet1" style="margin-left:14.2pt;text-indent:-14.2pt"><span lang="EN-US" style="font-family:Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span><span dir="LTR"></span><span lang="EN-US">if at t0 the object is above
@@ -8457,7 +8469,7 @@ do exactly the same but expect a different time parameter.</span></p>
 
 <p class="MsoNormal" style="margin-left:1.0cm"><span class="sourcecode"><span lang="EN-US">char *serr);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* return error string */</span></span></p>
 
-<p class="MsoNormal"><span lang="EN-US">The function returns:</span></p>
+<p class="MsoNormal"><span lang="EN-US">The function возвращает:</span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">/*</span></span></p>
 
@@ -8674,7 +8686,7 @@ input value</span></span></p>
 
 <p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">Function returns:</span></p>
+<p class="MsoNormal"><span lang="EN-US">Function возвращает:</span></p>
 
 <p class="ListBullet1" style="margin-left:14.2pt;text-indent:-14.2pt"><span lang="EN-US" style="font-family:Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span><span dir="LTR"></span><strong><span lang="EN-US" style="font-family:
@@ -8702,7 +8714,7 @@ i.e. if it is a position above the ideal horizon;</span></p>
 
 <p class="ListBullet1" style="margin-left:1.0cm;text-indent:-14.15pt"><span lang="EN-US" style="font-family:&quot;Courier New&quot;">o<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;
 </span></span><span dir="LTR"></span><span lang="EN-US">the input altitude; otherwise
-in addition the array dret[] returns the following values:</span></p>
+in addition the array dret[] возвращает the following values:</span></p>
 
 <p class="ListBullet1" style="margin-left:42.55pt;text-indent:-14.2pt"><span lang="EN-US" style="font-family:Wingdings">§<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;
 </span></span><span dir="LTR"></span><span class="sourcecode"><span lang="EN-US">dret[0]</span></span><span lang="EN-US"> true altitude, if possible; otherwise input value;</span></p>
@@ -8751,7 +8763,7 @@ of the heliacal event */</span></span></p>
 
 <p class="MsoNormal" style="margin-left:1.0cm"><span class="sourcecode"><span lang="EN-US">char * serr);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* error string */</span></span></p>
 
-<p class="MsoNormal"><span lang="EN-US">Function returns OK или ERR.</span></p>
+<p class="MsoNormal"><span lang="EN-US">Function возвращает OK или ERR.</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">Details for </span><span class="sourcecode"><span lang="EN-US">dgeo[]</span></span><span lang="EN-US"> (array of doubles):</span></p>
 
@@ -8954,7 +8966,7 @@ visible */</span></span></p>
 
 <p class="MsoNormal" style="margin-left:1.0cm"><span class="sourcecode"><span lang="EN-US">char * serr);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* error string */</span></span></p>
 
-<p class="MsoNormal"><span lang="EN-US">Function returns:</span></p>
+<p class="MsoNormal"><span lang="EN-US">Function возвращает:</span></p>
 
 <p class="ListBullet1" style="margin-left:14.2pt;text-indent:-14.2pt"><span lang="EN-US" style="font-family:Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span><span dir="LTR"></span><span lang="EN-US">-1&nbsp;&nbsp;&nbsp; on error;</span></p>
@@ -9176,7 +9188,7 @@ dates to the astronomical time scale which measures time in Julian days.</span><
 
 <p class="MsoNormal"><span class="functions"><span lang="EN-US">swe_julday()</span></span><i><span lang="EN-US"> </span></i><span lang="EN-US">and </span><span class="functions"><span lang="EN-US">swe_date_conversion()</span></span><span lang="EN-US"> compute a Julian
 day number from year, month, day, and hour. </span><span class="functions"><span lang="EN-US">swe_date_conversion()</span></span><i><span lang="EN-US"> </span></i><span lang="EN-US">checks in addition <a name="_Hlk477839957">whether the date is legal</a>.
-It returns OK или ERR.</span></p>
+It возвращает OK или ERR.</span></p>
 
 <p class="MsoNormal"><span class="functions"><span lang="EN-US">swe_revjul()</span></span><span lang="EN-US"> is the reverse function of </span><span class="functions"><span lang="EN-US">swe_julday()</span></span><span lang="EN-US">.<i> </i>It computes year,
 month, day and hour from a Julian day number.</span></p>
@@ -9290,7 +9302,7 @@ doubles with Julian Day number in ET (TT) and UT (UT1)</span></span></p>
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">* an error message (on
 error)</span></span></p>
 
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">* The function returns
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">* The function возвращает
 OK или ERR.</span></span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">*/</span></span></p>
@@ -9506,7 +9518,7 @@ of time itself, i. e. the value </span><span class="sourcecode"><span lang="EN-U
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">/* Equation of Time</span></span></p>
 
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">* The function returns
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">* The function возвращает
 the difference between local apparent and local mean time in days.</span></span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">* E = LAT - LMT</span></span></p>
@@ -9634,7 +9646,7 @@ margin-left:19.85pt;margin-right:0cm">
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">serr</span></span><span lang="EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = string pointer for warning messages.</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">If the function is called with </span><span class="sourcecode"><span lang="EN-US">SEFLG_SWIEPH</span></span><span lang="EN-US"> before
-calling </span><span class="functions"><span lang="EN-US">swe_set_ephe_path()</span></span><span lang="EN-US">, или with или </span><span class="sourcecode"><span lang="EN-US">SEFLG_JPLEPH</span></span><span lang="EN-US"> before calling </span><span class="functions"><span lang="EN-US">swe_set_jpl_file()</span></span><span lang="EN-US">, then the function returns a warning.</span></p>
+calling </span><span class="functions"><span lang="EN-US">swe_set_ephe_path()</span></span><span lang="EN-US">, или with или </span><span class="sourcecode"><span lang="EN-US">SEFLG_JPLEPH</span></span><span lang="EN-US"> before calling </span><span class="functions"><span lang="EN-US">swe_set_jpl_file()</span></span><span lang="EN-US">, then the function возвращает a warning.</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">The calculation of ephemerides in UT depends
 on Delta T, which depends on the ephemeris-inherent value of the tidal acceleration
@@ -9980,7 +9992,7 @@ default </span><span class="sourcecode"><span lang="EN-US">ayanamsha </span></sp
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">#define SE_SIDM_USER&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 255</span></span></p>
 
-<p class="MsoNormal"><span lang="EN-US">The function </span><span class="functions"><span lang="EN-US">swe_get_ayanamsa_name()</span></span><span lang="EN-US"> returns the name
+<p class="MsoNormal"><span lang="EN-US">The function </span><span class="functions"><span lang="EN-US">swe_get_ayanamsa_name()</span></span><span lang="EN-US"> возвращает the name
 of the ayanamsha.</span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">const char *</span></span><span class="functions"><span lang="EN-US">swe_get_ayanamsa_name</span></span><span class="sourcecode"><span lang="EN-US">(int32 isidmode)</span></span></p>
@@ -10377,7 +10389,7 @@ SEFLG_...</span></span></p>
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">* serr = error message
 or warning (pointer to string)</span></span></p>
 
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">* The function returns
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">* The function возвращает
 either the ephemeris flag used или ERR (-1)</span></span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="FR-CH">*/</span></span></p>
@@ -10515,7 +10527,7 @@ margin-left:19.85pt;margin-right:0cm">
 
 </div>
 
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">/* returns the name of
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">/* возвращает the name of
 the house method, maximum 40 chars */</span></span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">char *</span></span><span class="functions"><span lang="EN-US">swe_house_name</span></span><span class="sourcecode"><span lang="EN-US">(</span></span></p>
@@ -10656,7 +10668,7 @@ further below */</span></span></p>
 swe_houses_ex2(): </span></span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">&nbsp;* Эта функция has
-the advantage that it also returns the speeds</span></span></p>
+the advantage that it also возвращает the speeds</span></span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">&nbsp;* (daily motions) of
 the ascendant, midheaven and house cusps. </span></span></p>
@@ -10714,7 +10726,7 @@ in clockwise direction.</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">The extended house functions </span><a name="_Hlk48643571"><span class="functions"><span lang="EN-US">swe_houses_ex()</span></span><span lang="EN-US"> </span></a><span lang="EN-US">and </span><span class="functions"><span lang="EN-US">swe_houses_ex2()</span></span><span lang="EN-US"> do exactly the same calculations
 as </span><span class="functions"><span lang="EN-US">swe_houses()</span></span><span lang="EN-US">. The difference is that the extended functions have a parameter </span><span class="sourcecode"><span lang="EN-US">iflag</span></span><span lang="EN-US">, which can
-be set to </span><span class="sourcecode"><span lang="EN-US">SEFLG_SIDEREAL</span></span><span lang="EN-US">, if </span><span class="FileName"><span lang="EN-US">sidereal</span></span><b><span lang="EN-US" style="color:maroon;text-transform:uppercase"> </span></b><span lang="EN-US">house positions are wanted. The house function returns data based on
+be set to </span><span class="sourcecode"><span lang="EN-US">SEFLG_SIDEREAL</span></span><span lang="EN-US">, if </span><span class="FileName"><span lang="EN-US">sidereal</span></span><b><span lang="EN-US" style="color:maroon;text-transform:uppercase"> </span></b><span lang="EN-US">house positions are wanted. The house function возвращает data based on
 the <b>true</b> equator and equinox of date. If the flag </span><span class="sourcecode"><span lang="EN-US">SEFLG_NONUT</span></span><span lang="EN-US"> is
 set, then the house cusps will be based on the <b>mean</b> equator and equinox of
 date. However, we recommend to use the true equator and equinox. The function </span><span class="functions"><span lang="EN-US">swe_houses_ex2()</span></span><span lang="EN-US"> also provides the speeds (“daily motions”) of the house cusps and additional
@@ -10819,7 +10831,7 @@ directed_armc;</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">etc.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">In the array </span><span class="sourcecode"><b><span lang="EN-US">ascmc</span></b></span><span lang="EN-US">, the function returns the following
+<p class="MsoNormal"><span lang="EN-US">In the array </span><span class="sourcecode"><b><span lang="EN-US">ascmc</span></b></span><span lang="EN-US">, the function возвращает the following
 values:</span></p>
 
 <p class="MsoNormal" style="margin-left:1.0cm"><a name="_Hlk477862569"><span class="sourcecode"><span lang="FR-CH">ascmc[0]</span></span></a><span class="sourcecode"><span lang="FR-CH"> = </span></span><span lang="FR-CH">Ascendant</span></p>
@@ -10978,7 +10990,7 @@ sign</span></span></p>
 <p class="MsoNormal"><span lang="EN-US">Placidus and Koch <a name="_Hlk477864194">house
 cusps as well as Gauquelin sectors <b><span style="color:red">cannot be computed
 beyond the polar circle</span></b></a>. In such cases,</span><span class="functions"><span lang="EN-US"> swe_houses()</span></span><span lang="EN-US"> switches
-to Porphyry houses (each quadrant is divided into three equal parts) and returns
+to Porphyry houses (each quadrant is divided into three equal parts) and возвращает
 the error code ERR. In addition, Sunshine houses may fail, e.g. when required for
 a date which is outside the time range of our solar ephemeris. Here, also, Porphyry
 houses will be provided.</span></p>
@@ -11024,7 +11036,7 @@ of the planet */</span></span></p>
 <p class="MsoNormal"><span lang="EN-US">The variables<b> </b></span><span class="sourcecode"><b><span lang="EN-US">armc</span></b></span><span class="sourcecode"><span lang="EN-US">, <b>geolat</b>, <b>eps</b></span></span><b><span lang="EN-US">,</span></b><span lang="EN-US"> and </span><span class="sourcecode"><b><span lang="EN-US">xpin[0]</span></b></span><b><span lang="EN-US"> </span></b><span lang="EN-US">and </span><span class="sourcecode"><b><span lang="EN-US">xpin[1]</span></b></span><i><span lang="EN-US"> </span></i><span lang="EN-US">(ecliptic longitude and latitude of the
 planet) must be в градусах. </span><span class="sourcecode"><b><span lang="EN-US">serr</span></b></span><span lang="EN-US"> must, as usually, point to a character array of 256 byte.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">The function returns a value between 1.0 and
+<p class="MsoNormal"><span lang="EN-US">The function возвращает a value between 1.0 and
 12.999999, indicating in which house a planet is and how far from its cusp it is.</span></p>
 
 <p class="MsoNormal"><span lang="EN-US">With house system ‘G’ (Gauquelin sectors), a
@@ -11032,7 +11044,7 @@ value between 1.0 and 36.9999999 is returned. Note that, while all other house s
 number house cusps in counterclockwise direction, Gauquelin sectors are numbered
 in clockwise direction.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">With </span><a name="_Hlk477864273"><span class="FileName"><span lang="EN-US">Koch</span></span><span lang="EN-US"> houses</span></a><span lang="EN-US">, the function sometimes </span><span class="FileName"><span lang="EN-US">returns 0</span></span><span lang="EN-US">, if the computation was not
+<p class="MsoNormal"><span lang="EN-US">With </span><a name="_Hlk477864273"><span class="FileName"><span lang="EN-US">Koch</span></span><span lang="EN-US"> houses</span></a><span lang="EN-US">, the function sometimes </span><span class="FileName"><span lang="EN-US">возвращает 0</span></span><span lang="EN-US">, if the computation was not
 possible. This happens most often in </span><span class="FileName"><span lang="EN-US">polar regions</span></span><span lang="EN-US">, but it can happen at latitudes
 <b><span style="color:red">below 66°33’</span></b> as well, e.g. if a body has a
 high declination and falls within the circumpolar sky. With circumpolar fixed stars
@@ -11099,16 +11111,16 @@ houses here. Sidereal Koch houses make no sense с этими звёздными
 margin-left:19.85pt;margin-right:0cm">
 
 <h2 style="margin-left:0cm;text-indent:0cm"><a name="_Toc112949028"><span lang="EN-US" style="color:#2E74B5">16.1.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;
-</span></span><span dir="LTR"></span><span lang="EN-US">Calculating the Gauquelin sector
-position of a planet with swe_house_pos() или swe_gauquelin_sector()</span></a></h2>
+</span></span><span dir="LTR"></span><span lang="EN-US">Вычисления положения планеты
+в секторе Гоклена с помощью swe_house_pos() или swe_gauquelin_sector()</span></a></h2>
 
 </div>
 
-<p class="MsoNormal"><span lang="EN-US">For general information on Gauquelin sectors,
-read chapter 6.5 in documentation file </span><span class="FileName"><span lang="EN-US">swisseph.doc</span></span><span lang="EN-US">.</span></p>
+<p class="MsoNormal"><span lang="EN-US">За общей информацией о секторах Гоклена
+читай главу 6.5 в файле документации </span><span class="FileName"><span lang="EN-US">swisseph.doc</span></span><span lang="EN-US">.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">There are two functions that can be used to
-calculate Gauquelin sectors:</span></p>
+<p class="MsoNormal"><span lang="EN-US">Суть две функции, которые можно использовать,
+чтобы вычислять сектора Гоклена:</span></p>
 
 <p class="ListBullet1" style="margin-left:14.2pt;text-indent:-14.2pt"><span lang="EN-US" style="font-family:Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span><span dir="LTR"></span><span class="functions"><span lang="EN-US">swe_house_pos</span></span><span lang="EN-US">. Full details about this function are presented in the previous section.
@@ -11136,16 +11148,17 @@ follows:</span></p>
 
 <p class="MsoNormal" style="margin-left:1.0cm"><span class="sourcecode"><span lang="EN-US">int32 iflag,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* флаг для эфемерид и SEFLG_TOPOCTR */</span></span></p>
 
-<p class="MsoNormal" style="margin-left:1.0cm"><span class="sourcecode"><span lang="EN-US">int32 imeth,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* method: 0 = with lat., 1 = without lat.,</span></span></p>
+<p class="MsoNormal" style="margin-left:1.0cm"><span class="sourcecode"><span lang="EN-US">int32 imeth,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* метод: 0 = с шир., 1 = без шир.,</span></span></p>
 
-<p class="MsoNormal" style="margin-left:1.0cm"><span class="sourcecode"><span lang="EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; * 2 = с восхода/заката, 3 = from rise/set with refraction
+<p class="MsoNormal" style="margin-left:1.0cm"><span class="sourcecode"><span lang="EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; * 2 = от восхода/заката, 3 = от восхода/заката с рафракцией
+
 */</span></span></p>
 
 <p class="MsoNormal" style="margin-left:1.0cm"><span class="sourcecode"><span lang="EN-US">double *geopos,&nbsp;&nbsp;&nbsp;&nbsp; /* массив из трёх doubles, содержащий</span></span></p>
 
-<p class="MsoNormal" style="margin-left:1.0cm"><span class="sourcecode"><span lang="EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* geograph. long., lat., height of observer */</span></span></p>
+<p class="MsoNormal" style="margin-left:1.0cm"><span class="sourcecode"><span lang="EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* географ. долг., шир., высота наблюдателя */</span></span></p>
 
-<p class="MsoNormal" style="margin-left:1.0cm"><span class="sourcecode"><span lang="EN-US">double atpress,&nbsp;&nbsp;&nbsp;&nbsp; /* атмосферное давление, only useful with imeth =
+<p class="MsoNormal" style="margin-left:1.0cm"><span class="sourcecode"><span lang="EN-US">double atpress,&nbsp;&nbsp;&nbsp;&nbsp; /* атмосферное давление, полезно только с imeth =
 3;</span></span></p>
 
 <p class="MsoNormal" style="margin-left:1.0cm"><span class="sourcecode"><span lang="EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* if 0, default = 1013.25 mbar is used*/</span></span></p>
@@ -11153,11 +11166,11 @@ follows:</span></p>
 <p class="MsoNormal" style="margin-left:1.0cm"><span class="sourcecode"><span lang="EN-US">double attemp,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* атмосферная температура в градусах Celsius, only
 useful with imeth = 3 */</span></span></p>
 
-<p class="MsoNormal" style="margin-left:1.0cm"><span class="sourcecode"><span lang="EN-US">double *dgsect,&nbsp;&nbsp;&nbsp;&nbsp; /* return address for Gauquelin sector position */</span></span></p>
+<p class="MsoNormal" style="margin-left:1.0cm"><span class="sourcecode"><span lang="EN-US">double *dgsect,&nbsp;&nbsp;&nbsp;&nbsp; /* возвращает адрес для положения в секторе Гоклена */</span></span></p>
 
-<p class="MsoNormal" style="margin-left:1.0cm"><span class="sourcecode"><span lang="EN-US">char *serr);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* return address for error message */</span></span></p>
+<p class="MsoNormal" style="margin-left:1.0cm"><span class="sourcecode"><span lang="EN-US">char *serr);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* возвращает адрес для сообщения об ошибке */</span></span></p>
 
-<p class="MsoNormal"><span lang="EN-US">Эта функция returns OK или ERR (-1). It returns
+<p class="MsoNormal"><span lang="EN-US">Эта функция возвращает OK или ERR (-1). It возвращает
 an error in a number of cases, for example circumpolar bodies with </span><span class="sourcecode"><span lang="EN-US">imeth=2</span></span><span lang="EN-US">. As with
 other SE functions, if there is an error, an error message is written to serr. dgsect
 is used to obtain the Gauquelin sector position as a value between 1.0 and 36.9999999.
@@ -11173,7 +11186,7 @@ sector position of a planet:</span></p>
 <p class="ListBullet1" style="margin-left:14.2pt;text-indent:-14.2pt"><span lang="EN-US" style="font-family:Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span><span dir="LTR"></span><span lang="EN-US">Call </span><span class="functions"><span lang="EN-US">swe_house_pos()</span></span><span lang="EN-US">
 with </span><span class="sourcecode"><span lang="EN-US">hsys = 'G', xpin[0] =</span></span><span lang="EN-US"> ecliptical longitude of planet, and </span><span class="sourcecode"><span lang="EN-US">xpin[1] =</span></span><span lang="EN-US"> ecliptical latitude. Эта функция
-returns the sector position as a value between 1.0 and 36.9999999.</span></p>
+возвращает the sector position as a value between 1.0 and 36.9999999.</span></p>
 
 <p class="ListBullet1" style="margin-left:14.2pt;text-indent:-14.2pt"><span lang="EN-US" style="font-family:Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span><span dir="LTR"></span><span lang="EN-US">Call </span><span class="functions"><span lang="EN-US">swe_gauquelin_sector()</span></span><span lang="EN-US"> with </span><span class="sourcecode"><span lang="EN-US">imeth = 0</span></span><span lang="EN-US">. This is less efficient than swe_house_pos because it recalculates the
@@ -11187,7 +11200,7 @@ without ecliptical latitudes:</span></p>
 
 <p class="ListBullet1" style="margin-left:14.2pt;text-indent:-14.2pt"><span lang="EN-US" style="font-family:Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span><span dir="LTR"></span><span lang="EN-US">Call </span><span class="functions"><span lang="EN-US">swe_house_pos()</span></span><span lang="EN-US">
-with </span><span class="sourcecode"><span lang="EN-US">hsys = 'G', xpin[0] = ecl</span></span><span lang="EN-US">. longitude of planet, and </span><span class="sourcecode"><span lang="EN-US">xpin[1] = 0</span></span><span lang="EN-US">. Эта функция returns the
+with </span><span class="sourcecode"><span lang="EN-US">hsys = 'G', xpin[0] = ecl</span></span><span lang="EN-US">. longitude of planet, and </span><span class="sourcecode"><span lang="EN-US">xpin[1] = 0</span></span><span lang="EN-US">. Эта функция возвращает the
 sector position as a value between 1.0 and 36.9999999.</span></p>
 
 <p class="ListBullet1" style="margin-left:14.2pt;text-indent:-14.2pt"><span lang="EN-US" style="font-family:Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
@@ -12392,7 +12405,7 @@ doubles with Julian Day number in ET (TT) and UT (UT1)</span></span></p>
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">* an error message (on
 error)</span></span></p>
 
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">* The function returns
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">* The function возвращает
 OK или ERR.</span></span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">*/</span></span></p>
@@ -12492,7 +12505,7 @@ margin-left:39.7pt;margin-right:14.45pt">
 
 </div>
 
-<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">/* function returns the
+<p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">/* function возвращает the
 difference between local apparent and local mean time.</span></span></p>
 
 <p class="MsoNormal"><span class="sourcecode"><span lang="EN-US">e = LAT – LMT. tjd_et
@@ -13276,7 +13289,7 @@ directory или installed in the Windows system directory.</span></p>
 <p class="MsoNormal"><span lang="EN-US">Эта функция copies its result into the string
 pointer </span><span class="sourcecode"><span lang="EN-US">plname</span></span><span lang="EN-US" style="color:navy">;</span><span lang="EN-US"> the calling program must
 provide sufficient space so that the result string fits into it. As usual in C programming,
-the function copies the return string into the provided area and returns the pointer
+the function copies the return string into the provided area and возвращает the pointer
 to this area as the function value. This allows to use Эта функция directly in
 a C print statement.</span></p>
 
@@ -16075,7 +16088,7 @@ Corrected double hcusp[36] to double hcusp[37].</span></p>
 <p class="MsoNormal" style="margin-top:0cm;margin-right:0cm;margin-bottom:6.0pt;
 margin-left:19.5pt"><span lang="EN-US">11. Bug fix in function swe_refrac_extended(),
 calculating true altitude from apparent altitude (SE_APP_TO_TRUE): Function now
-correctly returns true altitude if apparent altitude is greater или equal to the
+correctly возвращает true altitude if apparent altitude is greater или equal to the
 dip of the horizon.</span></p>
 
 <p class="MsoNormal" style="margin-top:0cm;margin-right:0cm;margin-bottom:6.0pt;
@@ -16689,8 +16702,8 @@ was created that allows the user to set a particular value for delta t.</span></
 
 <p class="MsoNormal"><b><span lang="EN-US">13) Function swe_nod_aps</span></b><span lang="EN-US">(): a bug was fixed that occurred with calculations for the EMB.</span></p>
 
-<p class="MsoNormal"><b><span lang="EN-US">14) Новая функция swe_get_library_path</span></b><span lang="EN-US">(): The function returns the path in which the executable resides. If
-it is running with a DLL, then returns the path of the DLL.</span></p>
+<p class="MsoNormal"><b><span lang="EN-US">14) Новая функция swe_get_library_path</span></b><span lang="EN-US">(): The function возвращает the path in which the executable resides. If
+it is running with a DLL, then возвращает the path of the DLL.</span></p>
 
 <div style="border:none;border-bottom:solid windowtext 1.5pt;padding:0cm 0cm 1.0pt 0cm;
 margin-left:19.85pt;margin-right:0cm">
@@ -17230,7 +17243,7 @@ places in code where buffer overflow could occur (thanks to Paul Elliott)</span>
 
 <p class="ListBullet1" style="margin-left:14.2pt;text-indent:-14.2pt"><span lang="EN-US" style="font-family:Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span><span dir="LTR"></span><span lang="EN-US">Новая функция swe_house_name(),
-returns name of house method</span></p>
+возвращает name of house method</span></p>
 
 <p class="ListBullet1" style="margin-left:14.2pt;text-indent:-14.2pt"><span lang="EN-US" style="font-family:Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span><span dir="LTR"></span><span lang="EN-US">Two new ayanamshas: Suryasiddhanta
@@ -17441,7 +17454,7 @@ user to update Delta T himself regularly, s. chap. 8.3</span></p>
 calculations (civil, nautical, and astronomical) added</span></p>
 
 <p class="ListBullet1" style="margin-left:14.2pt;text-indent:-14.2pt"><span lang="EN-US" style="font-family:Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><span dir="LTR"></span><span lang="EN-US">Function swe_version() returns
+</span></span><span dir="LTR"></span><span lang="EN-US">Function swe_version() возвращает
 version number of Swiss Ephemeris.</span></p>
 
 <p class="ListBullet1" style="margin-left:14.2pt;text-indent:-14.2pt"><span lang="EN-US" style="font-family:Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
@@ -18064,7 +18077,7 @@ range remains unchanged at 3000 BCE to 3000 CE.</span></p>
 <p class="MsoNormal"><span lang="EN-US">Chiron’s ephemeris is now restricted to the
 time range <b>650 CE – 4650 CE</b>; for explanations, see swisseph.doc.</span></p>
 
-<p class="MsoNormal"><span lang="EN-US">Outside this time range, Swiss Ephemeris returns
+<p class="MsoNormal"><span lang="EN-US">Outside this time range, Swiss Ephemeris возвращает
 an error code and a position value 0. You must handle this situation in your application.
 There is a similar restriction with Pholus (as with some other asteroids).</span></p>
 
@@ -18474,12 +18487,12 @@ what you can expect from an ephemeris module. We do not tell you:</span></p>
 from local time, i.e. what timezone a place is located in;</span></p>
 
 <p class="MsoNormal" style="margin-left:1.0cm;text-indent:-1.0cm"><span lang="EN-US" style="font-family:Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><span dir="LTR"></span><span lang="EN-US">how to compute progressions,
-solar returns, composite charts, transit times and a lot more;</span></p>
+</span></span><span dir="LTR"></span><span lang="EN-US">как вычислять прогрессии,
+солнечные возвращения, композитные карты, transit times and a lot more;</span></p>
 
 <p class="MsoNormal" style="margin-left:1.0cm;text-indent:-1.0cm"><span lang="EN-US" style="font-family:Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><span dir="LTR"></span><span lang="EN-US">what the different calendars
-(Julian, Gregorian ...) mean and when they apply.</span></p>
+</span></span><span dir="LTR"></span><span lang="EN-US">что разные календари
+(Юлианский, Григорианский ...) означают и когда они применяются.</span></p>
 
 <span lang="EN-US" style="font-size:10.0pt;font-family:&quot;Segoe UI&quot;,sans-serif"><br clear="all" style="page-break-before:always">
 </span>
@@ -19649,7 +19662,7 @@ text-align:left;layout-grid-mode:both;text-autospace:ideograph-numeric ideograph
   <td width="492" valign="top" style="width:369.15pt;border-top:none;border-left:
   none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt">
-  <p class="MsoNormal" style="margin-left:1.55pt"><span lang="EN-US">returns sidereal
+  <p class="MsoNormal" style="margin-left:1.55pt"><span lang="EN-US">возвращает sidereal
   time on Julian day</span></p>
   </td>
  </tr>
@@ -19666,7 +19679,7 @@ text-align:left;layout-grid-mode:both;text-autospace:ideograph-numeric ideograph
   <td width="492" valign="top" style="width:369.15pt;border-top:none;border-left:
   none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt">
-  <p class="MsoNormal" style="margin-left:1.55pt"><span lang="EN-US">returns sidereal
+  <p class="MsoNormal" style="margin-left:1.55pt"><span lang="EN-US">возвращает sidereal
   time on Julian day, obliquity and nutation</span></p>
   </td>
  </tr>
@@ -19751,7 +19764,7 @@ text-align:left;layout-grid-mode:both;text-autospace:ideograph-numeric ideograph
   <td width="492" valign="top" style="width:369.15pt;border-top:none;border-left:
   none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt">
-  <p class="MsoNormal" style="margin-left:1.55pt"><span lang="EN-US">returns the difference
+  <p class="MsoNormal" style="margin-left:1.55pt"><span lang="EN-US">возвращает the difference
   between local apparent and local mean time</span></p>
   </td>
  </tr>
@@ -19785,7 +19798,7 @@ text-align:left;layout-grid-mode:both;text-autospace:ideograph-numeric ideograph
   <td width="492" valign="top" style="width:369.15pt;border-top:none;border-left:
   none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt">
-  <p class="MsoNormal" style="margin-left:1.55pt"><span lang="EN-US">returns the version
+  <p class="MsoNormal" style="margin-left:1.55pt"><span lang="EN-US">возвращает the version
   of the Swiss Ephemeris</span></p>
   </td>
  </tr>
