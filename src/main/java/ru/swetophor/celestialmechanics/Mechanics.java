@@ -1,8 +1,11 @@
 package ru.swetophor.celestialmechanics;
 
+import ru.swetophor.resogrid.Harmonics;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.round;
@@ -316,10 +319,44 @@ public class Mechanics {
         System.out.println(report);
     }
 
+    public static void buildHeavensWithHarmonics(int uptoNumber) {
+        StringBuilder report = new StringBuilder();
+        int heaven = 0;
+        StringBuilder heavenBuilder = new StringBuilder();
+        int n = 0;
+        int heavenSum = 0;
+
+        for (Harmonics h : Harmonics.generateUpTo(uptoNumber))
+            if (h.isSimple()) {
+                if (!heavenBuilder.isEmpty())
+                    report.append("Небо №%d (высота = %.2f)%n"
+                                    .formatted(heaven++, (double) heavenSum / (double) n))
+                            .append(heavenBuilder);
+                heavenBuilder = new StringBuilder("\t%s Σ = %d (сложность %d)%n"
+                        .formatted(
+                                formatMultipliers(h.getMultipliers()),
+                                h.multipliersSum(),
+                                h.complexity()));
+                n = 1;
+                heavenSum = h.multipliersSum();
+            } else {
+                heavenBuilder.append("\t%s Σ = %d (сложность %d)%n"
+                        .formatted(
+                                formatMultipliers(h.getMultipliers()),
+                                h.multipliersSum(),
+                                h.complexity()));
+                n++;
+                heavenSum += h.multipliersSum();
+            }
+
+        System.out.println(report);
+    }
+
 
     public static void main(String[] args) {
 //        displayMultipliers(108);
-        buildHeavens(108);
+//        buildHeavens(108);
+        buildHeavensWithHarmonics(144);
     }
 
     public static String formatMultipliers(List<Integer> multipliers) {
@@ -329,6 +366,16 @@ public class Mechanics {
         for (int i = 1; i < multipliers.size(); i++)
             answer.append("x")
                     .append(multipliers.get(i));
+        answer.append(">");
+        return answer.toString();
+    }
+
+    public static String formatMultipliers(Integer[] multipliers) {
+        StringBuilder answer = new StringBuilder("<");
+        if (multipliers.length > 0)
+            answer.append(multipliers[0]);
+        IntStream.range(1, multipliers.length)
+                .forEach(i -> answer.append("x").append(multipliers[i]));
         answer.append(">");
         return answer.toString();
     }
