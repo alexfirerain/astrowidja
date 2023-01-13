@@ -56,9 +56,9 @@ public class Matrix {
 
         switch (type) {
             case SYNASTRY -> {                                 // таблица всех астр одной на все астры другой
-                for (int i = 0; i < datum1.length; i++)
-                    for (int j = 0; j < datum2.length; j++)
-                        sb.append(resonances[i][j].resonancesOutput()).append("\n");
+                for (int x = 0; x < datum1.length; x++)
+                    for (int y = 0; y < datum2.length; y++)
+                        sb.append(resonances[x][y].resonancesOutput()).append("\n");
             }
             case COSMOGRAM -> {                               // полутаблица астр карты между собой
                 for (int i = 0; i < datum1.length; i++)

@@ -1,6 +1,7 @@
 package ru.swetophor.celestialmechanics;
 
 import ru.swetophor.Application;
+import ru.swetophor.Decorator;
 
 import java.util.List;
 
@@ -47,4 +48,7 @@ abstract public class ChartObject {
     public abstract String getAstrasList();
     public abstract String getAspectTable();
 
+    protected String getCaption(String title) {
+        return Decorator.frameText(title, 30, '*');
+    }
 }

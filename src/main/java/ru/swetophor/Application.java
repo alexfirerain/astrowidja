@@ -100,7 +100,7 @@ public class Application {
 
         mainCycle();
 
-        saveTableToFile(Shell.autosaveName());
+        saveTableToFile(Decorator.autosaveName());
     }
 
 
@@ -113,7 +113,7 @@ public class Application {
 
     private static void welcome() {
         System.out.printf("%sСчитаем резонансы с приближением в %.0f° (1/%d часть круга) до числа %d%n%n",
-                Shell.frameText("Начато исполнение АстроВидьи!", 30, '*'),
+                Decorator.frameText("Начато исполнение АстроВидьи!", 30, '*'),
                 getOrbs(), orbsDivider, edgeHarmonic);
     }
 
@@ -123,7 +123,7 @@ public class Application {
     static private final Map<String, ChartObject> DESK = new HashMap<>();
 
     private static void displayMainMenu() {
-        System.out.println(Shell.frameText("""
+        System.out.println(Decorator.frameText("""
             1. карты на столе
             2. настройки
             3. управление картами
@@ -157,7 +157,7 @@ public class Application {
         if (content == null)
             content = "Не удалось получить содержимое базы.";
 
-        System.out.println(Shell.frameText(content, 40, '*'));
+        System.out.println(Decorator.frameText(content, 40, '*'));
 
     }
 
@@ -191,10 +191,18 @@ public class Application {
      * Выводит на экран список карт, лежащих на столе, то есть загруженных в программу.
      */
     private static void listCharts() {
+        StringBuilder output = new StringBuilder();
         if (DESK.isEmpty())
-            System.out.println("Ни одной карты не загружено.");
+            output
+                    .append("Ни одной карты не загружено.");
         else
-            DESK.values().forEach(System.out::println);
+            DESK.values().forEach(c -> output
+                    .append(c.toString())
+                    .append("\n"));
+        System.out.println(Decorator.frameText(output.toString(),
+                30, 80,
+                '┌', '─', '┐',
+                '│', '└', '┘'));
     }
 
     /**

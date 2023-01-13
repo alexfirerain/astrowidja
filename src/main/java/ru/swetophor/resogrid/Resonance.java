@@ -16,8 +16,9 @@ import static ru.swetophor.celestialmechanics.Mechanics.*;
 import static ru.swetophor.resogrid.ResonanceType.*;
 
 /**
- * Структурированный массив, описывающий
- * взаимодействие (резонансы) между некоторыми двумя точками
+ * Гармонический анализ взаимодействия некоторых двух астр.
+ * Содержит ссылки на две точки (астры) и {@link #aspects список} рассчитанных
+ * для этой {@link #arc дуги} {@link Aspect Аспектов}.
  */
 @Setter
 @Getter
@@ -27,11 +28,11 @@ public class Resonance {
      */
     private final ResonanceType type;
     /**
-     * Название первой астры.
+     * Первая астра.
      */
     private Astra astra_1;
     /**
-     * Название второй астры.
+     * Вторая астра.
      */
     private Astra astra_2;
     /**
@@ -39,17 +40,18 @@ public class Resonance {
      */
     private double arc;
     /**
-     * Принятый в карте орбис, т.е. допуск, с которым аспект считается действующим.
+     * Максимальный орбис для соединения, т.е. базовый допуск, с которым при расчётах считается,
+     * что резонанс возник. Для каждой гармоники базовый орбис пропорционально уменьшается.
      */
     private double orb;
     /**
-     * Наибольший проверяемый целочисленный резонанс
+     * Наибольший проверяемый целочисленный резонанс.
      */
     private int ultimateHarmonic;
     /**
-     * найденные в пределах орбиса резонансы по росту гармоники
+     * Найденные в пределах орбиса аспекты по росту гармоники.
      */
-    private List<Aspect> aspects;
+    private List<Aspect> aspects = new ArrayList<>();
 
     /**
      * Получение массива аспектов для дуги между двумя астрами (конструктор)
@@ -59,38 +61,39 @@ public class Resonance {
      * @param ultimateHarmonic  до какой гармоники продолжать анализ.
      */
     Resonance(Astra a, Astra b, double orb, int ultimateHarmonic) {
+        type = a == b ?
+                IN_SELF :
+                a.getHeaven() == b.getHeaven() ?
+                        IN_MOMENT :
+                        INTER_MOMENTS;
         astra_1 = a;
-        if (a.equals(b)) {
-            type = SELF;
-        } else {
-            astra_2 = b;
-            type = a.getHeaven().getID() == b.getHeaven().getID() ?
-                    CHART : SYNASTRY;
-            arc = Mechanics.getArc(a, b);
-            this.orb = orb;
-            this.ultimateHarmonic = ultimateHarmonic;
+        astra_2 = b;
+        arc = Mechanics.getArc(a, b);
+        this.orb = orb;
+        this.ultimateHarmonic = ultimateHarmonic;
 
-            aspects = new ArrayList<>();
-            IntStream.rangeClosed(1, ultimateHarmonic).forEach(h -> {
-                double arcInHarmonic = normalizeArc(arc * h);
-                if (arcInHarmonic < orb && isNewSimple(h))
+        if (type == IN_SELF)
+            return;
+
+        IntStream.rangeClosed(1, ultimateHarmonic).forEach(h -> {
+            double arcInHarmonic = normalizeArc(arc * h);
+            if (arcInHarmonic < orb && isNewSimple(h))
                     aspects.add(new Aspect(h, arcInHarmonic, arc, orb));
-            });
-        }
+        });
     }
 
     /**
-     * Вспомогательный метод отсечения кратных гармоник при заполнении списка отзвуков.
-     * @param aNewNumber число, которое проверяется на кратность уже найденным отзвукам.
-     * @return {@code истинно}, если проверяемое число не кратно никакому из уже найденных (кроме 1),
+     * Вспомогательный метод отсечения кратных гармоник при заполнении списка аспектов.
+     * @param aNewNumber число, которое проверяется на кратность уже найденным аспектам.
+     * @return {@code истинно}, если проверяемое число не кратно никакому из {@link #aspects уже найденных} (кроме 1),
      * а также не является точным соединением, проходящим до данной гармоники. Следовательно,
-     * эту гармонику надо брать в набор. Если же {@code ложно}, брать её в набор не нужно.
+     * эту гармонику надо брать в {@link #aspects набор}. Если же {@code ложно}, брать её в набор не нужно.
      */
     private boolean isNewSimple(int aNewNumber) {
         boolean isConjunction = false;
 
         for (Aspect next : aspects) {
-            int aPreviousHarmonic = next.numeric;
+            int aPreviousHarmonic = next.getNumeric();
 
             if (aPreviousHarmonic == 1)
                 isConjunction = true;
@@ -115,14 +118,14 @@ public class Resonance {
             sb.append("Ни одного резонанса до %d при орбисе %s%n".formatted(ultimateHarmonic, orb));
         }
         for (Aspect aspect : getAspectsByStrength()) {
-            sb.append(ResonanceDescription(aspect.numeric, aspect.multiplier));
+            sb.append(ResonanceDescription(aspect.getNumeric(), aspect.getMultiplicity()));
             sb.append("Резонанс %d (x%d) - %s как %d (%.2f%%, %s)%n".formatted(
-                    aspect.numeric,
-                    aspect.multiplier,
+                    aspect.getNumeric(),
+                    aspect.getMultiplicity(),
                     aspect.strengthLevel(),
-                    aspect.depth,
-                    aspect.strength,
-                    secondFormat(aspect.clearance, true)));
+                    aspect.getDepth(),
+                    aspect.getStrength(),
+                    secondFormat(aspect.getClearance(), true)));
         }
         return sb.toString();
     }
@@ -130,10 +133,10 @@ public class Resonance {
     public String resonancesOutput() {
         StringBuilder sb = new StringBuilder();
         switch (type) {
-            case SELF -> sb.append("%n%c %s (%s)%n".formatted(
+            case IN_SELF -> sb.append("%n%c %s (%s)%n".formatted(
                     astra_1.getSymbol(), astra_1.getZodiacDegree(),
                     astra_1.getHeaven().getName()));
-            case CHART -> {
+            case IN_MOMENT -> {
                 sb.append("%n* Дуга между %c %s и %c %s (%s) = %s%n".formatted(
                         astra_1.getSymbol(), astra_1.getZodiacDegree(),
                         astra_2.getSymbol(), astra_2.getZodiacDegree(),
@@ -141,7 +144,7 @@ public class Resonance {
                         secondFormat(arc, true)));
                 sb.append(resoundsReport());
             }
-            case SYNASTRY -> {
+            case INTER_MOMENTS -> {
                 sb.append("%n* Дуга между %c %s (%s) и %c %s (%s) = %s%n".formatted(
                         astra_1.getSymbol(), astra_1.getZodiacDegree(),
                         astra_1.getHeaven().getName(),
@@ -169,15 +172,31 @@ public class Resonance {
             sb.append("Ни одного резонанса до %d при орбисе %s%n".formatted(ultimateHarmonic, orb));
         }
         for (Aspect aspect : getAspectsByStrength()) {
-            sb.append(ResonanceDescription(aspect.numeric, aspect.multiplier));
+            sb.append(ResonanceDescription(aspect.getNumeric(), aspect.getMultiplicity()));
             sb.append("Резонанс %d/%d %s (%.0f%%) --- %.2f %n".formatted(
-                    aspect.multiplier,
-                    aspect.numeric,
+                    aspect.getMultiplicity(),
+                    aspect.getNumeric(),
                     aspect.strengthRating(),
-                    aspect.strength,
-                    aspect.strength / Math.pow(Math.log(aspect.numeric + 1.0), 0.5)));
+                    aspect.getStrength(),
+                    aspect.getStrength() / Math.pow(Math.log(aspect.getNumeric() + 1.0), 0.5)));
         }
         return sb.toString();
+    }
+
+    public boolean hasHarmonicResonance(int harmonic) {
+        for (Aspect a : aspects)
+            for (int m : a.getMultipliers())
+                if (m == harmonic)
+                    return true;
+        return false;
+    }
+
+    public boolean hasExactHarmonic(int harmonic) {
+        for (Aspect a : aspects) {
+            if (a.getNumeric() == harmonic)
+                return true;
+        }
+        return false;
     }
 
 }

@@ -5,5 +5,5 @@ package ru.swetophor.resogrid;
  * передаваемых в резонанс
 */
 public enum ResonanceType {
-    SELF, CHART, SYNASTRY
+    IN_SELF, IN_MOMENT, INTER_MOMENTS
 }

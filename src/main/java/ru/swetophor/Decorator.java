@@ -4,14 +4,14 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 
-public class Shell {
-    static String autosaveName() {
+public class Decorator {
+    public static String autosaveName() {
         return "сохранение %s.awb"
                 .formatted(new SimpleDateFormat("E d MMMM .yy HH-mm")
                         .format(new Date()));
     }
 
-    static String frameText(String text,
+    public static String frameText(String text,
                             int minWidth,
                             int maxWidth,
                             char leftTop,
@@ -45,7 +45,7 @@ public class Shell {
         return output.toString();
     }
 
-    static String frameText(String text, int minWidth, char symbol) {
+    public static String frameText(String text, int minWidth, char symbol) {
         return frameText(text, minWidth, 80, symbol, symbol, symbol, symbol, symbol, symbol);
     }
 

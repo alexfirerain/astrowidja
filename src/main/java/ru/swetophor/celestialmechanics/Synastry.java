@@ -2,6 +2,7 @@ package ru.swetophor.celestialmechanics;
 
 import lombok.Getter;
 import lombok.Setter;
+import ru.swetophor.Decorator;
 import ru.swetophor.resogrid.Matrix;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class Synastry extends MultiChart {
 
     {
         type = ChartType.SYNASTRY;
-        moments = new ArrayList<>(2);
+        moments = new Chart[2];
     }
 
     protected Matrix aspects;
@@ -26,8 +27,8 @@ public class Synastry extends MultiChart {
      */
     public Synastry(Chart chart1, Chart chart2) {
         super("Синастрия: %s и %s".formatted(chart1.name, chart2.name));
-        moments.add(chart1);
-        moments.add(chart2);
+        moments[0] = chart1;
+        moments[1] = chart2;
         aspects = new Matrix(chart1.getAstras(), chart2.getAstras());
     }
 
@@ -38,29 +39,29 @@ public class Synastry extends MultiChart {
                         **************************************
                         """,
                 type,
-                moments.get(0).name,
-                moments.get(1).name,
+                moments[0].name,
+                moments[1].name,
                 ID);
         System.out.println(aspects.resultsOutput());
     }
 
     public Chart getChartA() {
-        return moments.get(0);
+        return moments[0];
     }
 
     public Chart getChartB() {
-        return moments.get(1);
+        return moments[1];
     }
 
     @Override
     public List<Astra> getAstras() {
         List<Astra> r = new ArrayList<>();
-        getChartA().getAstras().forEach(a -> {
+        moments[0].getAstras().forEach(a -> {
             a.setName("%s (%s)"
                     .formatted(a.getName(), a.getHeaven()));
             r.add(a);
         });
-        getChartB().getAstras().forEach(a -> {
+        moments[1].getAstras().forEach(a -> {
             a.setName("%s (%s)"
                     .formatted(a.getName(), a.getHeaven()));
             r.add(a);
@@ -77,15 +78,22 @@ public class Synastry extends MultiChart {
 
     @Override
     public String getAspectTable() {
-        return """
-                        **************************************
-                        * %s: %s и %s (№%d) *
-                        **************************************
-                        """.formatted(
-                                type,
-                                moments.get(0).name,
-                                moments.get(1).name,
-                                ID) +
+        String title = "%s: %s и %s (№%d)".formatted(
+                type,
+                moments[0].name,
+                moments[1].name,
+                ID);
+        return getCaption() +
+                "\n" +
                 aspects.resultsOutput();
+    }
+
+    public String getCaption() {
+        return super.getCaption("%s: %s и %s (№%d)"
+                .formatted(
+                    type,
+                    moments[0].name,
+                    moments[1].name,
+                    ID));
     }
 }
