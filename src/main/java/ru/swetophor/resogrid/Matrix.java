@@ -188,6 +188,31 @@ public class Matrix {
                 return getResonancesFor(i);
         return null;
     }
+    /**
+     * Список всех резонансов для указанной астры.
+     * Для космограммы выдаёт взаимодействие астры со всеми остальными астрами карты.
+     * Для синастрии выдаёт взаимодействие астры указанной карты со всеми астрами другой.
+     * @param astra астра (из любой карты).
+     * @return список резонансов, которые имеет указанная астра.
+     */
+    public List<Resonance> getResonancesFor(Astra astra) {
+        if (datum1.length == 0)
+            throw new IllegalStateException("Матрица пуста.");
+
+        if (astra.getHeaven() == datum1[0].getHeaven()) {
+            for (int i = 0; i < datum1.length; i++)
+                if (datum1[i].equals(astra))
+                    return getResonancesFor(i);
+        } else {
+            if (datum2.length == 0) throw new IllegalStateException("Матрица пуста.");
+            if (datum2[0].getHeaven() != astra.getHeaven()) return null;
+
+            for (int i = 0; i < datum2.length; i++)
+                if (datum2[i].equals(astra))
+                    return getResonancesOfBackChartFor(i);
+        }
+        return null;
+    }
 
     /**
      * Список всех резонансов для астры с указанным именем из второй карты.
@@ -205,7 +230,7 @@ public class Matrix {
     }
 
     public List<Astra> getConnectedAstras(Astra astra, int harmonic) {
-        return getResonancesFor(astra.getName())
+        return getResonancesFor(astra)
                 .stream().filter(r -> r.hasHarmonicPattern(harmonic))
                 .map(Resonance::getAstra_2)
                 .collect(Collectors.toList());

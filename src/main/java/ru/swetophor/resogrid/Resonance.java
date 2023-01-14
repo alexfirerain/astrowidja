@@ -199,10 +199,14 @@ public class Resonance {
 
     public boolean hasHarmonicPattern(int harmonic) {
         for (Aspect a : aspects) {
-            if (a.getNumeric() == harmonic ||
-                    a.getMultipliers().contains(harmonic)
-                            &&
-                            a.getNumeric() / harmonic <= a.getDepth())
+            int aKnownAspect = a.getNumeric();
+            if (aKnownAspect == harmonic ||
+                    (aKnownAspect == 1 ||
+                            Mechanics.multipliersExplicate(harmonic)
+                                                .contains(aKnownAspect)
+                    )
+                    &&
+                        harmonic / aKnownAspect <= a.getDepth())
                 return true;
         }
         return false;
