@@ -45,6 +45,9 @@ abstract public class ChartObject {
 
     public abstract List<Astra> getAstras();
 
+    /**
+     * @return строку с перечислением зодиакальных положений астр.
+     */
     public abstract String getAstrasList();
     public abstract String getAspectTable();
 

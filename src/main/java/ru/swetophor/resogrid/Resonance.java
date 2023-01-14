@@ -171,7 +171,7 @@ public class Resonance {
         if (aspects.isEmpty()) {
             sb.append("Ни одного резонанса до %d при орбисе %s%n".formatted(ultimateHarmonic, orb));
         }
-        for (Aspect aspect : getAspectsByStrength()) {
+        getAspectsByStrength().forEach(aspect -> {
             sb.append(ResonanceDescription(aspect.getNumeric(), aspect.getMultiplicity()));
             sb.append("Резонанс %d/%d %s (%.0f%%) --- %.2f %n".formatted(
                     aspect.getMultiplicity(),
@@ -179,24 +179,35 @@ public class Resonance {
                     aspect.strengthRating(),
                     aspect.getStrength(),
                     aspect.getStrength() / Math.pow(Math.log(aspect.getNumeric() + 1.0), 0.5)));
-        }
+        });
         return sb.toString();
     }
 
-    public boolean hasHarmonicResonance(int harmonic) {
+    public boolean hasResonanceElement(int harmonic) {
         for (Aspect a : aspects)
-            for (int m : a.getMultipliers())
-                if (m == harmonic)
+            if (a.getMultipliers().contains(harmonic))
                     return true;
         return false;
     }
 
-    public boolean hasExactHarmonic(int harmonic) {
-        for (Aspect a : aspects) {
+    public boolean hasGivenHarmonic(int harmonic) {
+        for (Aspect a : aspects)
             if (a.getNumeric() == harmonic)
+                return true;
+        return false;
+    }
+
+    public boolean hasHarmonicPattern(int harmonic) {
+        for (Aspect a : aspects) {
+            if (a.getNumeric() == harmonic ||
+                    a.getMultipliers().contains(harmonic)
+                            &&
+                            a.getNumeric() / harmonic <= a.getDepth())
                 return true;
         }
         return false;
     }
+
+
 
 }

@@ -80,13 +80,13 @@ public class Chart extends ChartObject {
     @Override
     public String getAspectTable() {
         calculateAspectTable();
-        return """
+        return getCaption() +
+                aspects.resultsOutput();
+    }
 
-                **************************************
-                * %s: %s (№%d) *
-                **************************************
-                """.formatted(type, name, ID)
-                + aspects.resultsOutput();
+    public String getCaption() {
+        return super.getCaption("%s: %s (№%d)"
+                .formatted(type, name, ID));
     }
 
 
@@ -181,6 +181,14 @@ public class Chart extends ChartObject {
         return null;
     }
 
+    public List<List<Astra>> findResonanceGroups(int harmonic) {
+        List<List<Astra>> groups = new ArrayList<>();
+
+
+
+
+        return groups;
+    }
 }
 
 

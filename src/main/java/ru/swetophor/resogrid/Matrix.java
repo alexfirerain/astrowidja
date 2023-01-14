@@ -5,8 +5,12 @@ import lombok.Setter;
 import ru.swetophor.Settings;
 import ru.swetophor.celestialmechanics.Astra;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static ru.swetophor.celestialmechanics.Mechanics.CIRCLE;
 import static ru.swetophor.resogrid.MatrixType.COSMOGRAM;
@@ -109,6 +113,102 @@ public class Matrix {
      */
     public Matrix(List<Astra> astras) {
         this(astras, astras);
+    }
+
+    /**
+     * Выдаёт полный список уникальных резонансов матрицы:
+     * для космограммы резонанс каждой астры со всеми последующими,
+     * для синастрии резонанс каждой астры первой карты с каждой астрой второй.
+     * @return список всех резонансов в том же порядке, как при выдаче описания.
+     */
+    public List<Resonance> getAllResonances() {
+        List<Resonance> content = new ArrayList<>();
+        switch (type) {
+            case SYNASTRY -> // таблица всех астр одной на все астры другой
+                    content = IntStream.range(0, datum1.length)
+                                .mapToObj(x -> Arrays.asList(resonances[x])
+                                    .subList(0, datum2.length))
+                                .flatMap(Collection::stream)
+                                .collect(Collectors.toList());
+            case COSMOGRAM -> {                               // полутаблица астр карты между собой
+                for (int i = 0; i < datum1.length; i++)
+                    content.addAll(Arrays.asList(
+                            resonances[i]).subList(i + 1, datum2.length));
+            }
+        }
+        return content;
+    }
+
+    /**
+     * Список всех резонансов для астры с указанным номером в списке астр.
+     * Для космограммы выдаёт взаимодействие определённой астры со всеми
+     * остальными астрами карты.
+     * Для синастрии выдаёт взаимодействие определённой астры первой карты
+     * со всеми астрами второй.
+     * @param astraOrdinal номер астры в списке астр карты.
+     * @return список резонансов, которые имеет астра с указанным номером.
+     */
+    public List<Resonance> getResonancesFor(int astraOrdinal) {
+        if (astraOrdinal < 0 || astraOrdinal >= datum1.length)
+            return null;
+        return Arrays.stream(resonances[astraOrdinal])
+                .filter(r -> r.getType() != ResonanceType.IN_SELF)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Список всех резонансов для астры с указанным номером в списке астр
+     * из второй карты.
+     * Для космограммы выдаёт то же, что {@link #getResonancesFor(int)}.
+     * Для синастрии выдаёт взаимодействие определённой астры второй карты
+     * со всеми астрами первой.
+     * @param astraOrdinal номер астры в списке астр второй карты.
+     * @return список резонансов, которые имеет астра с указанным номером
+     * из второй карты.
+     */
+    public List<Resonance> getResonancesOfBackChartFor(int astraOrdinal) {
+        if (astraOrdinal < 0 || astraOrdinal >= datum2.length)
+            return null;
+        return Arrays.stream(resonances)
+                .map(row -> row[astraOrdinal])
+                .filter(r -> r.getType() != ResonanceType.IN_SELF)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Список всех резонансов для астры с указанным именем.
+     * Для космограммы выдаёт взаимодействие определённой астры со всеми остальными астрами карты.
+     * Для синастрии выдаёт взаимодействие определённой астры первой карты со всеми астрами второй.
+     * @param astraName имя астры (в случае синастрии имеется в виду первая карта).
+     * @return список резонансов, которые имеет астра с указанным именем.
+     */
+    public List<Resonance> getResonancesFor(String astraName) {
+        for (int i = 0; i < datum1.length; i++)
+            if (datum1[i].getName().equals(astraName))
+                return getResonancesFor(i);
+        return null;
+    }
+
+    /**
+     * Список всех резонансов для астры с указанным именем из второй карты.
+     * Для космограммы выдаёт то же, что {@link #getResonancesFor(String)}.
+     * Для синастрии выдаёт взаимодействие определённой астры второй карты
+     * со всеми астрами первой.
+     * @param astraName имя астры из второй карты.
+     * @return список резонансов, которые имеет указанная астра из второй карты.
+     */
+    public List<Resonance> getResonancesOfBackChartFor(String astraName) {
+        for (int i = 0; i < datum2.length; i++)
+            if (datum2[i].getName().equals(astraName))
+                return getResonancesOfBackChartFor(i);
+        return null;
+    }
+
+    public List<Astra> getConnectedAstras(Astra astra, int harmonic) {
+        return getResonancesFor(astra.getName())
+                .stream().filter(r -> r.hasHarmonicPattern(harmonic))
+                .map(Resonance::getAstra_2)
+                .collect(Collectors.toList());
     }
 
 }
