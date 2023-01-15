@@ -96,7 +96,8 @@ public class Application {
 
 //        addChart(SCChart, TVChart, doubleChart, SCTVComposite);
 
-        loadFromFile("autosave.awb");
+        loadFromFile("сохранение вс 15 января .23 15-03.awb");
+//        loadFromFile("autosave.awb");
 
         mainCycle();
 
@@ -105,7 +106,7 @@ public class Application {
 
 
     private static void printChartStat(ChartObject chart) {
-            System.out.println(chart.getAstrasList());
+        System.out.println(chart.getAstrasList());
         System.out.println(chart.getAspectTable());
         chart.printResonanceAnalysis(Settings.getEdgeHarmonic());
     }
