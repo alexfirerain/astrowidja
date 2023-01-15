@@ -216,11 +216,19 @@ public class Resonance {
     }
 
     public Astra getAstra_1() {
-        return this.astra_1;
+        return astra_1;
     }
 
     public Astra getAstra_2() {
-        return this.astra_2;
+        return astra_2;
+    }
+
+    public Astra getCounterpart(Astra taken) {
+        if (astra_1.equals(taken))
+            return astra_2;
+        if (astra_2.equals(taken))
+            return astra_1;
+        return null;
     }
 
     public double getArc() {

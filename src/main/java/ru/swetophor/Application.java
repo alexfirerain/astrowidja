@@ -82,16 +82,16 @@ public class Application {
     public static void main(String[] args) {
         welcome();
 
-        Chart SCChart = Chart.readFromString(SC);
+//        Chart SCChart = Chart.readFromString(SC);
 //        printChartStat(SCChart);
 
-        Chart TVChart = Chart.readFromString(TV);
+//        Chart TVChart = Chart.readFromString(TV);
 //        printChartStat(TVChart);
 
-        Synastry doubleChart = new Synastry(SCChart, TVChart);
+//        Synastry doubleChart = new Synastry(SCChart, TVChart);
 //        doubleChart.plotAspectTable();
 
-        Chart SCTVComposite = Chart.composite(SCChart, TVChart);
+//        Chart SCTVComposite = Chart.composite(SCChart, TVChart);
 //        printChartStat(SCTVComposite);
 
 //        addChart(SCChart, TVChart, doubleChart, SCTVComposite);
@@ -289,7 +289,8 @@ public class Application {
     }
 
     /**
-     * Прочитывает карты из файла в попке базы данных.
+     * Прочитывает карты из файла в папке базы данных.
+     *
      * @param file имя файла в папке базы данных.
      */
     public static void loadFromFile(String file) {

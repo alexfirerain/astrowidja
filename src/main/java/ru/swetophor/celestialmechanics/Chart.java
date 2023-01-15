@@ -186,12 +186,11 @@ public class Chart extends ChartObject {
     public List<List<Astra>> findResonanceGroups(int harmonic) {
         List<List<Astra>> patterns = new ArrayList<>();
         boolean[] analyzed = new boolean[astras.size()];
-        for (int i = 0; i < astras.size(); i++)
-            if (!analyzed[i]) {
-                List<Astra> pattern = analyzeAstra(i, harmonic, analyzed);
-                siftPattern(pattern, harmonic);
-                patterns.add(pattern);
-            }
+        IntStream.range(0, astras.size())
+                .filter(i -> !analyzed[i])
+                .mapToObj(i -> analyzeAstra(i, harmonic, analyzed))
+                .filter(pattern -> isValidPattern(pattern, harmonic))
+                .forEach(patterns::add);
         return patterns;
     }
 
@@ -209,21 +208,29 @@ public class Chart extends ChartObject {
         return currentPattern;
     }
 
-    private void siftPattern(List<Astra> pattern, int harmonic) {
-        boolean hasNominalResonance = false;
-        if (pattern.size() < 2)
-            pattern.clear();
-
+    /**
+     * Вспомогательный предикат, удостоверяющий, что в группе астр наличествует
+     * указанный аспект в явном виде для хотя бы одной пары.
+     *
+     * @param pattern  анализируемый астропаттерн.
+     * @param harmonic число резонанса, который надо удостоверить.
+     * @return {@code false}, если паттерна нет, если он пуст или содержит только
+     * одну астру, или если ни в одной из пар элементов нет указанного резонанса
+     * в явном виде. {@code true}, если хотя бы в одной паре номинальный резонанс
+     * наличествует.
+     */
+    private boolean isValidPattern(List<Astra> pattern, int harmonic) {
+        if (pattern == null || pattern.size() < 2)
+            return false;
         for (int i = 0; i < pattern.size() - 1; i++)
             for (int j = i + 1; j < pattern.size(); j++)
                 if (aspects.astrasInResonance(pattern.get(i), pattern.get(j), harmonic))
-                    hasNominalResonance = true;
-
-        if (!hasNominalResonance)
-            pattern.clear();
+                    return true;
+        return false;
     }
 
-    public void printResonanceGroups(int harmonic) {
+
+    public void printResonanceGroupsStupid(int harmonic) {
         List<List<Astra>> groups = findResonanceGroups(harmonic);
         for (List<Astra> pattern : groups) {
             if (!pattern.isEmpty()) {
@@ -245,10 +252,34 @@ public class Chart extends ChartObject {
                 Settings.getOrbsDivider());
     }
 
+    private String patternReport(int harmonic) {
+        StringBuilder string = new StringBuilder(harmonic + ": ");
+
+        List<List<Astra>> groups = findResonanceGroups(harmonic);
+
+        if (groups.isEmpty())
+            return string.append("-").toString();
+
+        groups.stream()
+                .filter(group -> !group.isEmpty())
+                .forEach(group -> {
+                    group.stream()
+                            .map(Astra::getSymbol)
+                            .forEach(string::append);
+                    string.append(" | ");
+                });
+
+        return string.toString();
+    }
+
     @Override
     public void printResonanceAnalysis(int upToHarmonic) {
+        System.out.printf("Резонансные группы для %s до гармоники %d с исходным орбисом 1/%d%n",
+                name,
+                upToHarmonic,
+                Settings.getOrbsDivider());
         IntStream.rangeClosed(1, upToHarmonic)
-                .forEach(this::printResonanceGroups);
+                .forEach(h -> System.out.println(patternReport(h)));
     }
 
 }

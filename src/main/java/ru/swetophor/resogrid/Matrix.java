@@ -241,10 +241,20 @@ public class Matrix {
     public List<Astra> getConnectedAstras(Astra astra, int harmonic) {
         return getResonancesFor(astra)
                 .stream().filter(r -> r.hasHarmonicPattern(harmonic))
-                .map(Resonance::getAstra_2)
+                .map(resonance -> resonance.getCounterpart(astra))
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Предикат, удостоверяющий, что между двумя указанными астрами
+     * существует явный резонанс по указнному числу.
+     *
+     * @param a        первая астра (для синастрии астра из первой карты).
+     * @param b        вторая астра (для синастрии астра со второй карты).
+     * @param harmonic число, резонанс по которому интересует.
+     * @return {@code true}, если обе астры имеются в матрице, и
+     * между ними имеется явное взаимодействие по указанной гармонике.
+     */
     public boolean astrasInResonance(Astra a, Astra b, int harmonic) {
         Resonance crossing = findResonance(a, b);
         if (crossing == null)
@@ -252,9 +262,23 @@ public class Matrix {
         return crossing.hasGivenHarmonic(harmonic);
     }
 
+    /**
+     * Вытаскивает из матрицы конкретный объект резонанса
+     * между двумя указанными астрами.
+     *
+     * @param a первая астра (для синастрии астра из первой карты).
+     * @param b вторая астра (для синастрии астра со второй карты).
+     * @return резонанс из матрицы на пересечении строки первой астры
+     * с колонкой второй;
+     * если хотя бы одна из астр не найдена, или в обоих параметрах
+     * указана идентичная астра, то {@code null}.
+     */
     private Resonance findResonance(Astra a, Astra b) {
         if (datum1.length == 0 || datum2.length == 0)
             throw new IllegalStateException("Матрица пуста.");
+
+        if (a.equals(b))
+            return null;
 
         int x = -1, y = -1;
 
