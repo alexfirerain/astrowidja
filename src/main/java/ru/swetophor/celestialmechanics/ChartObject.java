@@ -49,9 +49,12 @@ abstract public class ChartObject {
      * @return строку с перечислением зодиакальных положений астр.
      */
     public abstract String getAstrasList();
+
     public abstract String getAspectTable();
 
     protected String getCaption(String title) {
         return Decorator.frameText(title, 30, '*');
     }
+
+    public abstract void printResonanceAnalysis(int upToHarmonic);
 }

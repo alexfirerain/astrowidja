@@ -94,7 +94,7 @@ public class Application {
         Chart SCTVComposite = Chart.composite(SCChart, TVChart);
 //        printChartStat(SCTVComposite);
 
-        addChart(SCChart, TVChart, doubleChart, SCTVComposite);
+//        addChart(SCChart, TVChart, doubleChart, SCTVComposite);
 
         loadFromFile("autosave.awb");
 
@@ -106,7 +106,8 @@ public class Application {
 
     private static void printChartStat(ChartObject chart) {
             System.out.println(chart.getAstrasList());
-            System.out.println(chart.getAspectTable());
+        System.out.println(chart.getAspectTable());
+        chart.printResonanceAnalysis(Settings.getEdgeHarmonic());
     }
 
     static public int id = 0;
@@ -185,6 +186,8 @@ public class Application {
             printChartStat(DESK.get(order));
         else
             System.out.println("Карты с именем " + order + " не найдено.");
+
+
     }
 
     /**

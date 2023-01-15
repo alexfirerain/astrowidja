@@ -2,11 +2,13 @@ package ru.swetophor.celestialmechanics;
 
 
 import lombok.Setter;
+import ru.swetophor.Settings;
 import ru.swetophor.resogrid.Matrix;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static ru.swetophor.celestialmechanics.Mechanics.*;
 
@@ -182,13 +184,73 @@ public class Chart extends ChartObject {
     }
 
     public List<List<Astra>> findResonanceGroups(int harmonic) {
-        List<List<Astra>> groups = new ArrayList<>();
-
-
-
-
-        return groups;
+        List<List<Astra>> patterns = new ArrayList<>();
+        boolean[] analyzed = new boolean[astras.size()];
+        for (int i = 0; i < astras.size(); i++)
+            if (!analyzed[i]) {
+                List<Astra> pattern = analyzeAstra(i, harmonic, analyzed);
+                siftPattern(pattern, harmonic);
+                patterns.add(pattern);
+            }
+        return patterns;
     }
+
+    private List<Astra> analyzeAstra(int astraIndex, int harmonic, boolean[] analyzed) {
+        analyzed[astraIndex] = true;
+        List<Astra> currentPattern = new ArrayList<>();
+        currentPattern.add(astras.get(astraIndex));
+        for (Astra a :
+                aspects.getConnectedAstras(astras.get(astraIndex), harmonic)) {
+            int i = astras.indexOf(a);
+            if (!analyzed[i])
+                currentPattern.addAll(analyzeAstra(i, harmonic, analyzed));
+        }
+
+        return currentPattern;
+    }
+
+    private void siftPattern(List<Astra> pattern, int harmonic) {
+        boolean hasNominalResonance = false;
+        if (pattern.size() < 2)
+            pattern.clear();
+
+        for (int i = 0; i < pattern.size() - 1; i++)
+            for (int j = i + 1; j < pattern.size(); j++)
+                if (aspects.astrasInResonance(pattern.get(i), pattern.get(j), harmonic))
+                    hasNominalResonance = true;
+
+        if (!hasNominalResonance)
+            pattern.clear();
+    }
+
+    public void printResonanceGroups(int harmonic) {
+        List<List<Astra>> groups = findResonanceGroups(harmonic);
+        for (List<Astra> pattern : groups) {
+            if (!pattern.isEmpty()) {
+                System.out.printf("Резонансные группы по числу %d для %s:%n", harmonic, name);
+                groups.stream()
+                        .filter(group -> !group.isEmpty())
+                        .forEach(group -> {
+                            group.stream()
+                                    .map(Astra::getSymbol)
+                                    .forEach(System.out::print);
+                            System.out.println();
+                        });
+                return;
+            }
+        }
+        System.out.printf("Резонансных групп по числу %d для %s не найдено при орбисе 1/%d%n",
+                harmonic,
+                name,
+                Settings.getOrbsDivider());
+    }
+
+    @Override
+    public void printResonanceAnalysis(int upToHarmonic) {
+        IntStream.rangeClosed(1, upToHarmonic)
+                .forEach(this::printResonanceGroups);
+    }
+
 }
 
 

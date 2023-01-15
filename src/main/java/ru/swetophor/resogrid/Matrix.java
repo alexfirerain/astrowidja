@@ -229,11 +229,47 @@ public class Matrix {
         return null;
     }
 
+    /**
+     * Выдаёт список астр, находящихся в резонансе с данной по указанной гармонике.
+     *
+     * @param astra    астра, резонансы с которой ищутся.
+     * @param harmonic число, по которому определяется резонанс.
+     * @return список астр, находящих в резонансе с данной по указанной гармонике.
+     * Для космограммы просматриваются все остальные астры карты,
+     * для синастрии все астры второй карты.
+     */
     public List<Astra> getConnectedAstras(Astra astra, int harmonic) {
         return getResonancesFor(astra)
                 .stream().filter(r -> r.hasHarmonicPattern(harmonic))
                 .map(Resonance::getAstra_2)
                 .collect(Collectors.toList());
+    }
+
+    public boolean astrasInResonance(Astra a, Astra b, int harmonic) {
+        Resonance crossing = findResonance(a, b);
+        if (crossing == null)
+            return false;
+        return crossing.hasGivenHarmonic(harmonic);
+    }
+
+    private Resonance findResonance(Astra a, Astra b) {
+        if (datum1.length == 0 || datum2.length == 0)
+            throw new IllegalStateException("Матрица пуста.");
+
+        int x = -1, y = -1;
+
+        for (int i = 0; i < datum1.length; i++)
+            if (datum1[i].equals(a))
+                x = i;
+
+        for (int i = 0; i < datum2.length; i++)
+            if (datum2[i].equals(b))
+                y = i;
+
+        if (x == -1 || y == -1)
+            return null;
+
+        return resonances[x][y];
     }
 
 }

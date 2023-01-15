@@ -1,6 +1,5 @@
 package ru.swetophor.resogrid;
 
-import lombok.Getter;
 import lombok.Setter;
 import ru.swetophor.celestialmechanics.Astra;
 import ru.swetophor.celestialmechanics.Mechanics;
@@ -21,7 +20,6 @@ import static ru.swetophor.resogrid.ResonanceType.*;
  * для этой {@link #arc дуги} {@link Aspect Аспектов}.
  */
 @Setter
-@Getter
 public class Resonance {
     /**
      * Тип резонанса:
@@ -203,15 +201,41 @@ public class Resonance {
             if (aKnownAspect == harmonic ||
                     (aKnownAspect == 1 ||
                             Mechanics.multipliersExplicate(harmonic)
-                                                .contains(aKnownAspect)
+                                    .contains(aKnownAspect)
                     )
-                    &&
-                        harmonic / aKnownAspect <= a.getDepth())
+                            &&
+                            harmonic / aKnownAspect <= a.getDepth())
                 return true;
         }
         return false;
     }
 
 
+    public ResonanceType getType() {
+        return this.type;
+    }
 
+    public Astra getAstra_1() {
+        return this.astra_1;
+    }
+
+    public Astra getAstra_2() {
+        return this.astra_2;
+    }
+
+    public double getArc() {
+        return this.arc;
+    }
+
+    public double getOrb() {
+        return this.orb;
+    }
+
+    public int getUltimateHarmonic() {
+        return this.ultimateHarmonic;
+    }
+
+    public List<Aspect> getAspects() {
+        return this.aspects;
+    }
 }

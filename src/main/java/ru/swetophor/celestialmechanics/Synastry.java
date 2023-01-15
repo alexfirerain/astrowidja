@@ -2,7 +2,6 @@ package ru.swetophor.celestialmechanics;
 
 import lombok.Getter;
 import lombok.Setter;
-import ru.swetophor.Decorator;
 import ru.swetophor.resogrid.Matrix;
 
 import java.util.ArrayList;
@@ -88,12 +87,20 @@ public class Synastry extends MultiChart {
                 aspects.resultsOutput();
     }
 
+    /**
+     * @param upToHarmonic до какой
+     */
+    @Override
+    public void printResonanceAnalysis(int upToHarmonic) {
+
+    }
+
     public String getCaption() {
         return super.getCaption("%s: %s и %s (№%d)"
                 .formatted(
-                    type,
-                    moments[0].name,
-                    moments[1].name,
-                    ID));
+                        type,
+                        moments[0].name,
+                        moments[1].name,
+                        ID));
     }
 }
