@@ -35,7 +35,7 @@ public class Matrix {
     /**
      * Двумерный массив резонансов между астрами.
      */
-    protected static Resonance[][] resonances;
+    protected Resonance[][] resonances;
     /**
      * Крайняя гармоника, до которой рассматриваются резонансы.
      */
@@ -82,18 +82,24 @@ public class Matrix {
      * @param orbsDivider   делитель для определения начального орбиса.
      */
     public Matrix(List<Astra> astras_1, List<Astra> astras_2, int edgeHarmonic, int orbsDivider) {
-        this.edgeHarmonic = edgeHarmonic;
-        this.orbsDivider = orbsDivider;
         datum1 = astras_1.toArray(Astra[]::new);
         datum2 = astras_2.toArray(Astra[]::new);
         type = Arrays.equals(datum1, datum2) ? COSMOGRAM : SYNASTRY;
+
+        this.orbsDivider = type == SYNASTRY &&
+                Settings.isHalfOrbsForDoubles() ?
+                orbsDivider * 2 :
+                orbsDivider;
+
+        this.edgeHarmonic = edgeHarmonic;
+
         resonances = new Resonance[astras_1.size()][astras_2.size()];
         for (int i = 0; i < datum1.length; i++)
             for (int j = 0; j < datum2.length; j++)
                 resonances[i][j] = new Resonance(datum1[i],
-                                                datum2[j],
-                                                CIRCLE / this.orbsDivider,
-                                                this.edgeHarmonic);
+                        datum2[j],
+                        CIRCLE / this.orbsDivider,
+                        this.edgeHarmonic);
     }
 
     /**
@@ -103,7 +109,7 @@ public class Matrix {
      * @param astras_2   второй массив астр
      */
     public Matrix(List<Astra> astras_1, List<Astra> astras_2) {
-        this(astras_1, astras_2, Settings.getEdgeHarmonic(), Settings.getOrbsDivider());
+        this(astras_1, astras_2, Settings.getEdgeHarmonic(), Settings.getOrbDivider());
     }
 
     /**
@@ -247,7 +253,7 @@ public class Matrix {
 
     /**
      * Предикат, удостоверяющий, что между двумя указанными астрами
-     * существует явный резонанс по указнному числу.
+     * существует явный резонанс по указанному числу.
      *
      * @param a        первая астра (для синастрии астра из первой карты).
      * @param b        вторая астра (для синастрии астра со второй карты).

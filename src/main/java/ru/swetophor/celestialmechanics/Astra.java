@@ -68,7 +68,11 @@ public class Astra {
         return Astra.fromData(elements[0], coors);
     }
 
-
+    /**
+     * Выдаёт инфу об астре в виде "название (градус_зодиака)"
+     *
+     * @return строку с названием и градусом астры.
+     */
     public String getNameWithZodiacDegree() {
         return "%s (%s)".formatted(name, getZodiacDegree());
     }
@@ -97,14 +101,41 @@ public class Astra {
         this.zodiacPosition = zodiacPosition;
     }
 
+    /**
+     * Выдаёт зодиакальное положение астры, как предоставляется
+     * функцией {@link Mechanics#zodiacDegree(double)}
+     *
+     * @return строковое представление зодиакального градуса, в котором расположена астра.
+     */
     public String getZodiacDegree() {
         return zodiacDegree(zodiacPosition);
     }
 
+    /**
+     * Выдаёт астрологический символ для астры, если она распознана по названию
+     * в библиотеке {@link AstraEntity}. Если имя не найдено среди псевдонимов,
+     * возвращается '*'.
+     *
+     * @return астрологический символ дя известных астр, '*' для неизвестных.
+     */
     public char getSymbol() {
         return AstraEntity.findSymbolFor(name);
     }
 
+    public String getSymbolWithDegree() {
+        return "%s (%s)".formatted(getSymbol(), getZodiacDegree());
+    }
+
+    public String getSymbolWithOwner() {
+        return "%s (%s)".formatted(getSymbol(), heaven.getShortenedName(8));
+    }
+
+    /**
+     * Возвращает строку того формата, который принят для хранения
+     * данных о положении астры при сохранении.
+     *
+     * @return строку с инфой об астре вида "название градусы минуты секунды".
+     */
     public String getString() {
         int[] coors = degreesToCoors(zodiacPosition);
         return "%s %s %s %s%n"

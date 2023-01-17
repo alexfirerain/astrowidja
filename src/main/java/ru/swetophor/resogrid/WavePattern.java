@@ -1,12 +1,13 @@
 package ru.swetophor.resogrid;
 
 import ru.swetophor.Settings;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
 import static java.lang.String.format;
-import static ru.swetophor.Settings.getOrbsDivider;
+import static ru.swetophor.Settings.getOrbDivider;
 import static ru.swetophor.celestialmechanics.Mechanics.*;
 
 public class WavePattern {
@@ -48,8 +49,8 @@ public class WavePattern {
             message.append(format("Всего найдено %d пересечений, считая до гармоники %d", b, edgeOfPatternHarmonics));
 
         message.append(" при орбисе %s (1/%d часть круга)%n".formatted(
-                            secondFormat(CIRCLE / getOrbsDivider(),true),
-                            getOrbsDivider()));
+                secondFormat(CIRCLE / getOrbDivider(), true),
+                getOrbDivider()));
         return message.toString();
     }
 
@@ -128,7 +129,7 @@ public class WavePattern {
             this.harmonic = i;
             this.multiplier = k;
             this.arc = normalizeCoordinate(CIRCLE / harmonic * multiplier);
-            this.aspectOrbs = CIRCLE / getOrbsDivider() / harmonic;
+            this.aspectOrbs = CIRCLE / getOrbDivider() / harmonic;
         }
         /**
          * Начало действия аспекта.

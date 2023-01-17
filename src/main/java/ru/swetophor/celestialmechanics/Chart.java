@@ -5,7 +5,10 @@ import lombok.Setter;
 import ru.swetophor.Settings;
 import ru.swetophor.resogrid.Matrix;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -245,7 +248,7 @@ public class Chart extends ChartObject {
         System.out.printf("Резонансных групп по числу %d для %s не найдено при орбисе 1/%d%n",
                 harmonic,
                 name,
-                Settings.getOrbsDivider());
+                Settings.getOrbDivider());
     }
 
     private String patternReport(int harmonic) {
@@ -281,7 +284,7 @@ public class Chart extends ChartObject {
     public void printResonanceAnalysis(int upToHarmonic) {
         StringBuilder output = new StringBuilder(
                 "Резонансные группы для %s до гармоники %d с исходным орбисом 1/%d%n"
-                    .formatted(name, upToHarmonic, Settings.getOrbsDivider()));
+                        .formatted(name, upToHarmonic, Settings.getOrbDivider()));
         buildPatternAnalysis(upToHarmonic)
                 .forEach((key, list) -> {
                     output.append("%d: ".formatted(key));

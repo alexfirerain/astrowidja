@@ -31,6 +31,20 @@ abstract public class ChartObject {
         return this.name;
     }
 
+    /**
+     * Выдаёт имя каты. Если оно длиннее указанного предела,
+     * выдаёт его первые буквы и символ "…" в конце, так чтобы
+     * общая длина строки была равна указанному пределу.
+     *
+     * @param limit максимальная длина возвращаемой строки.
+     * @return имя карты, сокращённое до указанной длины.
+     */
+    public String getShortenedName(int limit) {
+        return name.length() <= limit ?
+                name :
+                name.substring(0, limit - 1) + "…";
+    }
+
     public void setID(int ID) {
         this.ID = ID;
     }

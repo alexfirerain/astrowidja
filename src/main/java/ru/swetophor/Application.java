@@ -21,7 +21,7 @@ import static ru.swetophor.Settings.*;
  * программы как таковой
  */
 public class Application {
-    private static final Scanner keyboard = new Scanner(System.in);
+    static final Scanner keyboard = new Scanner(System.in);
 
     private static final String baseDir = "base";
     static {
@@ -116,7 +116,7 @@ public class Application {
     private static void welcome() {
         System.out.printf("%sСчитаем резонансы с приближением в %.0f° (1/%d часть круга) до числа %d%n%n",
                 Decorator.frameText("Начато исполнение АстроВидьи!", 30, '*'),
-                getOrbs(), orbsDivider, edgeHarmonic);
+                getOrb(), getOrbDivider(), getEdgeHarmonic());
     }
 
     /**
@@ -143,6 +143,7 @@ public class Application {
             displayMainMenu();
             switch(keyboard.nextLine()) {
                 case "1" -> listCharts();
+                case "2" -> Settings.editSettings();
                 case "3" -> manageCharts();
                 case "4" -> showChart();
                 case "5" -> addChart(enterChartData());
@@ -200,9 +201,10 @@ public class Application {
             output
                     .append("Ни одной карты не загружено.");
         else
-            DESK.values().forEach(c -> output
-                    .append(c.toString())
-                    .append("\n"));
+            DESK.values()
+                    .forEach(c -> output
+                            .append(c.toString())
+                            .append("\n"));
         System.out.println(Decorator.frameText(output.toString(),
                 30, 80,
                 '┌', '─', '┐',

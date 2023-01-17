@@ -359,6 +359,13 @@ public class Mechanics {
         buildHeavensWithHarmonics(144);
     }
 
+    /**
+     * Возвращает форматированную строку с переданными числами через "х",
+     * вся группа заключена в <>.
+     *
+     * @param multipliers числа (множители, которые хотим форматировать).
+     * @return форматированное представление множителей числа, переданных в аргумент как список.
+     */
     public static String formatMultipliers(List<Integer> multipliers) {
         StringBuilder answer = new StringBuilder("<");
         if (!multipliers.isEmpty())
@@ -370,6 +377,13 @@ public class Mechanics {
         return answer.toString();
     }
 
+    /**
+     * Возвращает форматированную строку с переданными числами через "х",
+     * вся группа заключена в <>.
+     *
+     * @param multipliers числа (множители, которые хотим форматировать).
+     * @return форматированное представление множителей числа, переданных в аргумент как массив.
+     */
     public static String formatMultipliers(Integer[] multipliers) {
         StringBuilder answer = new StringBuilder("<");
         if (multipliers.length > 0)
@@ -378,5 +392,40 @@ public class Mechanics {
                 .forEach(i -> answer.append("x").append(multipliers[i]));
         answer.append(">");
         return answer.toString();
+    }
+
+    /**
+     * Определяет, находится ли вторая координата в первой половине круга,
+     * считая от первой координаты.
+     * Например, если Луна находится в первой половине круга от Солнца,
+     * она является растущей, иначе – убывающей.
+     *
+     * @param fromCoordinate координата, от которой считается.
+     * @param coordinate     координата, для которой определяется фаза.
+     * @return {@code true}, если вторая координата находится в соединении
+     * с первой или менее, чем в 180° от неё по ходу движения Зодиака.
+     * {@code false}, если вторая координата находится в 180° или более от
+     * первой по ходу движения Зодиака.
+     */
+    public static boolean isAhead(double fromCoordinate, double coordinate) {
+        double delta = coordinate - fromCoordinate;
+        return delta >= 0 && delta < 180 || delta < -180;
+    }
+
+    /**
+     * Определяет, находится ли вторая астра в первой половине круга,
+     * считая от первой астры.
+     * Например, если Луна находится в первой половине круга от Солнца,
+     * она является растущей, иначе – убывающей.
+     *
+     * @param fromPlanet астра, от которой считается.
+     * @param planet     астра, для которой определяется фаза.
+     * @return {@code true}, если вторая астра находится в соединении
+     * с первой или менее, чем в 180° от неё по ходу движения Зодиака.
+     * {@code false}, если вторая астра находится в 180° или более от
+     * первой по ходу движения Зодиака.
+     */
+    public static boolean isAhead(Astra fromPlanet, Astra planet) {
+        return isAhead(fromPlanet.getZodiacPosition(), planet.getZodiacPosition());
     }
 }
