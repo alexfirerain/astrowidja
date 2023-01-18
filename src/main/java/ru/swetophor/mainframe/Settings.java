@@ -4,7 +4,7 @@ import ru.swetophor.celestialmechanics.Mechanics;
 
 import java.util.Set;
 
-import static ru.swetophor.celestialmechanics.Mechanics.CIRCLE;
+import static ru.swetophor.celestialmechanics.CelestialMechanics.CIRCLE;
 
 /**
  * Класс-хранилище статических глобальных переменных АстроВидьи.

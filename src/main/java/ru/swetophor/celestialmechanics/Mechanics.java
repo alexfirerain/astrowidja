@@ -17,50 +17,8 @@ import static ru.swetophor.celestialmechanics.ZodiacSign.zodiumIcon;
  * задач по пространственному расположению
  */
 public class Mechanics {
-    public static final double CIRCLE = 360.0;
 
-    /**
-     * вычисляет эклиптическую дугу между двумя точками на большом круге
-     * @param a первая координата точки.
-     * @param b вторая координата точки.
-     * @return  наименьшую дугу между двумя указанными точками дуги.
-     */
-    public static double getArc(double a, double b){
-        double arc = abs(normalizeCoordinate(a) - normalizeCoordinate(b));
-        return arc > CIRCLE / 2 ?
-                CIRCLE - arc :
-                arc;
-    }
-
-    /**
-     *  вычисляет эклиптическую дугу между астрами, переданными как объекты
-     * @param a первая астра.
-     * @param b вторая астра.
-     * @return  наименьшую дугу между двумя указанными астрами.
-     */
-    public static double getArc(Astra a, Astra b){
-        return getArc(a.getZodiacPosition(), b.getZodiacPosition());
-    }
-
-    /**
-     * приводит дугу к расстоянию меж ея концами
-     */
-    public static double normalizeArc(double a){
-        return getArc(normalizeCoordinate(a), 0);
-    }
-
-    /**
-     * Приводит координату в диапазон от 0° до 359°59'59".
-     *
-     * @param p нормализуемая координата.
-     * @return координату от 0° до 359°59'59", равную данной.
-     */
-    public static double normalizeCoordinate(double p){
-        p %= CIRCLE;
-        return p < 0 ? p + CIRCLE : p;
-    }
-
-//    public static String секундФормат(double вГрадусах) {
+    //    public static String секундФормат(double вГрадусах) {
 //        double минутнаяЧасть = вГрадусах % 1;
 //        if (минутнаяЧасть < 1 / (КРУГ * 60)) return String.valueOf((int) вГрадусах) + "°";
 //        else if (вГрадусах  %  (1.0/60) < 1 / (КРУГ * 3600)) {
@@ -75,7 +33,7 @@ public class Mechanics {
 //    }
 
     public static String secondFormat(double inDegrees) {
-        int[] coors = degreesToCoors(inDegrees);
+        int[] coors = CelestialMechanics.degreesToCoors(inDegrees);
         return "%s°%s'%s\""
                 .formatted(
                         format("%3s", coors[0]),
@@ -91,7 +49,7 @@ public class Mechanics {
      *      то отсутствующия секунды или секунды и минуты упускаются.
      */
     public static String secondFormat(double inDegrees, boolean withoutExtraZeros) {
-        int[] coors = degreesToCoors(inDegrees);
+        int[] coors = CelestialMechanics.degreesToCoors(inDegrees);
         StringBuilder degreeString = new StringBuilder();
 
         if (withoutExtraZeros &&
@@ -125,7 +83,7 @@ public class Mechanics {
      *      выровненную влево.
      */
     public static String secondFormatForTable(double inDegrees, boolean withoutExtraZeros) {
-        int[] coors = degreesToCoors(inDegrees);
+        int[] coors = CelestialMechanics.degreesToCoors(inDegrees);
         StringBuilder formatHolder = new StringBuilder();
 
         if (withoutExtraZeros)
@@ -154,7 +112,7 @@ public class Mechanics {
      *          съ всеми избыточными нолями
      */
     public static String secondFormatForTable(double inDegrees) {
-        int[] coors = degreesToCoors(inDegrees);
+        int[] coors = CelestialMechanics.degreesToCoors(inDegrees);
         StringBuilder formatHolder = new StringBuilder();
 
         formatHolder.append(format("%03d°", coors[0]))
@@ -173,50 +131,6 @@ public class Mechanics {
         return "%c\t%s"
                 .formatted(zodiumIcon(position),
                         secondFormat(position % 30, true));
-    }
-
-    /**
-     * Находит среднюю координату (мидпойнт) для двух зодиакальных позиций.
-     * @param positionA первая позиция.
-     * @param positionB вторая позиция.
-     * @return  среднюю координату между двумя заданными со стороны меньшей
-     * дуги между ними. Если дуга равна ровно половине Круга, возвращается точка,
-     * следующая через четверть после точки, переданной первой.
-     */
-    public static double findMedian(double positionA, double positionB) {
-        double arc = getArc(positionA, positionB);
-        double minorPosition =
-                normalizeCoordinate(positionA + arc) == positionB ?
-                positionA : positionB;
-
-        return normalizeCoordinate(minorPosition + arc / 2);
-    }
-
-    /**
-     * Выдаёт зодиакальный градус указанной зодиакальной позиции в виде «градус°символ»
-     * @param position зодиакальная позиция.
-     * @return  строковое представление градуса и знака Зодиака.
-     */
-    public static String zodiacDegree(double position) {
-
-        return "%d°%s"
-                .formatted(
-                        (int) Math.ceil(position % 30),
-                        zodiumIcon(position));
-    }
-
-    /**
-     * Превращает координату дуги из градусов в массив [градусы, минуты, секунды].
-     * @param position дуга в градусах и дробных долях градуса.
-     * @return массив из трёх целых величин: градусы, минуты и секунды.
-     */
-    public static int[] degreesToCoors(double position) {
-        int[] coors = new int[3];
-        int inSeconds = (int) round((normalizeCoordinate(position) * 3600));
-        coors[0] = inSeconds / 3600;
-        coors[1] = inSeconds % 3600 / 60;
-        coors[2] = inSeconds % 60;
-        return coors;
     }
 
     /**
@@ -260,7 +174,7 @@ public class Mechanics {
      * @return  множитель аспекта заданной гармоники для заданной дуги.
      */
     public static int findMultiplier(int resonance, double arc, double orb) {
-        double single = CIRCLE / resonance;
+        double single = CelestialMechanics.CIRCLE / resonance;
         int multiplier = 1;
         double orbHere = orb / resonance;
         while (multiplier < resonance / 2)
@@ -395,38 +309,20 @@ public class Mechanics {
         return answer.toString();
     }
 
-    /**
-     * Определяет, находится ли вторая координата в первой половине круга,
-     * считая от первой координаты.
-     * Например, если Луна находится в первой половине круга от Солнца,
-     * она является растущей, иначе – убывающей.
-     *
-     * @param fromCoordinate координата, от которой считается.
-     * @param coordinate     координата, для которой определяется фаза.
-     * @return {@code true}, если вторая координата находится в соединении
-     * с первой или менее, чем в 180° от неё по ходу движения Зодиака.
-     * {@code false}, если вторая координата находится в 180° или более от
-     * первой по ходу движения Зодиака.
-     */
-    public static boolean isAhead(double fromCoordinate, double coordinate) {
-        double delta = coordinate - fromCoordinate;
-        return delta >= 0 && delta < 180 || delta < -180;
-    }
 
     /**
-     * Определяет, находится ли вторая астра в первой половине круга,
-     * считая от первой астры.
-     * Например, если Луна находится в первой половине круга от Солнца,
-     * она является растущей, иначе – убывающей.
-     *
-     * @param fromPlanet астра, от которой считается.
-     * @param planet     астра, для которой определяется фаза.
-     * @return {@code true}, если вторая астра находится в соединении
-     * с первой или менее, чем в 180° от неё по ходу движения Зодиака.
-     * {@code false}, если вторая астра находится в 180° или более от
-     * первой по ходу движения Зодиака.
+     * Скажет, является ли данная гармоника кратной некоторой другой гармонике.
+     * @param harmonic  число резонанса, которое проверяем на кратность.
+     * @param numeric   число резонанса, на кратность с которым проверяется.
+     * @return  {@code true}, если один из простых множителей первого аргумента совпадает
+     * со вторым аргументом.
      */
-    public static boolean isAhead(Astra fromPlanet, Astra planet) {
-        return isAhead(fromPlanet.getZodiacPosition(), planet.getZodiacPosition());
+    public static boolean isMultiplied(int harmonic, int numeric) {
+        return multipliersExplicate(harmonic)
+                .contains(numeric);
+    }
+
+    public static boolean isMultiple(int number, int multiplier) {
+        return number % multiplier == 0;
     }
 }

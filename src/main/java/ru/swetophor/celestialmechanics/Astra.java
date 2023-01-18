@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static ru.swetophor.celestialmechanics.Mechanics.*;
-
 /**
  * Прототип небесного те́ла — объект, имеющий:
  * <li> идентификатор
@@ -38,7 +36,7 @@ public class Astra {
     }
     public Astra(String name, double degree) {
         this.name = name;
-        this.zodiacPosition = normalizeCoordinate(degree);
+        this.zodiacPosition = CelestialMechanics.normalizeCoordinate(degree);
     }
 
     public static Astra fromData(String name, Double... coordinate) {
@@ -105,12 +103,12 @@ public class Astra {
 
     /**
      * Выдаёт зодиакальное положение астры, как предоставляется
-     * функцией {@link Mechanics#zodiacDegree(double)}
+     * функцией {@link CelestialMechanics#zodiacDegree(double)}
      *
      * @return строковое представление зодиакального градуса, в котором расположена астра.
      */
     public String getZodiacDegree() {
-        return zodiacDegree(zodiacPosition);
+        return CelestialMechanics.zodiacDegree(zodiacPosition);
     }
 
     /**
@@ -139,7 +137,7 @@ public class Astra {
      * @return строку с инфой об астре вида "название градусы минуты секунды".
      */
     public String getString() {
-        int[] coors = degreesToCoors(zodiacPosition);
+        int[] coors = CelestialMechanics.degreesToCoors(zodiacPosition);
         return "%s %s %s %s%n"
                 .formatted(name,
                         coors[0],

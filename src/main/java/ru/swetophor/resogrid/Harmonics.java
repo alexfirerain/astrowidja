@@ -1,12 +1,13 @@
 package ru.swetophor.resogrid;
 
+import ru.swetophor.celestialmechanics.CelestialMechanics;
 import ru.swetophor.celestialmechanics.Mechanics;
 
 import java.util.Arrays;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static ru.swetophor.celestialmechanics.Mechanics.normalizeArc;
+import static ru.swetophor.celestialmechanics.CelestialMechanics.normalizeArc;
 
 public class Harmonics extends Number implements Comparable<Harmonics> {
     /**
@@ -85,7 +86,7 @@ public class Harmonics extends Number implements Comparable<Harmonics> {
      * @return  частное от деления 360 на данное число. Ноль для первой гармоники.
      */
     public double getSinglePureArc() {
-        return normalizeArc(Mechanics.CIRCLE / doubleValue());
+        return normalizeArc(CelestialMechanics.CIRCLE / doubleValue());
     }
 
     /**

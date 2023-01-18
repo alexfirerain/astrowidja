@@ -1,6 +1,6 @@
 package ru.swetophor.celestialmechanics;
 
-import static ru.swetophor.celestialmechanics.Mechanics.normalizeCoordinate;
+import static ru.swetophor.celestialmechanics.CelestialMechanics.normalizeCoordinate;
 
 /**
  * Представление зодиакального знака, содержит символ.

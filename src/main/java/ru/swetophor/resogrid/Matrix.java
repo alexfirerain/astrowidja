@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static ru.swetophor.celestialmechanics.Mechanics.CIRCLE;
+import static ru.swetophor.celestialmechanics.CelestialMechanics.CIRCLE;
 import static ru.swetophor.resogrid.MatrixType.COSMOGRAM;
 import static ru.swetophor.resogrid.MatrixType.SYNASTRY;
 

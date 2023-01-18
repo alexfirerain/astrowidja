@@ -45,19 +45,11 @@ public class Aspect {
     }
 
     /**
-     * Выдаёт список множителей, в произведении дающих
-     * число резонанса данного аспекта.
-     * @return  список множителей гармоники.
-     */
-    public List<Integer> getMultipliers() {
-        return Mechanics.multipliersExplicate(numeric);
-    }
-
-    /**
      * Разность дуги резонанса с дугой чистого аспекта, полученной как
      * (360° / гармоника) * множитель. Т.е. эффективный орбис аспекта.
      */
     private final double clearance;           //
+
     /**
      * Эффективный орбис аспекта, выраженный в %-ах, где 100% означает полное
      * совпадение реальной дуги с математическим аспектом (экзакт, эффективный орбис 0°),
@@ -66,9 +58,32 @@ public class Aspect {
      */
     private final double strength;            //
     /**
+     * Модель аспекта, одного из резонансов в дуге.
+     * @param numeric      гармоника, т.е. кратность дуги Кругу.
+     * @param clearance     с каким орбисом фиксируется соединение в этой гармонике.
+     * @param fromArc   дуга, в которой распознан этот резонанс.
+     * @param orb   первичный орб для соединений, используемый при определении резонансов.
+     */
+    public Aspect(int numeric, double clearance, double fromArc, double orb) {
+        this.numeric = numeric;
+        this.multiplicity = findMultiplier(numeric, fromArc, orb);
+        this.clearance = clearance;
+        this.strength = ((orb - clearance) / orb) * 100;
+        this.depth = (int) floor(orb / clearance);
+    }
+    /**
+     * Выдаёт список простых множителей, в произведении дающих
+     * число резонанса данного аспекта.
+     * @return  список множителей гармоники, каждый из которых является простым числом.
+     */
+    public List<Integer> getMultipliers() {
+        return Mechanics.multipliersExplicate(numeric);
+    }
+    /**
      * точность аспекта через количество последующих гармоник, через кои проходит
      */
     private final int depth;
+
     /**
      * Выводит характеристику, насколько точен резонанс.
      *
@@ -103,32 +118,13 @@ public class Aspect {
         else return "✰✰✰✰✰";
     }
 
-    /**
-     * Модель аспекта, одного из резонансов в дуге.
-     * @param numeric      гармоника, т.е. кратность дуги Кругу.
-     * @param clearance     с каким орбисом фиксируется соединение в этой гармонике.
-     * @param fromArc   дуга, в которой распознан этот резонанс.
-     * @param orb   первичный орб для соединений, используемый при определении резонансов.
-     */
-    public Aspect(int numeric, double clearance, double fromArc, double orb) {
-        this.numeric = numeric;
-        this.multiplicity = findMultiplier(numeric, fromArc, orb);
-        this.clearance = clearance;
-        this.strength = ((orb - clearance) / orb) * 100;
-        this.depth = (int) floor(orb / clearance);
-    }
-
     public double getStrength() {
         return strength;
     }
 
 
     public boolean hasResonance(int harmonic) {
-        return numeric == harmonic ||
-                (numeric == 1 ||
-                        Mechanics.multipliersExplicate(harmonic)
-                                .contains(numeric)
-                ) &&
-                        harmonic / numeric <= depth;
+        return harmonic % numeric == 0 && harmonic / numeric <= depth;
     }
+
 }

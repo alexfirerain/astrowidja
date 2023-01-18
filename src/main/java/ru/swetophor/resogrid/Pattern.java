@@ -21,12 +21,14 @@ public class Pattern {
 
     public void addAstra(Astra astra) {
         astras.add(astra);
-        entries.add(new PatternElement(astra));
-        for (int i = 0; i < entries.size() - 1; i++) {
-            for (int j = 1; j < entries.size(); j++) {
-//                double clearance =
+        PatternElement added = new PatternElement(astra);
+        for (PatternElement a : entries) {
+            Resonance r = astra.getHeaven().getAspects().findResonance(astra, a.element);
+            if (r.hasHarmonicPattern(harmonic)) {
+
             }
         }
+        entries.add(added);
     }
 
     public List<Astra> getAstras() {

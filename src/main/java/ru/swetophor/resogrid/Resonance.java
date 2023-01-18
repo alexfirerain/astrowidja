@@ -2,7 +2,7 @@ package ru.swetophor.resogrid;
 
 import lombok.Setter;
 import ru.swetophor.celestialmechanics.Astra;
-import ru.swetophor.celestialmechanics.Mechanics;
+import ru.swetophor.celestialmechanics.CelestialMechanics;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -66,7 +66,7 @@ public class Resonance {
                         INTER_MOMENTS;
         astra_1 = a;
         astra_2 = b;
-        arc = Mechanics.getArc(a, b);
+        arc = CelestialMechanics.getArc(a, b);
         this.orb = orb;
         this.ultimateHarmonic = ultimateHarmonic;
 
@@ -74,7 +74,7 @@ public class Resonance {
             return;
 
         IntStream.rangeClosed(1, ultimateHarmonic).forEach(h -> {
-            double arcInHarmonic = normalizeArc(arc * h);
+            double arcInHarmonic = CelestialMechanics.normalizeArc(arc * h);
             if (arcInHarmonic < orb && isNewSimple(h))
                     aspects.add(new Aspect(h, arcInHarmonic, arc, orb));
         });

@@ -1,5 +1,6 @@
 package ru.swetophor.resogrid;
 
+import ru.swetophor.celestialmechanics.CelestialMechanics;
 import ru.swetophor.mainframe.Settings;
 
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class WavePattern {
             message.append(format("Всего найдено %d пересечений, считая до гармоники %d", b, edgeOfPatternHarmonics));
 
         message.append(" при орбисе %s (1/%d часть круга)%n".formatted(
-                secondFormat(CIRCLE / getOrbDivider(), true),
+                secondFormat(CelestialMechanics.CIRCLE / getOrbDivider(), true),
                 getOrbDivider()));
         return message.toString();
     }
@@ -128,8 +129,8 @@ public class WavePattern {
         public Aspect(int i, int k) {
             this.harmonic = i;
             this.multiplier = k;
-            this.arc = normalizeCoordinate(CIRCLE / harmonic * multiplier);
-            this.aspectOrbs = CIRCLE / getOrbDivider() / harmonic;
+            this.arc = CelestialMechanics.normalizeCoordinate(CelestialMechanics.CIRCLE / harmonic * multiplier);
+            this.aspectOrbs = CelestialMechanics.CIRCLE / getOrbDivider() / harmonic;
         }
         /**
          * Начало действия аспекта.
@@ -147,7 +148,7 @@ public class WavePattern {
          */
         private double getEnd() {
             double end = arc + aspectOrbs;
-            return end <= CIRCLE/2 ? end : 180.;
+            return end <= CelestialMechanics.CIRCLE/2 ? end : 180.;
         }
         @Override
         public String toString() {
@@ -200,7 +201,7 @@ public class WavePattern {
         }
 
         private static void fillWavePattern(int harmonic, List<Aspect> patterns) {
-            double single = normalizeCoordinate(CIRCLE / harmonic);
+            double single = CelestialMechanics.normalizeCoordinate(CelestialMechanics.CIRCLE / harmonic);
             multipliersIteration:
             for (int multiplier = 1; multiplier <= harmonic/2; multiplier++) {
 

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static ru.swetophor.celestialmechanics.Mechanics.normalizeCoordinate;
+import static ru.swetophor.celestialmechanics.CelestialMechanics.normalizeCoordinate;
 import static ru.swetophor.celestialmechanics.Mechanics.secondFormat;
 
 public class ТестПереставлятора {

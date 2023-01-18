@@ -8,7 +8,7 @@ class MechanicsTest {
 
     @Test
     void zodiacDegree() {
-        assertEquals("16°♑", Mechanics.zodiacDegree(285.4));
+        assertEquals("16°♑", CelestialMechanics.zodiacDegree(285.4));
 
     }
 }

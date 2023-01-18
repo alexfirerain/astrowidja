@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static ru.swetophor.celestialmechanics.CelestialMechanics.*;
 import static ru.swetophor.celestialmechanics.Mechanics.*;
 
 /**
@@ -155,22 +156,24 @@ public class Chart extends ChartObject {
         }
 
         if (sun != null) {
+
             if (mercury != null &&
                     getArc(sun, mercury) > 30.0) {
 
-                mercury.setZodiacPosition(normalizeCoordinate(mercury.getZodiacPosition() + CIRCLE / 2));
+                mercury.setZodiacPosition(normalizeCoordinate(mercury.getZodiacPosition() + HALF_CIRCLE));
                 composite.addAstra(mercury);
             }
             if (venus != null &&
                     getArc(sun, venus) > 60.0) {
 
-                venus.setZodiacPosition(normalizeCoordinate(venus.getZodiacPosition() + CIRCLE / 2));
+                venus.setZodiacPosition(normalizeCoordinate(venus.getZodiacPosition() + HALF_CIRCLE));
                 composite.addAstra(venus);
             }
         }
 
         return composite;
     }
+
 
     /**
      * Отдаёт астру карты по ея имени.
