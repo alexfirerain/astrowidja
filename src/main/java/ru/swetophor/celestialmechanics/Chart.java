@@ -2,7 +2,7 @@ package ru.swetophor.celestialmechanics;
 
 
 import lombok.Setter;
-import ru.swetophor.Settings;
+import ru.swetophor.mainframe.Settings;
 import ru.swetophor.resogrid.Matrix;
 
 import java.util.ArrayList;

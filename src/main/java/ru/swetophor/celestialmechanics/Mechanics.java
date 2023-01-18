@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
 import static java.lang.Math.abs;
 import static java.lang.Math.round;
 import static java.lang.String.format;
-import static ru.swetophor.celestialmechanics.ZodiacSign.pointsZodium;
+import static ru.swetophor.celestialmechanics.ZodiacSign.zodiumIcon;
 
 /**
  * Инструментальный класс для решения
@@ -50,9 +50,10 @@ public class Mechanics {
     }
 
     /**
-     * Приводит координату в диапазон от 0 до 360°.
+     * Приводит координату в диапазон от 0° до 359°59'59".
+     *
      * @param p нормализуемая координата.
-     * @return  координату от 0° до 360°, равную данной.
+     * @return координату от 0° до 359°59'59", равную данной.
      */
     public static double normalizeCoordinate(double p){
         p %= CIRCLE;
@@ -169,8 +170,8 @@ public class Mechanics {
      * @return  строку, представляющую зодиакальную координату (знак + секундФормат без лишних нолей).
      */
     public static String zodiacFormat(double position) {
-        return "%s\t%s"
-                .formatted(pointsZodium(position),
+        return "%c\t%s"
+                .formatted(zodiumIcon(position),
                         secondFormat(position % 30, true));
     }
 
@@ -201,7 +202,7 @@ public class Mechanics {
         return "%d°%s"
                 .formatted(
                         (int) Math.ceil(position % 30),
-                        pointsZodium(position));
+                        zodiumIcon(position));
     }
 
     /**

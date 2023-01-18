@@ -2,8 +2,8 @@ package ru.swetophor.resogrid;
 
 import lombok.Getter;
 import lombok.Setter;
-import ru.swetophor.Settings;
 import ru.swetophor.celestialmechanics.Astra;
+import ru.swetophor.mainframe.Settings;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -279,7 +279,7 @@ public class Matrix {
      * если хотя бы одна из астр не найдена, или в обоих параметрах
      * указана идентичная астра, то {@code null}.
      */
-    private Resonance findResonance(Astra a, Astra b) {
+    public Resonance findResonance(Astra a, Astra b) {
         if (datum1.length == 0 || datum2.length == 0)
             throw new IllegalStateException("Матрица пуста.");
 

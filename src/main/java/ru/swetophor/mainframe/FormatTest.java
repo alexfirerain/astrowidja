@@ -1,4 +1,7 @@
-package ru.swetophor.celestialmechanics;
+package ru.swetophor.mainframe;
+
+import ru.swetophor.celestialmechanics.Astra;
+import ru.swetophor.celestialmechanics.Mechanics;
 
 import java.util.Arrays;
 
@@ -8,7 +11,7 @@ import static ru.swetophor.celestialmechanics.Mechanics.secondFormatForTable;
 public class FormatTest {
     static Astra[] astras =
             Arrays.stream(new String[]{
-                    "звезда 50 30 5",
+                            "звезда 50 30 5",
                     "звезда 50 0 5",
                     "звезда 50 30 0",
                     "звезда 0 30 0",

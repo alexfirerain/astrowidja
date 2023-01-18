@@ -6,45 +6,50 @@ import static ru.swetophor.celestialmechanics.Mechanics.normalizeCoordinate;
  * Представление зодиакального знака, содержит символ.
  */
 public enum ZodiacSign {
-    ARIES("♈"),
-    TAURUS("♉"),
-    GEMINI("♊"),
-    CANCER("♋"),
-    LEO("♌"),
-    VIRGO("♍"),
-    LIBRA("♎"),
-    SCORPIO("♏"),
-    SAGITTARIUS("♐"),
-    CAPRICORN("♑"),
-    AQUARIUS("♒"),
-    PISCES("♓");
+    ARIES('♈'),
+    TAURUS('♉'),
+    GEMINI('♊'),
+    CANCER('♋'),
+    LEO('♌'),
+    VIRGO('♍'),
+    LIBRA('♎'),
+    SCORPIO('♏'),
+    SAGITTARIUS('♐'),
+    CAPRICORN('♑'),
+    AQUARIUS('♒'),
+    PISCES('♓');
 
-    private final String symbol;
+    private final char symbol;
 
-    ZodiacSign(String symbol) {
+    ZodiacSign(char symbol) {
         this.symbol = symbol;
     }
 
-    public String getSymbol() {
-        return symbol;
+    public static char zodiumIcon(double position) {
+        return getZodiumOf(position).getSymbol();
     }
 
-    public static String pointsZodium(double position) {
-        return switch ((int) normalizeCoordinate(position) / 30) {
-            case 0 -> ARIES.symbol;
-            case 1 -> TAURUS.symbol;
-            case 2 -> GEMINI.symbol;
-            case 3 -> CANCER.symbol;
-            case 4 -> LEO.symbol;
-            case 5 -> VIRGO.symbol;
-            case 6 -> LIBRA.symbol;
-            case 7 -> SCORPIO.symbol;
-            case 8 -> SAGITTARIUS.symbol;
-            case 9 -> CAPRICORN.symbol;
-            case 10 -> AQUARIUS.symbol;
-            case 11 -> PISCES.symbol;
-            default -> throw new IllegalStateException("Unexpected value: " + position);
-        };
+    public static ZodiacSign getZodiumOf(double position) {
+        return values()[(int) normalizeCoordinate(position) / 30];
+//        return switch ((int) normalizeCoordinate(position) / 30) {
+//            case 0 -> ARIES;
+//            case 1 -> TAURUS;
+//            case 2 -> GEMINI;
+//            case 3 -> CANCER;
+//            case 4 -> LEO;
+//            case 5 -> VIRGO;
+//            case 6 -> LIBRA;
+//            case 7 -> SCORPIO;
+//            case 8 -> SAGITTARIUS;
+//            case 9 -> CAPRICORN;
+//            case 10 -> AQUARIUS;
+//            case 11 -> PISCES;
+//            default -> throw new IllegalStateException("Unexpected value: " + position);
+//        };
+    }
+
+    public char getSymbol() {
+        return symbol;
     }
 
 }

@@ -1,7 +1,7 @@
 package ru.swetophor.celestialmechanics;
 
-import ru.swetophor.Application;
-import ru.swetophor.Decorator;
+import ru.swetophor.mainframe.Application;
+import ru.swetophor.mainframe.Decorator;
 
 import java.util.List;
 

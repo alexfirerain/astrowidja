@@ -1,5 +1,7 @@
 package ru.swetophor.celestialmechanics;
 
+import ru.swetophor.resogrid.Aspect;
+
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -143,5 +145,23 @@ public class Astra {
                         coors[0],
                         coors[1],
                         coors[2]);
+    }
+
+    public double getOrbInHarmonicWith(int harmonic, Astra counterpart) {
+        return heaven
+                .aspects
+                .findResonance(this, counterpart)
+                .getAspects().stream()
+                .filter(a -> a.hasResonance(harmonic))
+                .findFirst()
+                .map(Aspect::getClearance)
+                .orElseThrow();
+    }
+
+    /**
+     * @return знак зодиака, в котором находится астра.
+     */
+    public ZodiacSign getZodiacSign() {
+        return ZodiacSign.getZodiumOf(zodiacPosition);
     }
 }

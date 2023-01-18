@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static ru.swetophor.Interpreter.ResonanceDescription;
 import static ru.swetophor.celestialmechanics.Mechanics.*;
+import static ru.swetophor.mainframe.Interpreter.ResonanceDescription;
 import static ru.swetophor.resogrid.ResonanceType.*;
 
 /**
@@ -182,32 +182,18 @@ public class Resonance {
     }
 
     public boolean hasResonanceElement(int harmonic) {
-        for (Aspect a : aspects)
-            if (a.getMultipliers().contains(harmonic))
-                    return true;
-        return false;
+        return aspects.stream()
+                .anyMatch(a -> a.getMultipliers().contains(harmonic));
     }
 
     public boolean hasGivenHarmonic(int harmonic) {
-        for (Aspect a : aspects)
-            if (a.getNumeric() == harmonic)
-                return true;
-        return false;
+        return aspects.stream()
+                .anyMatch(a -> a.getNumeric() == harmonic);
     }
 
     public boolean hasHarmonicPattern(int harmonic) {
-        for (Aspect a : aspects) {
-            int aKnownAspect = a.getNumeric();
-            if (aKnownAspect == harmonic ||
-                    (aKnownAspect == 1 ||
-                            Mechanics.multipliersExplicate(harmonic)
-                                    .contains(aKnownAspect)
-                    )
-                            &&
-                            harmonic / aKnownAspect <= a.getDepth())
-                return true;
-        }
-        return false;
+        return aspects.stream()
+                .anyMatch(a -> a.hasResonance(harmonic));
     }
 
 

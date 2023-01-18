@@ -1,14 +1,14 @@
 package ru.swetophor.resogrid;
 
-import ru.swetophor.Settings;
+import ru.swetophor.mainframe.Settings;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
 import static java.lang.String.format;
-import static ru.swetophor.Settings.getOrbDivider;
 import static ru.swetophor.celestialmechanics.Mechanics.*;
+import static ru.swetophor.mainframe.Settings.getOrbDivider;
 
 public class WavePattern {
     public static void main(String[] args) {

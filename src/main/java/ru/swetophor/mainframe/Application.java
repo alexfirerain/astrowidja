@@ -1,4 +1,4 @@
-package ru.swetophor;
+package ru.swetophor.mainframe;
 
 
 import ru.swetophor.celestialmechanics.*;
@@ -13,7 +13,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static ru.swetophor.Settings.*;
+import static ru.swetophor.mainframe.Settings.*;
 
 
 /**

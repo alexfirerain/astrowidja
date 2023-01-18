@@ -123,5 +123,12 @@ public class Aspect {
     }
 
 
-
+    public boolean hasResonance(int harmonic) {
+        return numeric == harmonic ||
+                (numeric == 1 ||
+                        Mechanics.multipliersExplicate(harmonic)
+                                .contains(numeric)
+                ) &&
+                        harmonic / numeric <= depth;
+    }
 }

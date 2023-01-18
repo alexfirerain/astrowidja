@@ -1,4 +1,4 @@
-package ru.swetophor;
+package ru.swetophor.mainframe;
 
 import ru.swetophor.celestialmechanics.Mechanics;
 
