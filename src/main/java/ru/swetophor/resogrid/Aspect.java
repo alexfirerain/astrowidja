@@ -1,5 +1,6 @@
 package ru.swetophor.resogrid;
 
+import ru.swetophor.celestialmechanics.CelestialMechanics;
 import ru.swetophor.celestialmechanics.Mechanics;
 
 import java.util.List;
@@ -68,7 +69,7 @@ public class Aspect {
         this.numeric = numeric;
         this.multiplicity = findMultiplier(numeric, fromArc, orb);
         this.clearance = clearance;
-        this.strength = ((orb - clearance) / orb) * 100;
+        this.strength = CelestialMechanics.calculateStrength(orb, clearance);
         this.depth = (int) floor(orb / clearance);
     }
     /**

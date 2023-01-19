@@ -4,16 +4,18 @@ package ru.swetophor.celestialmechanics;
 import lombok.Setter;
 import ru.swetophor.mainframe.Settings;
 import ru.swetophor.resogrid.Matrix;
+import ru.swetophor.resogrid.Pattern;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
+import static java.util.stream.IntStream.range;
+import static java.util.stream.IntStream.rangeClosed;
 import static ru.swetophor.celestialmechanics.CelestialMechanics.*;
-import static ru.swetophor.celestialmechanics.Mechanics.*;
+import static ru.swetophor.celestialmechanics.Mechanics.zodiacFormat;
 
 /**
  * Астрологическое описание момента времени,
@@ -32,13 +34,14 @@ public class Chart extends ChartObject {
     {
         type = ChartType.COSMOGRAM;
     }
+
     protected Matrix aspects;
 
+
+    // конструктор
     public Chart(String name) {
         super(name);
     }
-
-    // конструктор
 
     public static Chart readFromString(String input) {
         String[] lines = input.lines().toArray(String[]::new);
@@ -182,31 +185,32 @@ public class Chart extends ChartObject {
      * @return астру с таким именем, если она есть в карте, иначе {@code пусто}.
      */
     public Astra getAstra(String name) {
-        for (Astra a : astras)
-            if (a.getName().equals(name))
-                return a;
-        return null;
+        return astras.stream()
+                .filter(a -> a.getName()
+                        .equals(name))
+                .findFirst()
+                .orElse(null);
     }
 
-    public List<List<Astra>> findResonanceGroups(int harmonic) {
-        List<List<Astra>> patterns = new ArrayList<>();
+    public List<Pattern> findPatterns(int harmonic) {
+        List<Pattern> patterns = new ArrayList<>();
         boolean[] analyzed = new boolean[astras.size()];
-        IntStream.range(0, astras.size())
+        range(0, astras.size())
                 .filter(i -> !analyzed[i])
-                .mapToObj(i -> analyzeAstra(i, harmonic, analyzed))
-                .filter(pattern -> isValidPattern(pattern, harmonic))
+                .mapToObj(i -> gatherResonants(i, harmonic, analyzed))
+                .filter(Pattern::isValid)
                 .forEach(patterns::add);
         return patterns;
     }
 
-    private List<Astra> analyzeAstra(int astraIndex, int harmonic, boolean[] analyzed) {
+    private Pattern gatherResonants(int astraIndex, int harmonic, boolean[] analyzed) {
         analyzed[astraIndex] = true;
-        List<Astra> currentPattern = new ArrayList<>();
-        currentPattern.add(astras.get(astraIndex));
+        Pattern currentPattern = new Pattern(harmonic);
+        currentPattern.addAstra(astras.get(astraIndex));
         aspects.getConnectedAstras(astras.get(astraIndex), harmonic).stream()
                 .filter(a -> !analyzed[astras.indexOf(a)])
-                .map(a -> analyzeAstra(astras.indexOf(a), harmonic, analyzed))
-                .forEach(currentPattern::addAll);
+                .map(a -> gatherResonants(astras.indexOf(a), harmonic, analyzed))
+                .forEach(currentPattern::addAllAstras);
         return currentPattern;
     }
 
@@ -233,14 +237,14 @@ public class Chart extends ChartObject {
 
 
     public void printResonanceGroupsStupid(int harmonic) {
-        List<List<Astra>> groups = findResonanceGroups(harmonic);
-        for (List<Astra> pattern : groups) {
-            if (!pattern.isEmpty()) {
+        List<Pattern> groups = findPatterns(harmonic);
+        for (Pattern pattern : groups) {
+            if (!pattern.getAstras().isEmpty()) {
                 System.out.printf("Резонансные группы по числу %d для %s:%n", harmonic, name);
                 groups.stream()
-                        .filter(group -> !group.isEmpty())
+                        .filter(group -> !group.getAstras().isEmpty())
                         .forEach(group -> {
-                            group.stream()
+                            group.getAstrasByConnectivity().stream()
                                     .map(Astra::getSymbol)
                                     .forEach(System.out::print);
                             System.out.println();
@@ -251,21 +255,21 @@ public class Chart extends ChartObject {
         System.out.printf("Резонансных групп по числу %d для %s не найдено при орбисе 1/%d%n",
                 harmonic,
                 name,
-                Settings.getOrbDivider());
+                Settings.getOrbDivisor());
     }
 
     private String patternReport(int harmonic) {
         StringBuilder string = new StringBuilder(harmonic + ": ");
 
-        List<List<Astra>> groups = findResonanceGroups(harmonic);
+        List<Pattern> groups = findPatterns(harmonic);
 
         if (groups.isEmpty())
             return string.append("-").toString();
 
         groups.stream()
-                .filter(group -> !group.isEmpty())
+                .filter(group -> !group.getAstras().isEmpty())
                 .forEach(group -> {
-                    group.stream()
+                    group.getAstrasByConnectivity().stream()
                             .map(Astra::getSymbol)
                             .forEach(string::append);
                     string.append(" | ");
@@ -274,7 +278,7 @@ public class Chart extends ChartObject {
         return string.toString();
     }
 
-//    @Override
+    //    @Override
 //    public void printResonanceAnalysis(int upToHarmonic) {
 //        System.out.printf("Резонансные группы для %s до гармоники %d с исходным орбисом 1/%d%n",
 //                name,
@@ -284,35 +288,60 @@ public class Chart extends ChartObject {
 //                .forEach(h -> System.out.println(patternReport(h)));
 //    }
     @Override
-    public void printResonanceAnalysis(int upToHarmonic) {
+    public String resonanceAnalysis(int upToHarmonic) {
         StringBuilder output = new StringBuilder(
                 "Резонансные группы для %s до гармоники %d с исходным орбисом 1/%d%n"
-                        .formatted(name, upToHarmonic, Settings.getOrbDivider()));
+                        .formatted(name, upToHarmonic, Settings.getOrbDivisor()));
         buildPatternAnalysis(upToHarmonic)
                 .forEach((key, list) -> {
                     output.append("%d: ".formatted(key));
                     if (list.isEmpty())
                         output.append("-\n");
                     else
-                        IntStream.range(0, list.size())
+                        range(0, list.size())
                             .forEach(i -> {
-                                list.get(i).stream()
+                                list.get(i)
+                                        .getAstrasByConnectivity().stream()
                                         .map(Astra::getSymbol)
                                         .forEach(output::append);
                                 output.append(i < list.size() - 1 ?
                                         " | " : "\n");
                             });
                 });
-        System.out.println(output);
+        return output.toString();
     }
 
-    public Map<Integer, List<List<Astra>>> buildPatternAnalysis(int edgeHarmonic) {
+    public String resonanceAnalysisVerbose(int upToHarmonic) {
+        StringBuilder output = new StringBuilder(
+                "Резонансные группы для %s до гармоники %d с исходным орбисом 1/%d%n"
+                        .formatted(name, upToHarmonic, Settings.getOrbDivisor()));
+        for (Map.Entry<Integer, List<Pattern>> entry : buildPatternAnalysis(upToHarmonic).entrySet()) {
+            Integer key = entry.getKey();
+            List<Pattern> list = entry.getValue();
+            output.append("%d: ".formatted(key));
+            if (list.isEmpty())
+                output.append("-\n");
+            else {
+                for (int i = 0; i < list.size(); i++) {
+                    list.get(i)
+                            .getAstrasByConnectivity().stream()
+                            .map(Astra::getSymbol)
+                            .forEach(output::append);
+                    output.append(i < list.size() - 1 ?
+                            " | " : "\n");
+                }
+            }
+        }
+        return output.toString();
+    }
 
-        return IntStream.rangeClosed(1, edgeHarmonic)
+    public Map<Integer, List<Pattern>> buildPatternAnalysis(int edgeHarmonic) {
+
+        return rangeClosed(1, edgeHarmonic)
                 .boxed()
                 .collect(Collectors
                         .toMap(h -> h,
-                                this::findResonanceGroups,
+                                this::findPatterns,
                                 (a, b) -> b));
     }
 }

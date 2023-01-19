@@ -8,8 +8,9 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import static java.lang.String.format;
-import static ru.swetophor.celestialmechanics.Mechanics.*;
-import static ru.swetophor.mainframe.Settings.getOrbDivider;
+import static ru.swetophor.celestialmechanics.Mechanics.secondFormat;
+import static ru.swetophor.celestialmechanics.Mechanics.secondFormatForTable;
+import static ru.swetophor.mainframe.Settings.getOrbDivisor;
 
 public class WavePattern {
     public static void main(String[] args) {
@@ -50,8 +51,8 @@ public class WavePattern {
             message.append(format("Всего найдено %d пересечений, считая до гармоники %d", b, edgeOfPatternHarmonics));
 
         message.append(" при орбисе %s (1/%d часть круга)%n".formatted(
-                secondFormat(CelestialMechanics.CIRCLE / getOrbDivider(), true),
-                getOrbDivider()));
+                secondFormat(CelestialMechanics.CIRCLE / getOrbDivisor(), true),
+                getOrbDivisor()));
         return message.toString();
     }
 
@@ -130,7 +131,7 @@ public class WavePattern {
             this.harmonic = i;
             this.multiplier = k;
             this.arc = CelestialMechanics.normalizeCoordinate(CelestialMechanics.CIRCLE / harmonic * multiplier);
-            this.aspectOrbs = CelestialMechanics.CIRCLE / getOrbDivider() / harmonic;
+            this.aspectOrbs = CelestialMechanics.CIRCLE / getOrbDivisor() / harmonic;
         }
         /**
          * Начало действия аспекта.

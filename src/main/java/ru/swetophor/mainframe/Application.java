@@ -1,17 +1,18 @@
 package ru.swetophor.mainframe;
 
 
-import ru.swetophor.celestialmechanics.*;
+import ru.swetophor.celestialmechanics.Astra;
+import ru.swetophor.celestialmechanics.AstraEntity;
+import ru.swetophor.celestialmechanics.Chart;
+import ru.swetophor.celestialmechanics.ChartObject;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
 import static ru.swetophor.mainframe.Settings.*;
 
@@ -22,19 +23,6 @@ import static ru.swetophor.mainframe.Settings.*;
  */
 public class Application {
     static final Scanner keyboard = new Scanner(System.in);
-
-    private static final String baseDir = "base";
-    static {
-        Path basePath = Path.of(baseDir);
-        if (!Files.exists(basePath)) {
-            try {
-                Files.createDirectory(basePath);
-                System.out.printf("Создали папку '%s'%n", baseDir);
-            } catch (IOException e) {
-                System.out.printf("Не удалось создать папку %s: %s%n", baseDir, e.getLocalizedMessage());
-            }
-        }
-    }
 
     static String SC = """
                 СЧ
@@ -101,14 +89,14 @@ public class Application {
 
         mainCycle();
 
-        saveTableToFile(Decorator.autosaveName());
+        Storage.saveTableToFile(DESK, Decorator.autosaveName());
     }
 
 
     private static void printChartStat(ChartObject chart) {
         System.out.println(chart.getAstrasList());
         System.out.println(chart.getAspectTable());
-        chart.printResonanceAnalysis(Settings.getEdgeHarmonic());
+        System.out.println(chart.resonanceAnalysis(Settings.getEdgeHarmonic()));
     }
 
     static public int id = 0;
@@ -116,7 +104,7 @@ public class Application {
     private static void welcome() {
         System.out.printf("%sСчитаем резонансы с приближением в %.0f° (1/%d часть круга) до числа %d%n%n",
                 Decorator.frameText("Начато исполнение АстроВидьи!", 30, '*'),
-                getOrb(), getOrbDivider(), getEdgeHarmonic());
+                getPrimalOrb(), getOrbDivisor(), getEdgeHarmonic());
     }
 
     /**
@@ -144,24 +132,13 @@ public class Application {
             switch(keyboard.nextLine()) {
                 case "1" -> listCharts();
                 case "2" -> Settings.editSettings();
-                case "3" -> manageCharts();
+                case "3" -> Storage.manageCharts();
                 case "4" -> showChart();
                 case "5" -> addChart(enterChartData());
                 case "0" -> exit = true;
             }
         }
         System.out.println("Спасибо за ведание резонансов!");
-    }
-
-    private static void manageCharts() {
-        System.out.println("В базе присутствуют следующие файлы и карты:");
-
-        String content = reportBasesContent();
-        if (content == null)
-            content = "Не удалось получить содержимое базы.";
-
-        System.out.println(Decorator.frameText(content, 40, '*'));
-
     }
 
     /**
@@ -249,10 +226,10 @@ public class Application {
             boolean fixed = false;
             while (!fixed) {
                 System.out.printf("""
-                        
-                        Карта с именем %s уже записана:
+                                                
+                        Карта с именем %s уже загружена:
                         1. заменить
-                        2. сохранить под новым именем
+                        2. добавить под новым именем
                         0. отмена
                         """, chart.getName());
                 switch (keyboard.nextLine()) {
@@ -297,7 +274,7 @@ public class Application {
      * @param file имя файла в папке базы данных.
      */
     public static void loadFromFile(String file) {
-        Path source = Path.of(baseDir, file);
+        Path source = Path.of(Storage.baseDir, file);
         if (!Files.exists(source)) {
             System.out.printf("Не удалось найти файл '%s'%n", file);
             return;
@@ -311,75 +288,6 @@ public class Application {
         } catch (IOException e) {
             System.out.printf("Не удалось прочесть файл '%s'%n", file);
         }
-
-    }
-
-    public static void saveTableToFile(String target) {
-        StringBuilder content = new StringBuilder();
-        DESK.values().stream()
-            .filter(chart -> chart.getType() == ChartType.COSMOGRAM)
-            .forEach(chart -> {
-                content.append("#%s%n"
-                               .formatted(chart.getName()));
-                chart.getAstras().stream()
-                        .map(Astra::getString)
-                        .forEach(content::append);
-                content.append("\n");
-            });
-        try (PrintWriter out = new PrintWriter(Path.of(baseDir, target).toFile())) {
-            // TODO: if exists
-            out.println(content);
-        } catch (FileNotFoundException e) {
-            System.out.printf("Запись в файл %s обломалась: %s%n", target, e);
-        }
-        System.out.printf("Строка%n%s%n записана в %s%n", content, target);
-    }
-
-    private static List<String> getBaseContent() {
-        File base = new File(baseDir);
-
-        if (base.listFiles() == null)
-            return null;
-        return Arrays.stream(Objects.requireNonNull(base.listFiles()))
-                    .filter(x -> !x.isDirectory())
-                    .map(File::getName)
-                    .filter(name -> name.endsWith(".awb") || name.endsWith(".awc"))
-                    .collect(Collectors.toList());
-    }
-
-    private static String reportBasesContent() {
-        List<String> files = getBaseContent();
-        if (files == null)
-            return null;
-        StringBuilder output = new StringBuilder();
-        for (String filename : files) {
-            output.append(filename).append("\n");
-            try {
-                String[] names = Files.readString(Path.of(baseDir, filename))
-                        .lines()
-                        .filter(line -> line.startsWith("#") && line.length() > 1)
-                        .map(line -> line.substring(1))
-                        .toArray(String[]::new);
-
-                if (filename.endsWith(".awb"))
-                    IntStream.range(0, names.length)
-                        .mapToObj(i -> " %3d. %s%n"
-                                .formatted(i + 1, names[i]))
-                        .forEach(output::append);
-
-                if (filename.endsWith(".awc") && names.length > 0)
-                    output.append(names[0]);
-
-            } catch (IOException e) {
-                output.append("Файл %s не читается: %s"
-                        .formatted(filename, e.getLocalizedMessage()));
-            }
-        }
-
-        return output.toString();
-    }
-
-    private static void moveChartsToFile(String source, String target, int... charts) {
 
     }
 

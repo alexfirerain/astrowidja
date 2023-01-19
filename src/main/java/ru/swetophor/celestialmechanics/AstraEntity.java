@@ -57,4 +57,24 @@ public enum AstraEntity {
     public static char findSymbolFor(Astra astra) {
         return findSymbolFor(astra.getName());
     }
+
+    /**
+     * Находит для данной астры, под каким номером значится
+     * соответствующая астросущность, т.е. какой ординал имеет в перечислении.
+     * Это зависит от конкретной реализации класса AstraEntity.
+     * Сущность ищется по совпадению имени астры.
+     * Если имя не опознано, выдаётся следующий номер за наибольшим,
+     * т.е. равный размеру известных астросущностей.
+     *
+     * @param astra астра, чей номер в реестре смотрится.
+     * @return ординальный номер соответствующей астре сущности,
+     * если же такой не найдено, то количество сущностей в реестре.
+     */
+    public static int getAstraEntityNumber(Astra astra) {
+        AstraEntity entity = getEntityByName(astra.getName());
+        return entity != null ?
+                entity.ordinal() :
+                values().length;
+    }
+
 }

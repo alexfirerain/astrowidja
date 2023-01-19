@@ -91,8 +91,8 @@ public class Synastry extends MultiChart {
      * @param upToHarmonic до какой
      */
     @Override
-    public void printResonanceAnalysis(int upToHarmonic) {
-
+    public String resonanceAnalysis(int upToHarmonic) {
+        return null;
     }
 
     public String getCaption() {

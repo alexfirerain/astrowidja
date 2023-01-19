@@ -10,7 +10,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static ru.swetophor.celestialmechanics.Mechanics.*;
+import static ru.swetophor.celestialmechanics.CelestialMechanics.getArcForHarmonic;
+import static ru.swetophor.celestialmechanics.Mechanics.findMultiplier;
+import static ru.swetophor.celestialmechanics.Mechanics.secondFormat;
 import static ru.swetophor.mainframe.Interpreter.ResonanceDescription;
 import static ru.swetophor.resogrid.ResonanceType.*;
 
@@ -74,7 +76,7 @@ public class Resonance {
             return;
 
         IntStream.rangeClosed(1, ultimateHarmonic).forEach(h -> {
-            double arcInHarmonic = CelestialMechanics.normalizeArc(arc * h);
+            double arcInHarmonic = getArcForHarmonic(a, b, h);
             if (arcInHarmonic < orb && isNewSimple(h))
                     aspects.add(new Aspect(h, arcInHarmonic, arc, orb));
         });
@@ -209,6 +211,13 @@ public class Resonance {
         return astra_2;
     }
 
+    /**
+     * Возвращает ту астру резонанса, которая не равна указанной.
+     *
+     * @param taken указанная астра резонанса.
+     * @return {@code null}, если указана астра, которой нет в резонансе,
+     * если же указана одна из астр в наличии, возвращается вторая.
+     */
     public Astra getCounterpart(Astra taken) {
         if (astra_1.equals(taken))
             return astra_2;

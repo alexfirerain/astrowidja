@@ -70,5 +70,5 @@ abstract public class ChartObject {
         return Decorator.frameText(title, 30, '*');
     }
 
-    public abstract void printResonanceAnalysis(int upToHarmonic);
+    public abstract String resonanceAnalysis(int upToHarmonic);
 }

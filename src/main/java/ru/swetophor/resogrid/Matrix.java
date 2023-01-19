@@ -109,7 +109,7 @@ public class Matrix {
      * @param astras_2   второй массив астр
      */
     public Matrix(List<Astra> astras_1, List<Astra> astras_2) {
-        this(astras_1, astras_2, Settings.getEdgeHarmonic(), Settings.getOrbDivider());
+        this(astras_1, astras_2, Settings.getEdgeHarmonic(), Settings.getOrbDivisor());
     }
 
     /**

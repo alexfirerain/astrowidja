@@ -13,7 +13,7 @@ public class Settings {
     private static final Set<String> yesValues = Set.of("да", "+", "yes", "true", "д", "y", "t");
     private static final Set<String> noValues = Set.of("нет", "-", "no", "false", "н", "n", "f");
     private static int edgeHarmonic = 108;
-    private static int orbsDivider = 30;
+    private static int orbsDivisor = 30;
     private static boolean halfOrbsForDoubles = true;
 
     public static boolean isHalfOrbsForDoubles() {
@@ -28,16 +28,16 @@ public class Settings {
         Settings.edgeHarmonic = edgeHarmonic;
     }
 
-    public static int getOrbDivider() {
-        return orbsDivider;
+    public static int getOrbDivisor() {
+        return orbsDivisor;
     }
 
     public static void setOrbDivider(int orbsDivider) {
-        Settings.orbsDivider = orbsDivider;
+        Settings.orbsDivisor = orbsDivider;
     }
 
-    public static double getOrb() {
-        return CIRCLE / orbsDivider;
+    public static double getPrimalOrb() {
+        return CIRCLE / orbsDivisor;
     }
 
     public static void disableHalfOrbForDoubles() {
@@ -93,8 +93,8 @@ public class Settings {
                             
                 """;
         System.out.println(Decorator.frameText(
-                MENU.formatted(edgeHarmonic, orbsDivider,
-                        Mechanics.secondFormat(getOrb(), false),
+                MENU.formatted(edgeHarmonic, orbsDivisor,
+                        Mechanics.secondFormat(getPrimalOrb(), false),
                         halfOrbsForDoubles ? "да" : "нет"), 30, 80,
                 '┌', '─', '┐',
                 '│', '└', '┘'));

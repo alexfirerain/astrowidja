@@ -1,6 +1,7 @@
 package ru.swetophor.celestialmechanics;
 
 import ru.swetophor.resogrid.Aspect;
+import ru.swetophor.resogrid.Matrix;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -10,8 +11,8 @@ import java.util.stream.IntStream;
  * Прототип небесного те́ла — объект, имеющий:
  * <li> идентификатор
  * <li> положение
- * <li> физическия свойства
- * <li> астральныя свойства
+ * <li> физические свойства
+ * <li> астральные свойства
  */
 public class Astra {
     /**
@@ -119,7 +120,7 @@ public class Astra {
      * @return астрологический символ дя известных астр, '*' для неизвестных.
      */
     public char getSymbol() {
-        return AstraEntity.findSymbolFor(name);
+        return AstraEntity.findSymbolFor(this);
     }
 
     public String getSymbolWithDegree() {
@@ -161,5 +162,14 @@ public class Astra {
      */
     public ZodiacSign getZodiacSign() {
         return ZodiacSign.getZodiumOf(zodiacPosition);
+    }
+
+    public Matrix getResonanceMatrix() {
+        return heaven.aspects;
+        // TODO: по поводу обращения к матрице синастрии вообще заново проархитектурить
+    }
+
+    public boolean isInDirectResonanceWith(Astra counterpart, int harmonic) {
+        return getResonanceMatrix().astrasInResonance(this, counterpart, harmonic);
     }
 }

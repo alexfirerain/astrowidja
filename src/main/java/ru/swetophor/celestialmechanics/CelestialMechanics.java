@@ -106,10 +106,10 @@ public class CelestialMechanics {
      *
      * @param fromCoordinate координата, от которой считается.
      * @param coordinate     координата, для которой определяется фаза.
-     * @return {@code true}, если вторая координата находится в соединении
-     * с первой или менее, чем в 180° от неё по ходу движения Зодиака.
-     * {@code false}, если вторая координата находится в 180° или более от
-     * первой по ходу движения Зодиака.
+     * @return {@code true}, если вторая координата равна первой или отстоит
+     * от неё по ходу движения Зодиака менее, чем на 180°.
+     * {@code false}, если вторая координата находится по ходу
+     * движения Зодиака в 180° или более от первой.
      */
     public static boolean isAhead(double fromCoordinate, double coordinate) {
         double delta = coordinate - fromCoordinate;
@@ -131,5 +131,22 @@ public class CelestialMechanics {
      */
     public static boolean isAhead(Astra fromPlanet, Astra planet) {
         return isAhead(fromPlanet.getZodiacPosition(), planet.getZodiacPosition());
+    }
+
+    public static double getArcForHarmonic(Astra a, Astra b, int harmonic) {
+        return normalizeArc(getArc(a, b) * harmonic);
+    }
+
+    /**
+     * Рассчитывает условную силу в процентах: насколько точность аспекта близка к экзакту,
+     * а именно: насколько разность дуги с чистым аспектом близка к нулю.
+     *
+     * @param orb       максимальный орбис, при котором аспект срабатывает действующим.
+     * @param clearance зазор между дугой и аспектом, т.е. эффективный орбис.
+     * @return 100, если аспект точный, 0, если точность аспекта на грани максимального орбиса,
+     * отрицательное значение, если зазор превышает максимальный орбис.
+     */
+    public static double calculateStrength(double orb, double clearance) {
+        return ((orb - clearance) / orb) * 100;
     }
 }
