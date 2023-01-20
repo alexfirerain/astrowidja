@@ -95,6 +95,15 @@ public class Synastry extends MultiChart {
         return null;
     }
 
+    /**
+     * @param upToHarmonic до какой гармоники считать.
+     * @return развёрнутый отчёт по паттернам.
+     */
+    @Override
+    public String resonanceAnalysisVerbose(int upToHarmonic) {
+        return null;
+    }
+
     public String getCaption() {
         return super.getCaption("%s: %s и %s (№%d)"
                 .formatted(

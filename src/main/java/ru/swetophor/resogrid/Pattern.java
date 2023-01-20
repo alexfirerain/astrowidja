@@ -63,9 +63,9 @@ public class Pattern {
     public String getConnectivityReport() {
         if (size() == 1)
             return "%c (-)%n".formatted(entries.get(0).getElement().getSymbol());
-        return "%.0f%%@%d%n".formatted(getAverageStrength(), size()) +
+        return "\t%.0f%% @%d:%n".formatted(getAverageStrength(), size()) +
                 entries.stream()
-                        .map(pe -> "\t%c (%.0f%%)%n"
+                        .map(pe -> "\t\t%c (%.0f%%)%n"
                                 .formatted(
                                         pe.getElement().getSymbol(),
                                         calculateStrength(

@@ -23,6 +23,7 @@ import static ru.swetophor.mainframe.Settings.*;
  */
 public class Application {
     static final Scanner keyboard = new Scanner(System.in);
+    static public int id = 0;
 
     static String SC = """
                 СЧ
@@ -67,6 +68,7 @@ public class Application {
                 Венера 35 19 47
                 Марс 143 35 4
                 """;
+
     public static void main(String[] args) {
         welcome();
 
@@ -96,10 +98,8 @@ public class Application {
     private static void printChartStat(ChartObject chart) {
         System.out.println(chart.getAstrasList());
         System.out.println(chart.getAspectTable());
-        System.out.println(chart.resonanceAnalysis(Settings.getEdgeHarmonic()));
+        System.out.println(chart.resonanceAnalysisVerbose(Settings.getEdgeHarmonic()));
     }
-
-    static public int id = 0;
 
     private static void welcome() {
         System.out.printf("%sСчитаем резонансы с приближением в %.0f° (1/%d часть круга) до числа %d%n%n",
@@ -288,7 +288,6 @@ public class Application {
         } catch (IOException e) {
             System.out.printf("Не удалось прочесть файл '%s'%n", file);
         }
-
     }
 
 }

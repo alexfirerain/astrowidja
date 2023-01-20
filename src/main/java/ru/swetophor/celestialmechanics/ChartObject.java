@@ -71,4 +71,6 @@ abstract public class ChartObject {
     }
 
     public abstract String resonanceAnalysis(int upToHarmonic);
+
+    public abstract String resonanceAnalysisVerbose(int upToHarmonic);
 }

@@ -6,10 +6,7 @@ import ru.swetophor.mainframe.Settings;
 import ru.swetophor.resogrid.Matrix;
 import ru.swetophor.resogrid.Pattern;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.IntStream.range;
@@ -311,26 +308,36 @@ public class Chart extends ChartObject {
         return output.toString();
     }
 
+    @Override
     public String resonanceAnalysisVerbose(int upToHarmonic) {
         StringBuilder output = new StringBuilder(
                 "Резонансные группы для %s до гармоники %d с исходным орбисом 1/%d%n"
                         .formatted(name, upToHarmonic, Settings.getOrbDivisor()));
-        for (Map.Entry<Integer, List<Pattern>> entry : buildPatternAnalysis(upToHarmonic).entrySet()) {
+        for (Map.Entry<Integer, List<Pattern>> entry :
+                buildPatternAnalysis(upToHarmonic).entrySet()) {
             Integer key = entry.getKey();
             List<Pattern> list = entry.getValue();
-            output.append("%d: ".formatted(key));
-            if (list.isEmpty())
-                output.append("-\n");
-            else {
-                for (int i = 0; i < list.size(); i++) {
-                    list.get(i)
-                            .getAstrasByConnectivity().stream()
-                            .map(Astra::getSymbol)
-                            .forEach(output::append);
-                    output.append(i < list.size() - 1 ?
-                            " | " : "\n");
-                }
-            }
+
+            list.sort(Comparator
+                    .comparingDouble(Pattern::getAverageStrength)
+                    .reversed());
+
+            output.append("%d".formatted(key));
+            output.append(list.isEmpty() ?
+                    ":\n" :
+                    " (%.0f%% @%d):%n"
+                            .formatted(
+                                    list.stream()
+                                            .mapToDouble(Pattern::getAverageStrength)
+                                            .sum() / list.size(),
+                                    list.stream()
+                                            .mapToInt(Pattern::size)
+                                            .sum()));
+            output.append(list.isEmpty() ?
+                    "\t-\n" :
+                    list.stream()
+                            .map(Pattern::getConnectivityReport)
+                            .collect(Collectors.joining()));
         }
         return output.toString();
     }
