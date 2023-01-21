@@ -17,6 +17,8 @@ public class Pattern {
     List<PatternElement> entries = new ArrayList<>();
     int harmonic;
 
+    double totalClearance = 0.0;
+
     public Pattern(int harmonic) {
         this.harmonic = harmonic;
     }
@@ -40,6 +42,7 @@ public class Pattern {
             double clearance = getArcForHarmonic(astra, a.element, harmonic);
             added.totalClearance += clearance;
             a.totalClearance += clearance;
+            totalClearance += clearance;
         }
         entries.add(added);
         entries.sort(Comparator
@@ -62,14 +65,19 @@ public class Pattern {
      */
     public String getConnectivityReport() {
         if (size() == 1)
-            return "%c (-)%n".formatted(entries.get(0).getElement().getSymbol());
-        return "\t%.0f%% @%d:%n".formatted(getAverageStrength(), size()) +
-                entries.stream()
+            return
+                    "%c (-)%n"
+                            .formatted(entries.get(0).getElement().getSymbol());
+        return
+                "\t%.0f%% @%d:%n"
+                        .formatted(getAverageStrength(), size())
+                    +
+                    entries.stream()
                         .map(pe -> "\t\t%c (%.0f%%)%n"
                                 .formatted(
                                         pe.getElement().getSymbol(),
                                         calculateStrength(
-                                                getPrimalOrb(),
+                                                getPrimalOrb() * size(),
                                                 pe.getTotalClearance() / (size() - 1))))
                         .collect(Collectors.joining());
     }
@@ -78,6 +86,9 @@ public class Pattern {
         return astras;
     }
 
+    /**
+     * @return количество астр в паттерне.
+     */
     public int size() {
         return astras.size();
     }
@@ -93,7 +104,7 @@ public class Pattern {
         return calculateStrength(
                 getPrimalOrb(),
                 entries.stream()
-                        .mapToDouble(pe -> pe.getTotalClearance() / size() - 1)
+                        .mapToDouble(pe -> pe.getTotalClearance() / (size() - 1))
                         .sum() /
                         size());
     }
@@ -114,7 +125,7 @@ public class Pattern {
             for (int j = i + 1; j < astras.size(); j++)
                 if (astras.get(i)
                         .isInDirectResonanceWith(astras.get(j),
-                                harmonic))
+                                                harmonic))
                     return true;
         return false;
     }
