@@ -104,6 +104,14 @@ public class Synastry extends MultiChart {
         return null;
     }
 
+    /**
+     * @return для сохранения
+     */
+    @Override
+    public String getString() {
+        return null;
+    }
+
     public String getCaption() {
         return super.getCaption("%s: %s и %s (№%d)"
                 .formatted(

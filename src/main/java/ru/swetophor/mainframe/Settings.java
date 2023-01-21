@@ -15,6 +15,7 @@ public class Settings {
     private static int edgeHarmonic = 108;
     private static int orbsDivisor = 30;
     private static boolean halfOrbsForDoubles = true;
+    public static boolean autosave = false;
 
     public static boolean isHalfOrbsForDoubles() {
         return halfOrbsForDoubles;
@@ -70,7 +71,11 @@ public class Settings {
                         if (yesValues.contains(value.toLowerCase())) enableHalfOrbForDoubles();
                         if (noValues.contains(value.toLowerCase())) disableHalfOrbForDoubles();
                     }
-                    default -> System.out.println("Введи номер существующего параметра.");
+                    case "4" -> {
+                        if (yesValues.contains(value.toLowerCase())) autosave = true;
+                        if (noValues.contains(value.toLowerCase())) autosave = false;
+                    }
+                    default -> System.out.println("Введи номер существующего параметра, а не " + parameter);
                 }
             } catch (NumberFormatException e) {
                 System.out.println("Не удалось прочитать значение.");
@@ -86,6 +91,7 @@ public class Settings {
                 2: делитель для первичного орбиса: %d
                              (первичный орбис = %s)
                 3: для двойных карт орбис уменьшен вдвое: %s
+                4: автосохранение стола при выходе: %s
                             
                     _   _   _   _   _   _   _   _   _
                 < введи новое как "номер_параметра = значение"
@@ -93,9 +99,12 @@ public class Settings {
                             
                 """;
         System.out.println(Decorator.frameText(
-                MENU.formatted(edgeHarmonic, orbsDivisor,
+                MENU.formatted(edgeHarmonic,
+                        orbsDivisor,
                         Mechanics.secondFormat(getPrimalOrb(), false),
-                        halfOrbsForDoubles ? "да" : "нет"), 30, 80,
+                        halfOrbsForDoubles ? "да" : "нет",
+                        autosave ? "да" : "нет"),
+                30, 80,
                 '┌', '─', '┐',
                 '│', '└', '┘'));
     }

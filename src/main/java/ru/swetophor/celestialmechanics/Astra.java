@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static ru.swetophor.celestialmechanics.CelestialMechanics.normalizeCoordinate;
+
 /**
  * Прототип небесного те́ла — объект, имеющий:
  * <li> идентификатор
@@ -37,7 +39,7 @@ public class Astra {
     }
     public Astra(String name, double degree) {
         this.name = name;
-        this.zodiacPosition = CelestialMechanics.normalizeCoordinate(degree);
+        this.zodiacPosition = normalizeCoordinate(degree);
     }
 
     public static Astra fromData(String name, Double... coordinate) {
@@ -98,8 +100,24 @@ public class Astra {
         this.heaven = heaven;
     }
 
+    /**
+     * Устанавливает зодиакальную координату, предварительно нормализуя.
+     *
+     * @param zodiacPosition устанавливаемая зодиакальная координата в градусах.
+     */
     public void setZodiacPosition(double zodiacPosition) {
-        this.zodiacPosition = zodiacPosition;
+        this.zodiacPosition = normalizeCoordinate(zodiacPosition);
+    }
+
+    /**
+     * Прибавляет к зодиакальной позиции указанное число.
+     *
+     * @param change изменение зодиакальной координаты.
+     * @return эту же астру с обновлённой координатой.
+     */
+    public Astra advanceCoordinateBy(double change) {
+        setZodiacPosition(zodiacPosition + change);
+        return this;
     }
 
     /**

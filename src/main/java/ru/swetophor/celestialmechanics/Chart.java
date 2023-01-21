@@ -145,28 +145,24 @@ public class Chart extends ChartObject {
                                 counterpart.getZodiacPosition()));
                 composite.addAstra(compositeAstra);
                 AstraEntity innerBody = AstraEntity.getEntityByName(compositeAstra.getName());
-                if (innerBody != null) {
+                if (innerBody != null)
                     switch (innerBody) {
                         case SOL -> sun = compositeAstra;
                         case MER -> mercury = compositeAstra;
                         case VEN -> venus = compositeAstra;
                     }
-                }
             }
         }
 
         if (sun != null) {
-
             if (mercury != null &&
                     getArc(sun, mercury) > 30.0) {
-
-                mercury.setZodiacPosition(normalizeCoordinate(mercury.getZodiacPosition() + HALF_CIRCLE));
+                mercury.advanceCoordinateBy(HALF_CIRCLE);
                 composite.addAstra(mercury);
             }
             if (venus != null &&
                     getArc(sun, venus) > 60.0) {
-
-                venus.setZodiacPosition(normalizeCoordinate(venus.getZodiacPosition() + HALF_CIRCLE));
+                venus.advanceCoordinateBy(HALF_CIRCLE);
                 composite.addAstra(venus);
             }
         }
@@ -209,27 +205,6 @@ public class Chart extends ChartObject {
                 .map(a -> gatherResonants(astras.indexOf(a), harmonic, analyzed))
                 .forEach(currentPattern::addAllAstras);
         return currentPattern;
-    }
-
-    /**
-     * Вспомогательный предикат, удостоверяющий, что в группе астр наличествует
-     * указанный аспект в явном виде для хотя бы одной пары.
-     *
-     * @param pattern  анализируемый астропаттерн.
-     * @param harmonic число резонанса, который надо удостоверить.
-     * @return {@code false}, если паттерна нет, если он пуст или содержит только
-     * одну астру, или если ни в одной из пар элементов нет указанного резонанса
-     * в явном виде. {@code true}, если хотя бы в одной паре номинальный резонанс
-     * наличествует.
-     */
-    private boolean isValidPattern(List<Astra> pattern, int harmonic) {
-        if (pattern == null || pattern.size() < 2)
-            return false;
-        for (int i = 0; i < pattern.size() - 1; i++)
-            for (int j = i + 1; j < pattern.size(); j++)
-                if (aspects.astrasInResonance(pattern.get(i), pattern.get(j), harmonic))
-                    return true;
-        return false;
     }
 
 
@@ -325,7 +300,7 @@ public class Chart extends ChartObject {
             output.append("%d".formatted(key));
             output.append(list.isEmpty() ?
                     ":\n" :
-                    " (%.0f%% @%d):%n"
+                    " %.0f%% (%d):%n"
                             .formatted(
                                     list.stream()
                                             .mapToDouble(Pattern::getAverageStrength)
@@ -351,6 +326,28 @@ public class Chart extends ChartObject {
                                 this::findPatterns,
                                 (a, b) -> b));
     }
+
+    /**
+     * Возвращает строку того формата, который принят для хранения
+     * данных карты астры при сохранении.
+     * В первой строке содержит "#" + имя карты.
+     * В каждой последующей строке – положение очередной астры, как оно
+     * предоставляется функцией {@link Astra#getString()}.
+     * В конце также добавляется пустая строка для разделения.
+     *
+     * @return многостроку с названием карты и положением астр.
+     */
+    @Override
+    public String getString() {
+        StringBuilder content = new StringBuilder();
+        content.append("#%s%n".formatted(name));
+        astras.stream()
+                .map(Astra::getString)
+                .forEach(content::append);
+        content.append("\n");
+        return content.toString();
+    }
+
 }
 
 

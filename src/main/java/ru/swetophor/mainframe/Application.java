@@ -91,7 +91,8 @@ public class Application {
 
         mainCycle();
 
-        Storage.saveTableToFile(DESK, Decorator.autosaveName());
+        if (autosave)
+            Storage.saveTableToFile(DESK, Decorator.autosaveName());
     }
 
 

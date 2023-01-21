@@ -1,6 +1,5 @@
 package ru.swetophor.mainframe;
 
-import ru.swetophor.celestialmechanics.Astra;
 import ru.swetophor.celestialmechanics.ChartObject;
 import ru.swetophor.celestialmechanics.ChartType;
 
@@ -17,6 +16,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * Предоставляет модель хранения данных в файлах попки базы данных.
+ * Содержит список всех доступных карт и инструментарий по управлению картами.
+ */
 public class Storage {
     static final String baseDir = "base";
 
@@ -32,57 +35,52 @@ public class Storage {
         }
     }
 
+    static File base = new File(baseDir);
+    static List<File> baseContent = getBaseContent();
+
+    public static String displayFolder() {
+        baseContent = getBaseContent();
+        if (baseContent == null) return null;
+        return IntStream.range(0, baseContent.size())
+                .mapToObj(i -> (i + 1) + ". " + baseContent.get(i).getName() + "\n")
+                .collect(Collectors.joining());
+    }
 
     static void manageCharts() {
         System.out.println("В базе присутствуют следующие файлы и карты:");
 
-        String content = reportBasesContent();
+        String content = reportFullBasesContent();
         if (content == null)
             content = "Не удалось получить содержимое базы.";
 
         System.out.println(Decorator.frameText(content, 40, '*'));
-
     }
 
-    public static void saveTableToFile(Map<String, ChartObject> table, String target) {
-        StringBuilder content = new StringBuilder();
-        table.values().stream()
-                .filter(chart -> chart.getType() == ChartType.COSMOGRAM)
-                .forEach(chart -> {
-                    content.append("#%s%n"
-                            .formatted(chart.getName()));
-                    chart.getAstras().stream()
-                            .map(Astra::getString)
-                            .forEach(content::append);
-                    content.append("\n");
-                });
-        try (PrintWriter out = new PrintWriter(Path.of(baseDir, target).toFile())) {
-            // TODO: if exists
-            out.println(content);
-        } catch (FileNotFoundException e) {
-            System.out.printf("Запись в файл %s обломалась: %s%n", target, e);
-        }
-        System.out.printf("Строка%n%s%n записана в %s%n", content, target);
-    }
-
-    private static List<String> getBaseContent() {
-        File base = new File(baseDir);
-
+    private static List<File> getBaseContent() {
         if (base.listFiles() == null)
             return null;
         return Arrays.stream(Objects.requireNonNull(base.listFiles()))
                 .filter(x -> !x.isDirectory())
-                .map(File::getName)
-                .filter(name -> name.endsWith(".awb") || name.endsWith(".awc"))
+                .filter(file -> file.getName().endsWith(".awb") || file.getName().endsWith(".awc"))
                 .collect(Collectors.toList());
     }
 
-    private static String reportBasesContent() {
-        List<String> files = getBaseContent();
-        if (files == null)
+//    private static List<String> getBaseContent() {
+//        if (base.listFiles() == null)
+//            return null;
+//        return Arrays.stream(Objects.requireNonNull(base.listFiles()))
+//                .filter(x -> !x.isDirectory())
+//                .map(File::getName)
+//                .filter(name -> name.endsWith(".awb") || name.endsWith(".awc"))
+//                .collect(Collectors.toList());
+//    }
+
+    private static String reportFullBasesContent() {
+        if (baseContent == null)
             return null;
+        List<String> fileNames = baseContent.stream().map(File::getName).toList();
         StringBuilder output = new StringBuilder();
-        for (String filename : files) {
+        for (String filename : fileNames) {
             output.append(filename).append("\n");
             try {
                 String[] names = Files.readString(Path.of(baseDir, filename))
@@ -109,7 +107,25 @@ public class Storage {
         return output.toString();
     }
 
-    private static void moveChartsToFile(String source, String target, int... charts) {
+    public static void saveTableToFile(Map<String, ChartObject> table, String target) {
+        StringBuilder content = new StringBuilder();
+        table.values().stream()
+                .filter(chart -> chart.getType() == ChartType.COSMOGRAM)
+                .forEach(chart -> content.append(chart.getString()));
+        try (PrintWriter out = new PrintWriter(Path.of(baseDir, target).toFile())) {
+            // TODO: if exists
+            out.println(content);
+        } catch (FileNotFoundException e) {
+            System.out.printf("Запись в файл %s обломалась: %s%n", target, e);
+        }
+        System.out.printf("Строка%n%s%n записана в %s%n", content, target);
+    }
+
+    public static void moveChartsToFile(String source, String target, int... charts) {
+
+    }
+
+    public static void putChartToBase(ChartObject chart, String file) {
 
     }
 }
