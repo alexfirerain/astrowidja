@@ -1,5 +1,6 @@
 package ru.swetophor.mainframe;
 
+import ru.swetophor.celestialmechanics.Chart;
 import ru.swetophor.celestialmechanics.ChartObject;
 import ru.swetophor.celestialmechanics.ChartType;
 
@@ -9,12 +10,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static ru.swetophor.mainframe.Application.keyboard;
 
 /**
  * Предоставляет модель хранения данных в файлах попки базы данных.
@@ -83,11 +83,7 @@ public class Storage {
         for (String filename : fileNames) {
             output.append(filename).append("\n");
             try {
-                String[] names = Files.readString(Path.of(baseDir, filename))
-                        .lines()
-                        .filter(line -> line.startsWith("#") && line.length() > 1)
-                        .map(line -> line.substring(1))
-                        .toArray(String[]::new);
+                String[] names = getNames(filename);
 
                 if (filename.endsWith(".awb"))
                     IntStream.range(0, names.length)
@@ -105,6 +101,22 @@ public class Storage {
         }
 
         return output.toString();
+    }
+
+    private static String[] getNames(String filename) throws IOException {
+        return Files.readString(Path.of(baseDir, filename))
+                .lines()
+                .filter(line -> line.startsWith("#") && line.length() > 1)
+                .map(line -> line.substring(1))
+                .toArray(String[]::new);
+    }
+
+    private static String[] getNames(File filename) throws IOException {
+        return Files.readString(filename.toPath())
+                .lines()
+                .filter(line -> line.startsWith("#") && line.length() > 1)
+                .map(line -> line.substring(1))
+                .toArray(String[]::new);
     }
 
     public static void saveTableToFile(Map<String, ChartObject> table, String target) {
@@ -125,7 +137,115 @@ public class Storage {
 
     }
 
-    public static void putChartToBase(ChartObject chart, String file) {
+    public static void putChartToBase(Chart chart, String file) {
+        List<Chart> content = readChartsFromFile(file);
+        if (containsName(content, chart.getName())) {
+            boolean fixed = false;
+            while (!fixed) {
+                System.out.printf("""
+                                                
+                        Карта с именем %s уже есть в файле %s:
+                        1. заменить
+                        2. добавить под новым именем
+                        0. отмена
+                        """, chart.getName(), file);
+                switch (keyboard.nextLine()) {
+                    case "1" -> {
+                        for (Chart c : content)
+                            if (c.getName().equals(chart.getName())) {
+                                content.remove(c);
+                                break;
+                            }
+                        fixed = true;
+                    }
+                    case "2" -> {
+                        System.out.print("Новое имя: ");
+                        String name = keyboard.nextLine();
+                        System.out.println();
+                        while (containsName(content, name)) {
+                            System.out.print("Новое имя: ");
+                            name = keyboard.nextLine();
+                            System.out.println();
+                        }
+                        chart.setName(name);
+                        fixed = true;
+                    }
+                    case "0" -> {
+                        System.out.println("Отмена загрузки карты: " + chart.getName());
+                        return;
+                    }
+                }
+            }
+        }
+        content.add(chart);
+        saveListToFile(content, file);
+    }
 
+    private static void saveListToFile(List<Chart> content, String file) {
+        try (PrintWriter out = new PrintWriter(Path.of(baseDir, file).toFile())) {
+            // TODO: if exists
+            out.println(content.stream()
+                    .map(Chart::getString)
+                    .collect(Collectors.joining()));
+        } catch (FileNotFoundException e) {
+            System.out.printf("Запись в файл %s обломалась: %s%n", file, e);
+        }
+        System.out.printf("Карты %s записаны в файл %s%n",
+                content.stream()
+                        .map(ChartObject::getName)
+                        .collect(Collectors.joining(", ")),
+                file);
+    }
+
+    private static boolean containsName(List<Chart> content, String chartName) {
+        return content.stream()
+                .anyMatch(c -> c.getName()
+                        .equals(chartName));
+    }
+
+    public static List<Chart> readChartsFromFile(File file) {
+        if (!file.exists()) {
+            System.out.printf("Не удалось найти файл '%s'%n", file);
+            return new ArrayList<>();
+        }
+        try {
+            return Arrays.stream(Files.readString(file.toPath())
+                            .split("#"))
+                    .filter(s -> !s.isBlank())
+                    .map(Chart::readFromString)
+                    .toList();
+        } catch (IOException e) {
+            System.out.printf("Не удалось прочесть файл '%s': %s%n", file, e.getLocalizedMessage());
+            return new ArrayList<>();
+        }
+    }
+
+    public static boolean containsChart(File baseFile, ChartObject chart) {
+        try {
+            return Arrays.stream(
+                            getNames(baseFile))
+                    .anyMatch(n -> n.equals(chart.getName()));
+        } catch (IOException e) {
+            System.out.printf("Не удалось прочесть %s: %s", baseFile.getName(), e.getLocalizedMessage());
+            return false;
+        }
+    }
+
+    public static List<Chart> readChartsFromFile(String file) {
+        Path filePath = Path.of(baseDir, file);
+        if (!Files.exists(filePath)) {
+            System.out.printf("Не удалось найти файл '%s'%n", file);
+            return new ArrayList<>();
+        }
+        try {
+            return Arrays.stream(Files.readString(filePath)
+                            .split("#"))
+                    .filter(s -> !s.isBlank())
+                    .map(Chart::readFromString)
+                    .toList();
+        } catch (IOException e) {
+            System.out.printf("Не удалось прочесть файл '%s': %s%n", file, e.getLocalizedMessage());
+            return new ArrayList<>();
+        }
     }
 }

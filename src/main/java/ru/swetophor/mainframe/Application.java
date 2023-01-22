@@ -6,9 +6,6 @@ import ru.swetophor.celestialmechanics.AstraEntity;
 import ru.swetophor.celestialmechanics.Chart;
 import ru.swetophor.celestialmechanics.ChartObject;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -270,25 +267,13 @@ public class Application {
     }
 
     /**
-     * Прочитывает карты из файла в папке базы данных.
+     * Прочитывает карты из файла в папке базы данных на стол.
      *
      * @param file имя файла в папке базы данных.
      */
     public static void loadFromFile(String file) {
-        Path source = Path.of(Storage.baseDir, file);
-        if (!Files.exists(source)) {
-            System.out.printf("Не удалось найти файл '%s'%n", file);
-            return;
-        }
-        try {
-            Arrays.stream(Files.readString(source)
-                    .split("#"))
-                    .filter(s -> !s.isBlank())
-                    .map(Chart::readFromString)
-                    .forEach(Application::addChart);
-        } catch (IOException e) {
-            System.out.printf("Не удалось прочесть файл '%s'%n", file);
-        }
+        Storage.readChartsFromFile(file)
+                .forEach(Application::addChart);
     }
 
 }
