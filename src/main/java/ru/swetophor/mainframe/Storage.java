@@ -111,17 +111,22 @@ public class Storage {
     }
 
     public static void saveTableToFile(Map<String, ChartObject> table, String target) {
-        StringBuilder content = new StringBuilder();
-        table.values().stream()
-                .filter(chart -> chart.getType() == ChartType.COSMOGRAM)
-                .forEach(chart -> content.append(chart.getString()));
+
+        String content = mergeList(
+                table.values().stream().toList(),
+                readChartsFromFile(target),
+                target)
+                .stream()
+                    .filter(chart -> chart.getType() == ChartType.COSMOGRAM)
+                    .map(ChartObject::getString)
+                    .collect(Collectors.joining());
+
         try (PrintWriter out = new PrintWriter(Path.of(baseDir, target).toFile())) {
-            // TODO: if exists
             out.println(content);
+            System.out.printf("Строка%n%s%n записана в %s%n", content, target);
         } catch (FileNotFoundException e) {
-            System.out.printf("Запись в файл %s обломалась: %s%n", target, e);
+            System.out.printf("Запись в файл %s обломалась: %s%n", target, e.getLocalizedMessage());
         }
-        System.out.printf("Строка%n%s%n записана в %s%n", content, target);
     }
 
     public static void moveChartsToFile(String source, String target, int... charts) {
@@ -130,44 +135,46 @@ public class Storage {
 
     public static void putChartToBase(ChartObject chart, String file) {
         List<ChartObject> content = readChartsFromFile(file);
-        if (containsName(content, chart.getName())) {
-            boolean fixed = false;
-            while (!fixed) {
-                System.out.printf("""
-                                                
-                        Карта с именем %s уже есть в файле %s:
-                        1. заменить
-                        2. добавить под новым именем
-                        0. отмена
-                        """, chart.getName(), file);
-                switch (keyboard.nextLine()) {
-                    case "1" -> {
-                        content.stream()
-                                .filter(c -> c.getName().equals(chart.getName()))
-                                .findFirst()
-                                .ifPresent(content::remove);
-                        fixed = true;
-                    }
-                    case "2" -> {
-                        System.out.print("Новое имя: ");
-                        String name = keyboard.nextLine();
-                        System.out.println();
-                        while (containsName(content, name)) {
-                            System.out.print("Новое имя: ");
-                            name = keyboard.nextLine();
-                            System.out.println();
-                        }
-                        chart.setName(name);
-                        fixed = true;
-                    }
-                    case "0" -> {
-                        System.out.println("Отмена загрузки карты: " + chart.getName());
-                        return;
-                    }
-                }
-            }
-        }
-        content.add(chart);
+
+        content = mergeList(List.of(chart), content, file);
+//        if (containsName(content, chart.getName())) {
+//            boolean fixed = false;
+//            while (!fixed) {
+//                System.out.printf("""
+//
+//                        Карта с именем %s уже есть в файле %s:
+//                        1. заменить
+//                        2. добавить под новым именем
+//                        0. отмена
+//                        """, chart.getName(), file);
+//                switch (keyboard.nextLine()) {
+//                    case "1" -> {
+//                        content.stream()
+//                                .filter(c -> c.getName().equals(chart.getName()))
+//                                .findFirst()
+//                                .ifPresent(content::remove);
+//                        fixed = true;
+//                    }
+//                    case "2" -> {
+//                        System.out.print("Новое имя: ");
+//                        String name = keyboard.nextLine();
+//                        System.out.println();
+//                        while (containsName(content, name)) {
+//                            System.out.print("Новое имя: ");
+//                            name = keyboard.nextLine();
+//                            System.out.println();
+//                        }
+//                        chart.setName(name);
+//                        fixed = true;
+//                    }
+//                    case "0" -> {
+//                        System.out.println("Отмена загрузки карты: " + chart.getName());
+//                        return;
+//                    }
+//                }
+//            }
+//        }
+//        content.add(chart);
         dropListToFile(content, file);
     }
 
@@ -231,7 +238,7 @@ public class Storage {
      * @param chart    указанная карта.
      * @return присутствует ли запись с указанным именем в указанном файле *.awb.
      */
-    public static boolean containsChart(File baseFile, ChartObject chart) {
+    public static boolean containsChartName(File baseFile, ChartObject chart) {
         try {
             return Arrays.stream(
                             getNames(baseFile))
@@ -286,7 +293,7 @@ public class Storage {
      * ту же карту с новым именем, если выбрано "переименовать новую карту",
      * или {@code пусто}, если выбрано "отменить операцию".
      */
-    public ChartObject resolveCollision(ChartObject controversial, List<ChartObject> list, String listName) {
+    public static ChartObject resolveCollision(ChartObject controversial, List<ChartObject> list, String listName) {
         boolean fixed = false;
         while (!fixed) {
             System.out.printf("""
@@ -298,18 +305,18 @@ public class Storage {
                     """, controversial.getName(), listName);
             switch (keyboard.nextLine()) {
                 case "1" -> {
-                    for (ChartObject c : list)
-                        if (c.getName().equals(controversial.getName())) {
-                            list.remove(c);
-                            break;
-                        }
+                    list.stream()
+                            .filter(c -> c.getName()
+                                    .equals(controversial.getName()))
+                            .findFirst()
+                            .ifPresent(list::remove);
                     fixed = true;
                 }
                 case "2" -> {
                     String name;
                     do {
                         System.out.print("Новое имя: ");
-                        name = keyboard.nextLine();
+                        name = keyboard.nextLine();         // TODO: допустимое имя
                         System.out.println();
                     } while (containsName(list, name));
                     controversial.setName(name);
@@ -324,18 +331,65 @@ public class Storage {
         return controversial;
     }
 
-    public List<ChartObject> mergeList(List<ChartObject> addingCharts, List<ChartObject> mergingList, String listName) {
+    /**
+     * Разрешает коллизию, возникающую, если имя добавляемой карты уже содержится
+     * в списке. Запрашивает решение у астролога, требуя выбора одного из трёх вариантов:
+     * <li>заменить – удаляет из списка карту с конфликтным именем, добавляет новую;</li>
+     * <li>переименовать – запрашивает новое имя для добавляемой карты и добавляет обновлённую;</li>
+     * <li>отмена – карта не добавляется.</li>
+     *
+     * @param controversial добавляемая карта, имя которой, как предварительно уже определено,
+     *                      уже присутствует в целевом списке.
+     * @param list          список, куда должны добавляться карты с уникальными именами.
+     * @param listName      название файла или иного списка, в который добавляется карта, в предложном падеже.
+     */
+    public static void mergeResolving(ChartObject controversial, List<ChartObject> list, String listName) {
+        boolean fixed = false;
+        while (!fixed) {
+            System.out.printf("""
+                                            
+                    Карта с именем %s уже есть:
+                    1. заменить присутствующую в %s
+                    2. добавить под новым именем
+                    0. отмена
+                    """, controversial.getName(), listName);
+            switch (keyboard.nextLine()) {
+                case "1" -> {
+                    list.stream()
+                            .filter(c -> c.getName()
+                                    .equals(controversial.getName()))
+                            .findFirst()
+                            .ifPresent(list::remove);
+                    list.add(controversial);
+                    fixed = true;
+                }
+                case "2" -> {
+                    String name;
+                    do {
+                        System.out.print("Новое имя: ");
+                        name = keyboard.nextLine();         // TODO: допустимое имя
+                        System.out.println();
+                    } while (containsName(list, name));
+                    controversial.setName(name);
+                    list.add(controversial);
+                    fixed = true;
+                }
+                case "0" -> {
+                    System.out.println("Отмена добавления карты: " + controversial.getName());
+                    fixed = true;
+                }
+            }
+        }
+    }
+
+    public static List<ChartObject> mergeList(List<ChartObject> addingCharts, List<ChartObject> mergingList, String listName) {
         if (addingCharts == null || addingCharts.isEmpty())
             return mergingList;
         if (mergingList == null || mergingList.isEmpty())
             return addingCharts;
-        for (ChartObject adding : addingCharts) {
-            ChartObject inspected = adding;
+        for (ChartObject adding : addingCharts)
             if (containsName(mergingList, adding.getName()))
-                inspected = resolveCollision(adding, mergingList, listName);
-            if (inspected != null)
-                mergingList.add(inspected);
-        }
+                mergeResolving(adding, mergingList, listName);
         return mergingList;
     }
 }
