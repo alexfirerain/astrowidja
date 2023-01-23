@@ -40,6 +40,7 @@ public class Chart extends ChartObject {
         super(name);
     }
 
+
     public static Chart readFromString(String input) {
         String[] lines = input.lines().toArray(String[]::new);
         if (lines.length == 0)

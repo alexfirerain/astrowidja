@@ -75,4 +75,8 @@ abstract public class ChartObject {
     public abstract String resonanceAnalysisVerbose(int upToHarmonic);
 
     public abstract String getString();
+
+    public static ChartObject readFromString(String s) {
+        return null;
+    }
 }
