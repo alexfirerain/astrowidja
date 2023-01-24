@@ -112,18 +112,23 @@ public class Storage {
 
     public static void saveTableToFile(Map<String, ChartObject> table, String target) {
 
-        String content = mergeList(
-                table.values().stream().toList(),
-                readChartsFromFile(target),
-                target)
-                .stream()
+        try (PrintWriter out = new PrintWriter(Path.of(baseDir, target).toFile())) {
+            out.println(mergeList(
+                    table.values().stream().toList(),
+                    readChartsFromFile(target),
+                    target)
+                    .stream()
                     .filter(chart -> chart.getType() == ChartType.COSMOGRAM)
                     .map(ChartObject::getString)
-                    .collect(Collectors.joining());
-
-        try (PrintWriter out = new PrintWriter(Path.of(baseDir, target).toFile())) {
-            out.println(content);
-            System.out.printf("Строка%n%s%n записана в %s%n", content, target);
+                    .collect(Collectors.joining()));
+            System.out.printf("Строка%n%s%n записана в %s%n", mergeList(
+                    table.values().stream().toList(),
+                    readChartsFromFile(target),
+                    target)
+                    .stream()
+                    .filter(chart -> chart.getType() == ChartType.COSMOGRAM)
+                    .map(ChartObject::getString)
+                    .collect(Collectors.joining()), target);
         } catch (FileNotFoundException e) {
             System.out.printf("Запись в файл %s обломалась: %s%n", target, e.getLocalizedMessage());
         }
@@ -134,10 +139,7 @@ public class Storage {
     }
 
     public static void putChartToBase(ChartObject chart, String file) {
-        List<ChartObject> content = readChartsFromFile(file);
-
-        content = mergeList(List.of(chart), content, file);
-//        if (containsName(content, chart.getName())) {
+        //        if (containsName(content, chart.getName())) {
 //            boolean fixed = false;
 //            while (!fixed) {
 //                System.out.printf("""
@@ -175,7 +177,10 @@ public class Storage {
 //            }
 //        }
 //        content.add(chart);
-        dropListToFile(content, file);
+        dropListToFile(mergeList(List.of(chart),
+                        readChartsFromFile(file),
+                        file),
+                file);
     }
 
     private static void dropListToFile(List<? extends ChartObject> content, String file) {
@@ -184,14 +189,14 @@ public class Storage {
             out.println(content.stream()
                     .map(ChartObject::getString)
                     .collect(Collectors.joining()));
+            System.out.printf("Карты {%s} записаны в файл %s.%n",
+                    content.stream()
+                            .map(ChartObject::getName)
+                            .collect(Collectors.joining(", ")),
+                    file);
         } catch (FileNotFoundException e) {
-            System.out.printf("Запись в файл %s обломалась: %s%n", file, e);
+            System.out.printf("Запись в файл %s обломалась: %s%n", file, e.getLocalizedMessage());
         }
-        System.out.printf("Карты {%s} записаны в файл %s.%n",
-                content.stream()
-                        .map(ChartObject::getName)
-                        .collect(Collectors.joining(", ")),
-                file);
     }
 
     /**
@@ -344,8 +349,7 @@ public class Storage {
      * @param listName      название файла или иного списка, в который добавляется карта, в предложном падеже.
      */
     public static void mergeResolving(ChartObject controversial, List<ChartObject> list, String listName) {
-        boolean fixed = false;
-        while (!fixed) {
+        while (true) {
             System.out.printf("""
                                             
                     Карта с именем %s уже есть:
@@ -361,7 +365,7 @@ public class Storage {
                             .findFirst()
                             .ifPresent(list::remove);
                     list.add(controversial);
-                    fixed = true;
+                    return;
                 }
                 case "2" -> {
                     String name;
@@ -372,11 +376,11 @@ public class Storage {
                     } while (containsName(list, name));
                     controversial.setName(name);
                     list.add(controversial);
-                    fixed = true;
+                    return;
                 }
                 case "0" -> {
                     System.out.println("Отмена добавления карты: " + controversial.getName());
-                    fixed = true;
+                    return;
                 }
             }
         }

@@ -58,7 +58,8 @@ public class Pattern {
 
     /**
      * Выдаёт многострочное представление паттерна.
-     * Каждая строка содержит символ астры и (в скобках) среднюю
+     * Первая строка докладывает среднюю силу связанности и кол-во астр.
+     * Каждая следующая строка содержит символ астры и (в скобках) среднюю
      * силу её связанности с другими элементами паттерна.
      *
      * @return многостроку с представлением паттерна.
@@ -69,16 +70,16 @@ public class Pattern {
                     "%c (-)%n"
                             .formatted(entries.get(0).getElement().getSymbol());
         return
-                "\t%.0f%% @%d:%n"
+                "\t%.0f%% (%d):%n"
                         .formatted(getAverageStrength(), size())
                     +
-                    entries.stream()
-                        .map(pe -> "\t\t%c (%.0f%%)%n"
-                                .formatted(
-                                        pe.getElement().getSymbol(),
-                                        calculateStrength(
-                                                getPrimalOrb() * size(),
-                                                pe.getTotalClearance() / (size() - 1))))
+                        entries.stream()
+                                .map(pe -> "\t\t%s (%.0f%%)%n"
+                                        .formatted(
+                                                pe.getElement().getSymbolWithDegree(),
+                                                calculateStrength(
+                                                        getPrimalOrb() * size(),
+                                                        pe.getTotalClearance() / (size() - 1))))
                         .collect(Collectors.joining());
     }
 
