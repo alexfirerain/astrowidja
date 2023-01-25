@@ -206,7 +206,7 @@ public class Storage {
      * @param chartName проверяемое имя.
      * @return есть ли карта с таким именем в этом списке.
      */
-    private static boolean containsName(List<? extends ChartObject> content, String chartName) {
+    public static boolean containsName(List<? extends ChartObject> content, String chartName) {
         return content.stream()
                 .anyMatch(c -> c.getName()
                         .equals(chartName));
@@ -347,16 +347,20 @@ public class Storage {
      *                      уже присутствует в целевом списке.
      * @param list          список, куда должны добавляться карты с уникальными именами.
      * @param listName      название файла или иного списка, в который добавляется карта, в предложном падеже.
+     * @return  {@code true}, если карта (с оригинальным либо обновлённым именем) добавлена в список.
      */
-    public static void mergeResolving(ChartObject controversial, List<ChartObject> list, String listName) {
+    public static boolean mergeResolving(ChartObject controversial, List<ChartObject> list, String listName) {
         while (true) {
             System.out.printf("""
-                                            
-                    Карта с именем %s уже есть:
-                    1. заменить присутствующую в %s
-                    2. добавить под новым именем
-                    0. отмена
-                    """, controversial.getName(), listName);
+                                                    
+                            Карта с именем '%s' уже есть:
+                            1. заменить присутствующую %s
+                            2. добавить под новым именем
+                            0. отмена
+                            """, controversial.getName(),
+                    listName.startsWith("на ") ?
+                            listName :
+                            "в " + listName);
             switch (keyboard.nextLine()) {
                 case "1" -> {
                     list.stream()
@@ -364,8 +368,7 @@ public class Storage {
                                     .equals(controversial.getName()))
                             .findFirst()
                             .ifPresent(list::remove);
-                    list.add(controversial);
-                    return;
+                    return list.add(controversial);
                 }
                 case "2" -> {
                     String name;
@@ -375,12 +378,11 @@ public class Storage {
                         System.out.println();
                     } while (containsName(list, name));
                     controversial.setName(name);
-                    list.add(controversial);
-                    return;
+                    return list.add(controversial);
                 }
                 case "0" -> {
                     System.out.println("Отмена добавления карты: " + controversial.getName());
-                    return;
+                    return false;
                 }
             }
         }
@@ -394,6 +396,8 @@ public class Storage {
         for (ChartObject adding : addingCharts)
             if (containsName(mergingList, adding.getName()))
                 mergeResolving(adding, mergingList, listName);
+            else
+                mergingList.add(adding);
         return mergingList;
     }
 }
