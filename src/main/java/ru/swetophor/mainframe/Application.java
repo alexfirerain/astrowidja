@@ -74,6 +74,8 @@ public class Application {
 
     static private final List<ChartObject> TABLE = new ArrayList<>();
 
+    static private final ChartList LIST = new ChartList();
+
     private static void mainCycle() {
         String MENU = frameText("""
                 1. карты на столе
@@ -209,8 +211,8 @@ public class Application {
      * @param chart добавляемая карта.
      */
     private static void addChart(ChartObject chart) {
-        if (Storage.containsName(TABLE, chart.getName()) ?
-                Storage.mergeResolving(chart, TABLE, "на столе") :
+        if (ChartList.containsName(TABLE, chart.getName()) ?
+                ChartList.mergeResolving(chart, TABLE, "на столе") :
                 TABLE.add(chart))
             System.out.println("Карта загружена: " + chart);
     }
@@ -232,8 +234,7 @@ public class Application {
      * @param file имя файла в папке базы данных.
      */
     public static void loadFromFile(String file) {
-        Storage.readChartsFromFile(file)
-                .forEach(Application::addChart);
+        LIST.mergeResolving(Storage.readChartsFromFile(file), "на столе");
     }
 
 }

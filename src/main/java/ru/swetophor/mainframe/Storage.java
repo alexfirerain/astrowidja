@@ -14,8 +14,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static ru.swetophor.mainframe.Application.keyboard;
-
 /**
  * Предоставляет модель хранения данных в файлах попки базы данных.
  * Содержит список всех доступных карт и инструментарий по управлению картами.
@@ -113,18 +111,18 @@ public class Storage {
     public static void saveTableToFile(Map<String, ChartObject> table, String target) {
 
         try (PrintWriter out = new PrintWriter(Path.of(baseDir, target).toFile())) {
-            out.println(mergeList(
-                    table.values().stream().toList(),
-                    readChartsFromFile(target),
-                    target)
+            out.println(ChartList.mergeList(
+                            table.values().stream().toList(),
+                            readChartsFromFile(target),
+                            target)
                     .stream()
                     .filter(chart -> chart.getType() == ChartType.COSMOGRAM)
                     .map(ChartObject::getString)
                     .collect(Collectors.joining()));
-            System.out.printf("Строка%n%s%n записана в %s%n", mergeList(
-                    table.values().stream().toList(),
-                    readChartsFromFile(target),
-                    target)
+            System.out.printf("Строка%n%s%n записана в %s%n", ChartList.mergeList(
+                            table.values().stream().toList(),
+                            readChartsFromFile(target),
+                            target)
                     .stream()
                     .filter(chart -> chart.getType() == ChartType.COSMOGRAM)
                     .map(ChartObject::getString)
@@ -177,7 +175,7 @@ public class Storage {
 //            }
 //        }
 //        content.add(chart);
-        dropListToFile(mergeList(List.of(chart),
+        dropListToFile(ChartList.mergeList(List.of(chart),
                         readChartsFromFile(file),
                         file),
                 file);
@@ -197,19 +195,6 @@ public class Storage {
         } catch (FileNotFoundException e) {
             System.out.printf("Запись в файл %s обломалась: %s%n", file, e.getLocalizedMessage());
         }
-    }
-
-    /**
-     * Содержит ли указанный список указанное имя карты.
-     *
-     * @param content   список, в котором проверяем.
-     * @param chartName проверяемое имя.
-     * @return есть ли карта с таким именем в этом списке.
-     */
-    public static boolean containsName(List<? extends ChartObject> content, String chartName) {
-        return content.stream()
-                .anyMatch(c -> c.getName()
-                        .equals(chartName));
     }
 
     /**
@@ -254,6 +239,32 @@ public class Storage {
         }
     }
 
+//    /**
+//     * Прочитывает список карт из формата *.awb
+//     *
+//     * @param file имя файла
+//     * @return список карт, прочитанных из файла.
+//     * Если файл не существует, то пустой список.
+//     */
+//    public static List<ChartObject> readChartsFromFile(String file) {
+//        List<ChartObject> read = new ArrayList<>();
+//        Path filePath = Path.of(baseDir, file);
+//        if (!Files.exists(filePath)) {
+//            System.out.printf("Не удалось найти файл '%s'%n", file);
+//        } else {
+//            try {
+//                read = Arrays.stream(Files.readString(filePath)
+//                                .split("#"))
+//                        .filter(s -> !s.isBlank())
+//                        .map(ChartObject::readFromString)
+//                        .toList();
+//            } catch (IOException e) {
+//                System.out.printf("Не удалось прочесть файл '%s': %s%n", file, e.getLocalizedMessage());
+//            }
+//        }
+//        return read;
+//    }
+
     /**
      * Прочитывает список карт из формата *.awb
      *
@@ -261,143 +272,23 @@ public class Storage {
      * @return список карт, прочитанных из файла.
      * Если файл не существует, то пустой список.
      */
-    public static List<ChartObject> readChartsFromFile(String file) {
-        List<ChartObject> result = new ArrayList<>();
+    public static ChartList readChartsFromFile(String file) {
+        ChartList read = new ChartList();
         Path filePath = Path.of(baseDir, file);
         if (!Files.exists(filePath)) {
             System.out.printf("Не удалось найти файл '%s'%n", file);
         } else {
             try {
-                result = Arrays.stream(Files.readString(filePath)
+                Arrays.stream(Files.readString(filePath)
                                 .split("#"))
                         .filter(s -> !s.isBlank())
                         .map(ChartObject::readFromString)
-                        .toList();
+                        .forEach(read::addItem);
             } catch (IOException e) {
                 System.out.printf("Не удалось прочесть файл '%s': %s%n", file, e.getLocalizedMessage());
             }
         }
-        return result;
+        return read;
     }
 
-    /**
-     * Разрешает коллизию, возникающую, если имя добавляемой карты уже содержится
-     * в списке. Запрашивает решение у астролога, требуя выбора одного из трёх вариантов:
-     * <li>заменить – удаляет из списка карту с конфликтным именем, возвращает добавляемую;</li>
-     * <li>переименовать – запрашивает новое имя для добавляемой карты, обновляет её и возвращает;</li>
-     * <li>отмена – возвращает {@code null}</li>
-     * <p>
-     * Таким образом, возращаемое функцией значение соответствует той карте, которую
-     * следует слудующим шагом добавить в целевой список.
-     *
-     * @param controversial добавляемая карта, имя которой, как предварительно уже определено,
-     *                      уже присутствует в целевом списке.
-     * @param list          список, куда должны добавляться карты с уникальными именами.
-     * @param listName      название файла или иного списка, в который добавляется карта, в предложном падеже.
-     * @return ту же карту, если выбрано "заменить старую карту",
-     * ту же карту с новым именем, если выбрано "переименовать новую карту",
-     * или {@code пусто}, если выбрано "отменить операцию".
-     */
-    public static ChartObject resolveCollision(ChartObject controversial, List<ChartObject> list, String listName) {
-        boolean fixed = false;
-        while (!fixed) {
-            System.out.printf("""
-                                            
-                    Карта с именем %s уже есть:
-                    1. заменить присутствующую в %s
-                    2. добавить под новым именем
-                    0. отмена
-                    """, controversial.getName(), listName);
-            switch (keyboard.nextLine()) {
-                case "1" -> {
-                    list.stream()
-                            .filter(c -> c.getName()
-                                    .equals(controversial.getName()))
-                            .findFirst()
-                            .ifPresent(list::remove);
-                    fixed = true;
-                }
-                case "2" -> {
-                    String name;
-                    do {
-                        System.out.print("Новое имя: ");
-                        name = keyboard.nextLine();         // TODO: допустимое имя
-                        System.out.println();
-                    } while (containsName(list, name));
-                    controversial.setName(name);
-                    fixed = true;
-                }
-                case "0" -> {
-                    System.out.println("Отмена добавления карты: " + controversial.getName());
-                    return null;
-                }
-            }
-        }
-        return controversial;
-    }
-
-    /**
-     * Разрешает коллизию, возникающую, если имя добавляемой карты уже содержится
-     * в списке. Запрашивает решение у астролога, требуя выбора одного из трёх вариантов:
-     * <li>заменить – удаляет из списка карту с конфликтным именем, добавляет новую;</li>
-     * <li>переименовать – запрашивает новое имя для добавляемой карты и добавляет обновлённую;</li>
-     * <li>отмена – карта не добавляется.</li>
-     *
-     * @param controversial добавляемая карта, имя которой, как предварительно уже определено,
-     *                      уже присутствует в целевом списке.
-     * @param list          список, куда должны добавляться карты с уникальными именами.
-     * @param listName      название файла или иного списка, в который добавляется карта, в предложном падеже.
-     * @return  {@code true}, если карта (с оригинальным либо обновлённым именем) добавлена в список.
-     */
-    public static boolean mergeResolving(ChartObject controversial, List<ChartObject> list, String listName) {
-        while (true) {
-            System.out.printf("""
-                                                    
-                            Карта с именем '%s' уже есть:
-                            1. заменить присутствующую %s
-                            2. добавить под новым именем
-                            0. отмена
-                            """, controversial.getName(),
-                    listName.startsWith("на ") ?
-                            listName :
-                            "в " + listName);
-            switch (keyboard.nextLine()) {
-                case "1" -> {
-                    list.stream()
-                            .filter(c -> c.getName()
-                                    .equals(controversial.getName()))
-                            .findFirst()
-                            .ifPresent(list::remove);
-                    return list.add(controversial);
-                }
-                case "2" -> {
-                    String name;
-                    do {
-                        System.out.print("Новое имя: ");
-                        name = keyboard.nextLine();         // TODO: допустимое имя
-                        System.out.println();
-                    } while (containsName(list, name));
-                    controversial.setName(name);
-                    return list.add(controversial);
-                }
-                case "0" -> {
-                    System.out.println("Отмена добавления карты: " + controversial.getName());
-                    return false;
-                }
-            }
-        }
-    }
-
-    public static List<ChartObject> mergeList(List<ChartObject> addingCharts, List<ChartObject> mergingList, String listName) {
-        if (addingCharts == null || addingCharts.isEmpty())
-            return mergingList;
-        if (mergingList == null || mergingList.isEmpty())
-            return addingCharts;
-        for (ChartObject adding : addingCharts)
-            if (containsName(mergingList, adding.getName()))
-                mergeResolving(adding, mergingList, listName);
-            else
-                mergingList.add(adding);
-        return mergingList;
-    }
 }
