@@ -6,6 +6,7 @@ import ru.swetophor.celestialmechanics.ChartType;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static ru.swetophor.mainframe.Application.keyboard;
@@ -32,6 +33,14 @@ public class ChartList {
     public ChartList(List<ChartObject> charts) {
         this();
         addAll(charts);
+    }
+
+    @Override
+    public String toString() {
+        return IntStream.range(0, size())
+                .mapToObj(i -> "%d. %s%n"
+                        .formatted(i + 1, getChart(i).toString()))
+                .collect(Collectors.joining());
     }
 
     /**
@@ -194,6 +203,7 @@ public class ChartList {
                 case "1" -> {
                     list.remove(controversial.getName());
                     list.addItem(controversial);
+                    return;
                 }
                 case "2" -> {
                     String rename;
@@ -204,9 +214,11 @@ public class ChartList {
                     } while (list.contains(rename));
                     controversial.setName(rename);
                     list.addItem(controversial);
+                    return;
                 }
                 case "0" -> {
                     System.out.println("Отмена добавления карты: " + controversial.getName());
+                    return;
                 }
             }
         }
@@ -253,21 +265,24 @@ public class ChartList {
     /**
      * Разрешает коллизию, возникающую, если имя добавляемой карты уже содержится
      * в списке. Запрашивает решение у астролога, требуя выбора одного из трёх вариантов:
-     * <li>заменить – удаляет из списка карту с конфликтным именем, добавляет новую;</li>
      * <li>переименовать – запрашивает новое имя для добавляемой карты и добавляет обновлённую;</li>
+     * <li>обновить – ставит новую карту на место старой карты с этим именем;</li>
+     * <li>заменить – удаляет из списка карту с конфликтным именем, добавляет новую;</li>
      * <li>отмена – карта не добавляется.</li>
      *
      * @param controversial добавляемая карта, имя которой, как предварительно уже определено,
      *                      уже присутствует в этом списке.
      * @param listName      название файла или иного списка, в который добавляется карта, в предложном падеже.
+     * @return
      */
-    public void mergeResolving(ChartObject controversial, String listName) {
+    public boolean mergeResolving(ChartObject controversial, String listName) {
         while (true) {
             System.out.printf("""
                                                     
-                            Карта с именем '%s' уже есть:
-                            1. заменить присутствующую %s
-                            2. добавить под новым именем
+                            Карта с именем '%s' уже есть %s:
+                            1. добавить под новым именем
+                            2. заменить присутствующую в списке
+                            3. удалить старую, добавить новую в конец списка 
                             0. отмена
                             """, controversial.getName(),
                     listName.startsWith("на ") ?
@@ -275,11 +290,6 @@ public class ChartList {
                             "в " + listName);
             switch (keyboard.nextLine()) {
                 case "1" -> {
-                    remove(controversial.getName());
-                    addItem(controversial);
-                    return;
-                }
-                case "2" -> {
                     String rename;
                     do {
                         System.out.print("Новое имя: ");
@@ -287,12 +297,20 @@ public class ChartList {
                         System.out.println();
                     } while (contains(rename));
                     controversial.setName(rename);
+                    return addItem(controversial);
+                }
+                case "2" -> {
+                    set(indexOf(controversial.getName()), controversial);
+                    return false;
+                }
+                case "3" -> {
+                    remove(controversial.getName());
                     addItem(controversial);
-                    return;
+                    return false;
                 }
                 case "0" -> {
                     System.out.println("Отмена добавления карты: " + controversial.getName());
-                    return;
+                    return false;
                 }
             }
         }
@@ -339,7 +357,12 @@ public class ChartList {
     }
 
     public boolean add(ChartObject chart) {
-        return false;
+        int mod = this.modCount;
+        if (contains(chart.getName()))
+            mergeResolving(chart, "этом списке");
+        else
+            addItem(chart);
+        return this.modCount != mod;
     }
 
     /**
@@ -347,8 +370,7 @@ public class ChartList {
      * @return
      */
     public boolean addAll(Collection<ChartObject> collection) {
-        ++this.modCount;
-        names.addAll(collection.stream().map(ChartObject::getName).toList());
+//        collection.forEach(this::add);
         return charts.addAll(collection);
     }
 
@@ -373,9 +395,7 @@ public class ChartList {
     public void sort(Comparator<? super ChartObject> c) {
         charts.sort(c);
         names.clear();
-        names.addAll(charts.stream()
-                .map(ChartObject::getName)
-                .toList());
+        names.addAll(chartsToNames(charts));
         ++this.modCount;
     }
 
@@ -428,18 +448,33 @@ public class ChartList {
     }
 
     /**
+     * @param name
+     * @return
+     */
+    public int indexOf(String name) {
+        return names.indexOf(name);
+    }
+    /**
      * @param o
      * @return
      */
-    public int indexOf(Object o) {
+    public int indexOf(ChartObject o) {
         return charts.indexOf(o);
+    }
+
+    /**
+     * @param name
+     * @return
+     */
+    public int lastIndexOf(String name) {
+        return names.lastIndexOf(name);
     }
 
     /**
      * @param o
      * @return
      */
-    public int lastIndexOf(Object o) {
+    public int lastIndexOf(ChartObject o) {
         return charts.lastIndexOf(o);
     }
 
@@ -478,10 +513,14 @@ public class ChartList {
      * @return {@code истинно}, если этот список изменился в результате вызова.
      */
     public boolean retainAll(Collection<ChartObject> collection) {
-        names.retainAll(collection.stream()
-                .map(ChartObject::getName)
-                .toList());
-        return charts.retainAll(collection);
+        names.retainAll(chartsToNames(collection));
+        boolean changed = charts.retainAll(collection);
+        if (changed) ++this.modCount;
+        return changed;
+    }
+
+    private List<String> chartsToNames(Collection<ChartObject> collection) {
+        return collection.stream().map(ChartObject::getName).toList();
     }
 
     /**
@@ -491,10 +530,11 @@ public class ChartList {
      * @return {@code истинно}, если этот список изменился в результате вызова.
      */
     public boolean removeAll(Collection<ChartObject> collection) {
-        names.removeAll(collection.stream()
-                .map(ChartObject::getName)
-                .toList());
-        return charts.removeAll(collection);
+        names.removeAll(chartsToNames(collection));
+        boolean changed = charts.removeAll(collection);
+        if (changed)
+            ++this.modCount;
+        return changed;
     }
 
     /**
@@ -513,9 +553,13 @@ public class ChartList {
      *
      * @param chart добавляемая карта.
      */
-    private void addItem(ChartObject chart) {
-        charts.add(chart);
-        names.add(chart.getName());
+    private boolean addItem(ChartObject chart) {
+        boolean add = charts.add(chart);
+        if (add) {
+            ++this.modCount;
+            names.add(chart.getName());
+        }
+        return add;
     }
 
     /**
@@ -539,7 +583,7 @@ public class ChartList {
      * если карты с таким именем здесь нет.
      */
     public ChartObject getChart(String name) {
-        return getChart(names.indexOf(name));
+        return getChart(indexOf(name));
     }
 
     /**

@@ -7,6 +7,8 @@ import ru.swetophor.celestialmechanics.Chart;
 import ru.swetophor.celestialmechanics.ChartObject;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static ru.swetophor.mainframe.Decorator.*;
 import static ru.swetophor.mainframe.Settings.*;
@@ -45,7 +47,7 @@ public class Application {
 
 //        addChart(SCChart, TVChart, doubleChart, SCTVComposite);
 
-        loadFromFile("сохранение вс 15 января .23 15-03.awb");
+        Storage.loadFromFile("сохранение вс 15 января .23 15-03.awb");
 //        loadFromFile("autosave.awb");
 
         mainCycle();
@@ -74,7 +76,7 @@ public class Application {
 
     static private final List<ChartObject> TABLE = new ArrayList<>();
 
-    static private final ChartList LIST = new ChartList();
+    protected static final ChartList LIST = new ChartList();
 
     private static void mainCycle() {
         String MENU = frameText("""
@@ -105,47 +107,39 @@ public class Application {
      * если она найдена, выводит её статистику на экран.
      */
     private static void showChart() {
-        System.out.print("Укажите карту по ИД или имени: ");
+        System.out.print("Укажите карту по номеру на столе или по имени: ");
         String order = keyboard.nextLine();
         if (order.isBlank())
             return;
-        if (order.matches("^\\d+"))
+        if (order.matches("^\\d+")) {
             try {
                 int i = Integer.parseInt(order);
-                DESK.values().stream()
-                        .filter(chart -> chart.getID() == i)
-                        .findFirst().ifPresentOrElse(
-                                Application::printChartStat,
-                                () -> System.out.println("Карты с номером " + order + " не найдено."));
+                ChartObject result = LIST.getChart(i - 1);
+                if (result != null)
+                    printChartStat(result);
+                else
+                    System.out.println("Карты под номером " + order + " не найдено.");
             } catch (NumberFormatException e) {
                 System.out.println("Число не распознано.");
             }
-        else if (DESK.containsKey(order))
-            printChartStat(DESK.get(order));
+        } else if (LIST.contains(order))
+            printChartStat(LIST.getChart(order));
         else
             System.out.println("Карты с именем " + order + " не найдено.");
     }
 
     /**
-     * Выводит на экран список карт, лежащих на {@link #TABLE столе}, то есть загруженных в программу.
+     * Выводит на экран список карт, лежащих на {@link #LIST столе}, то есть загруженных в программу.
      */
     private static void listCharts() {
-        StringBuilder output = new StringBuilder();
-        if (DESK.isEmpty())
-            output
-                    .append("Ни одной карты не загружено.");
-        else
-            DESK.values()
-                    .forEach(c -> output
-                            .append(c.toString())
-                            .append("\n"));
-        System.out.println(frameText(output.toString(),
-                30, 80,
-                SINGULAR_FRAME));
+        System.out.println(frameText(LIST.isEmpty() ?
+                    "Ни одной карты не загружено." :
+                    LIST.toString(),
+                30, 80, SINGULAR_FRAME));
     }
 
     /**
-     * Запрашивает, какую карту со {@link #TABLE стола} взять в работу,
+     * Запрашивает, какую карту со {@link #LIST стола} взять в работу,
      * т.е. запустить в {@link #workCycle(ChartObject) цикле процедур для карты}.
      */
     public static void takeChart() {
@@ -206,35 +200,26 @@ public class Application {
     }
 
     /**
-     * Добавляет карту на {@link #TABLE стол}. Если карта с таким именем уже
+     * Добавляет карту на {@link #LIST стол}. Если карта с таким именем уже
      * присутствует, запрашивает решение у юзера.
      * @param chart добавляемая карта.
      */
     private static void addChart(ChartObject chart) {
-        if (ChartList.containsName(TABLE, chart.getName()) ?
-                ChartList.mergeResolving(chart, TABLE, "на столе") :
-                TABLE.add(chart))
+        if (LIST.contains(chart.getName()) ?
+                LIST.mergeResolving(chart, "на столе") :
+                LIST.add(chart))
             System.out.println("Карта загружена: " + chart);
     }
 
     /**
-     * Добавляет {@link #TABLE в реестр} произвольное количество карт из аргументов.
+     * Добавляет {@link #LIST в реестр} произвольное количество карт из аргументов.
      * Если какая-то карта совпадает с уже записанной, у юзера
      * запрашивается решение.
      * @param charts добавляемые карты.
      */
     private static void addChart(ChartObject... charts) {
-        Arrays.stream(charts)
-                .forEach(Application::addChart);
-    }
-
-    /**
-     * Прочитывает карты из файла в папке базы данных на стол.
-     *
-     * @param file имя файла в папке базы данных.
-     */
-    public static void loadFromFile(String file) {
-        LIST.mergeResolving(Storage.readChartsFromFile(file), "на столе");
+        for (ChartObject chart : charts)
+            addChart(chart);
     }
 
 }

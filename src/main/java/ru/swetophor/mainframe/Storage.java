@@ -290,4 +290,13 @@ public class Storage {
         return read;
     }
 
+    /**
+     * Прочитывает карты из файла в папке базы данных на {@link Application#LIST стол} {@link Application АстроВидьи}.
+     *
+     * @param fileName имя файла в папке базы данных.
+     */
+    public static void loadFromFile(String fileName) {
+        readChartsFromFile(fileName)
+                .forEach(c -> Application.LIST.mergeResolving(c, "на столе"));
+    }
 }
