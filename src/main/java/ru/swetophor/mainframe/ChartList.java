@@ -1,9 +1,11 @@
 package ru.swetophor.mainframe;
 
 import ru.swetophor.celestialmechanics.ChartObject;
+import ru.swetophor.celestialmechanics.ChartType;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static ru.swetophor.mainframe.Application.keyboard;
@@ -23,6 +25,14 @@ public class ChartList {
      */
     private final List<String> names = new ArrayList<>();
     protected transient int modCount = 0;
+
+    public ChartList() {
+    }
+
+    public ChartList(List<ChartObject> charts) {
+        this();
+        addAll(charts);
+    }
 
     /**
      * Содержит ли указанный список указанное имя карты.
@@ -288,6 +298,13 @@ public class ChartList {
         }
     }
 
+    public String getString() {
+        return charts.stream()
+                .filter(chart -> chart.getType() == ChartType.COSMOGRAM)
+                .map(ChartObject::getString)
+                .collect(Collectors.joining());
+    }
+
     /**
      * @return количество карт-объектов в этом списке.
      */
@@ -304,13 +321,9 @@ public class ChartList {
 
 
     /**
-     * @return
-     */
-    public Iterator iterator() {
-        return null;
-    }
-
-    /**
+     * Применяет по конвейеру указанное действие последовательно ко всем картам,
+     * контролируя, что список карт не изменился в его ходе.
+     *
      * @param action действие, которое будет последовательно применено ко всем картам.
      */
     public void forEach(Consumer<? super ChartObject> action) {
@@ -325,56 +338,61 @@ public class ChartList {
             throw new ConcurrentModificationException();
     }
 
+    public boolean add(ChartObject chart) {
+        return false;
+    }
+
     /**
+     * @param collection
      * @return
+     */
+    public boolean addAll(Collection<ChartObject> collection) {
+        ++this.modCount;
+        names.addAll(collection.stream().map(ChartObject::getName).toList());
+        return charts.addAll(collection);
+    }
+
+    /**
+     * @param i
+     * @param collection
+     * @return
+     */
+    public boolean addAll(int i, Collection<ChartObject> collection) {
+        ++this.modCount;
+        names.addAll(i, collection.stream().map(ChartObject::getName).toList());
+        return charts.addAll(i, collection);
+    }
+
+    /**
+     * Сортирует карты сообразно полученному компаратору,
+     * затем перезаполняет список имён в соответствие с обновлённым
+     * списком карт.
+     *
+     * @param c компаратор для внесения порядка в список карт.
+     */
+    public void sort(Comparator<? super ChartObject> c) {
+        charts.sort(c);
+        names.clear();
+        names.addAll(charts.stream()
+                .map(ChartObject::getName)
+                .toList());
+        ++this.modCount;
+    }
+
+    /**
+     * @return массив с содержащимися картами.
      */
     public ChartObject[] toArray() {
         return charts.toArray(ChartObject[]::new);
     }
 
-
     /**
-     * @param c
+     * Опустошает список карт (и имён).
      */
-    @Override
-    public void sort(Comparator<? super ChartObject> c) {
-        List.super.sort(c);
-    }
-
-    /**
-     * @param collection
-     * @return
-     */
-    @Override
-    public boolean addAll(Collection collection) {
-        return false;
-    }
-
-    /**
-     * @param i
-     * @param collection
-     * @return
-     */
-    @Override
-    public boolean addAll(int i, Collection collection) {
-        return false;
-    }
-
-    /**
-     *
-     */
-    @Override
     public void clear() {
-
-    }
-
-    /**
-     * @param i
-     * @return
-     */
-    @Override
-    public Object get(int i) {
-        return null;
+        charts.clear();
+        names.clear();
+        ++this.modCount;
     }
 
     /**
@@ -383,192 +401,205 @@ public class ChartList {
      * @return
      */
     public ChartObject set(int i, ChartObject chartObject) {
-        return null;
+//        if (contains(chartObject.getName()))
+//            chartObject = resolveCollision(chartObject, charts, "этом списке'");
+        names.set(i, chartObject.getName());
+        ++this.modCount;
+        return charts.set(i, chartObject);
     }
 
     /**
      * @param i
      * @param chartObject
      */
-    @Override
     public void add(int i, ChartObject chartObject) {
-
-    }
-
-    /**
-     * @param i
-     * @param o
-     * @return
-     */
-    @Override
-    public Object set(int i, Object o) {
-        return null;
-    }
-
-    /**
-     * @param i
-     * @param o
-     */
-    @Override
-    public void add(int i, Object o) {
-
+        charts.add(i, chartObject);
+        names.add(i, chartObject.getName());
     }
 
     /**
      * @param i
      * @return
      */
-    @Override
-    public Object remove(int i) {
-        return null;
+    public ChartObject remove(int i) {
+        names.remove(i);
+        ++this.modCount;
+        return charts.remove(i);
     }
 
     /**
      * @param o
      * @return
      */
-    @Override
     public int indexOf(Object o) {
-        return 0;
+        return charts.indexOf(o);
     }
 
     /**
      * @param o
      * @return
      */
-    @Override
     public int lastIndexOf(Object o) {
-        return 0;
+        return charts.lastIndexOf(o);
     }
 
     /**
-     * @return
+     * Возвращает новый список карт, содержащий карты этого списка
+     * с номера i включительно до номера i1 исключительно.
+     *
+     * @param i  первый номер карты в списке, который
+     *           попадёт в новый список.
+     * @param i1 первый номер карты в списке, который не
+     *           попадёт в новый список.
+     * @return новый список карт, включающий карты этого списка с i до i1.
      */
-    @Override
-    public ListIterator listIterator() {
-        return null;
+    public ChartList subList(int i, int i1) {
+        return new ChartList(charts.subList(i, i1));
     }
 
     /**
-     * @param i
-     * @return
+     * @return поток из карт-объектов.
      */
-    @Override
-    public ListIterator listIterator(int i) {
-        return null;
-    }
-
-    /**
-     * @param i
-     * @param i1
-     * @return
-     */
-    @Override
-    public List subList(int i, int i1) {
-        return null;
-    }
-
-    /**
-     * @return
-     */
-    @Override
-    public Spliterator<ChartObject> spliterator() {
-        return List.super.spliterator();
-    }
-
-    /**
-     * @return
-     */
-    @Override
     public Stream<ChartObject> stream() {
-        return List.super.stream();
+        return charts.stream();
     }
 
     /**
-     * @return
+     * @return параллельный поток из карт-объектов, как он определён в {@link ArrayList}.
      */
-    @Override
     public Stream<ChartObject> parallelStream() {
-        return List.super.parallelStream();
+        return charts.parallelStream();
     }
 
     /**
-     * @param collection
-     * @return
+     * Удаляет из списка карт все элементы, которые не присутствуют в указанном собрании.
+     *
+     * @param collection любой собрание карт-элементов.
+     * @return {@code истинно}, если этот список изменился в результате вызова.
      */
-    @Override
-    public boolean retainAll(Collection collection) {
-        return false;
+    public boolean retainAll(Collection<ChartObject> collection) {
+        names.retainAll(collection.stream()
+                .map(ChartObject::getName)
+                .toList());
+        return charts.retainAll(collection);
     }
 
     /**
-     * @param collection
-     * @return
+     * Удаляет из списка карт все элементы, которые присутствуют в указанном собрании.
+     *
+     * @param collection любое собрание карт-элементов.
+     * @return {@code истинно}, если этот список изменился в результате вызова.
      */
-    @Override
-    public boolean removeAll(Collection collection) {
-        return false;
+    public boolean removeAll(Collection<ChartObject> collection) {
+        names.removeAll(collection.stream()
+                .map(ChartObject::getName)
+                .toList());
+        return charts.removeAll(collection);
     }
 
     /**
-     * @param collection
-     * @return
+     * Присутствуют ли в этом списке все указанные карты.
+     *
+     * @param collection собрание карт.
+     * @return да, если все суть, нет, если хотя бы какой-то нет.
      */
-    @Override
-    public boolean containsAll(Collection collection) {
-        return false;
+    public boolean containsAll(Collection<ChartObject> collection) {
+        return charts.containsAll(collection);
     }
 
     /**
-     * @param objects
-     * @return
+     * Добавляет карту и имя карты в соответствующие списки
+     * без дополнительных проверок уникальности имени.
+     *
+     * @param chart добавляемая карта.
      */
-    @Override
-    public Object[] toArray(Object[] objects) {
-        return new Object[0];
-    }
-
-    public boolean add(ChartObject chart) {
-        return false;
-    }
-
-    public void addItem(ChartObject chart) {
+    private void addItem(ChartObject chart) {
         charts.add(chart);
         names.add(chart.getName());
     }
 
+    /**
+     * Даёт карту по её номеру в списке.
+     *
+     * @param i номер карты в списке.
+     * @return карту из списка с соответствующим номером,
+     * или {@code пусто}, если указан номер за пределами списка.
+     */
     public ChartObject getChart(int i) {
         return i >= 0 && i < charts.size() ?
                 charts.get(i) :
                 null;
     }
 
+    /**
+     * Даёт карту по её имени.
+     *
+     * @param name имя карты, которую хотим получить.
+     * @return карту с соответствующим именем, или {@code пусто},
+     * если карты с таким именем здесь нет.
+     */
     public ChartObject getChart(String name) {
         return getChart(names.indexOf(name));
     }
 
+    /**
+     * Отдаёт список всех имён присутствующих карт.
+     *
+     * @return список имён карт в историческом порядке.
+     */
     public List<String> getNames() {
         return names;
     }
 
+    /**
+     * Отдаёт список всех присутствующих карт.
+     *
+     * @return список карт в историческом порядке.
+     */
     public List<ChartObject> getCharts() {
         return charts;
     }
 
+    /**
+     * Содержит ли этот список карту с таким именем.
+     *
+     * @param name имя, которое есть ли.
+     * @return да, если есть, нет, если нет.
+     */
     public boolean contains(String name) {
         return names.contains(name);
     }
 
+    /**
+     * Содержит ли этот список указанную карту.
+     *
+     * @param chart карта, которая есть ли.
+     * @return да, если есть, нет, если нет.
+     */
     public boolean contains(ChartObject chart) {
         return charts.contains(chart);
     }
 
+    /**
+     * Удаляет из списка карту с указанным именем.
+     *
+     * @param name имя карты, которую нужно удалить.
+     * @throws IndexOutOfBoundsException если карта
+     *                                   с указанным номером отсутствует.
+     */
     public void remove(String name) {
         int index = names.indexOf(name);
         charts.remove(index);
         names.remove(index);
     }
 
+    /**
+     * Удаляет из списка указанную карту.
+     *
+     * @param item карта, которую нужно удалить.
+     * @throws IndexOutOfBoundsException если указанная карта
+     *                                   отсутствует.
+     */
     public void remove(ChartObject item) {
         int index = charts.indexOf(item);
         names.remove(index);

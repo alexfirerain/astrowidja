@@ -119,14 +119,13 @@ public class Storage {
                     .filter(chart -> chart.getType() == ChartType.COSMOGRAM)
                     .map(ChartObject::getString)
                     .collect(Collectors.joining()));
-            System.out.printf("Строка%n%s%n записана в %s%n", ChartList.mergeList(
-                            table.values().stream().toList(),
-                            readChartsFromFile(target),
-                            target)
-                    .stream()
-                    .filter(chart -> chart.getType() == ChartType.COSMOGRAM)
-                    .map(ChartObject::getString)
-                    .collect(Collectors.joining()), target);
+            System.out.printf("Строка%n%s%n записана в %s%n", ChartList
+                            .mergeList(
+                                    table.values().stream().toList(),
+                                    readChartsFromFile(target),
+                                    target)
+                            .getString(),
+                    target);
         } catch (FileNotFoundException e) {
             System.out.printf("Запись в файл %s обломалась: %s%n", target, e.getLocalizedMessage());
         }
@@ -283,7 +282,7 @@ public class Storage {
                                 .split("#"))
                         .filter(s -> !s.isBlank())
                         .map(ChartObject::readFromString)
-                        .forEach(read::addItem);
+                        .forEach(read::add);
             } catch (IOException e) {
                 System.out.printf("Не удалось прочесть файл '%s': %s%n", file, e.getLocalizedMessage());
             }
