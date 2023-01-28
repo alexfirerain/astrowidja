@@ -7,8 +7,6 @@ import ru.swetophor.celestialmechanics.Chart;
 import ru.swetophor.celestialmechanics.ChartObject;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static ru.swetophor.mainframe.Decorator.*;
 import static ru.swetophor.mainframe.Settings.*;
@@ -47,13 +45,13 @@ public class Application {
 
 //        addChart(SCChart, TVChart, doubleChart, SCTVComposite);
 
-        Storage.loadFromFile("сохранение вс 15 января .23 15-03.awb");
+        loadFromFile("сохранение вс 15 января .23 15-03.awb");
 //        loadFromFile("autosave.awb");
 
         mainCycle();
 
         if (autosave)
-            Storage.saveTableToFile(DESK, autosaveName());
+            Storage.saveTableToFile(LIST, autosaveName());
     }
 
 
@@ -222,4 +220,13 @@ public class Application {
             addChart(chart);
     }
 
+    /**
+     * Прочитывает карты из файла в папке базы данных на {@link Application#LIST стол} {@link Application АстроВидьи}.
+     *
+     * @param fileName имя файла в папке базы данных.
+     */
+    public static void loadFromFile(String fileName) {
+        Storage.readChartsFromFile(fileName)
+                .forEach(c -> LIST.mergeResolving(c, "на столе"));
+    }
 }

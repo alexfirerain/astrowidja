@@ -282,7 +282,7 @@ public class ChartList {
                             Карта с именем '%s' уже есть %s:
                             1. добавить под новым именем
                             2. заменить присутствующую в списке
-                            3. удалить старую, добавить новую в конец списка 
+                            3. удалить старую, добавить новую в конец списка
                             0. отмена
                             """, controversial.getName(),
                     listName.startsWith("на ") ?
@@ -301,12 +301,11 @@ public class ChartList {
                 }
                 case "2" -> {
                     set(indexOf(controversial.getName()), controversial);
-                    return false;
+                    return true;
                 }
                 case "3" -> {
                     remove(controversial.getName());
-                    addItem(controversial);
-                    return false;
+                    return addItem(controversial);
                 }
                 case "0" -> {
                     System.out.println("Отмена добавления карты: " + controversial.getName());
@@ -356,6 +355,14 @@ public class ChartList {
             throw new ConcurrentModificationException();
     }
 
+    /**
+     * Добавляет в список указанную карту.
+     * Если карта с таким именем уже в наличии, запускает интерактивную процедуру разрешения
+     * конфликта {@link #mergeResolving(ChartObject, String)} (с названием списка "этот список").
+     *
+     * @param chart
+     * @return
+     */
     public boolean add(ChartObject chart) {
         int mod = this.modCount;
         if (contains(chart.getName()))
@@ -370,8 +377,9 @@ public class ChartList {
      * @return
      */
     public boolean addAll(Collection<ChartObject> collection) {
-//        collection.forEach(this::add);
-        return charts.addAll(collection);
+        int mod = this.modCount;
+        collection.forEach(this::add);
+        return this.modCount != mod;
     }
 
     /**
@@ -650,4 +658,7 @@ public class ChartList {
         charts.remove(index);
     }
 
+    public void addAll(ChartList adding) {
+        addAll(adding.getCharts());
+    }
 }
