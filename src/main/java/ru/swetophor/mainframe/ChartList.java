@@ -39,7 +39,7 @@ public class ChartList {
     public String toString() {
         return IntStream.range(0, size())
                 .mapToObj(i -> "%d. %s%n"
-                        .formatted(i + 1, getChart(i).toString()))
+                        .formatted(i + 1, get(i).toString()))
                 .collect(Collectors.joining());
     }
 
@@ -300,7 +300,7 @@ public class ChartList {
                     return addItem(controversial);
                 }
                 case "2" -> {
-                    set(indexOf(controversial.getName()), controversial);
+                    setItem(indexOf(controversial.getName()), controversial);
                     return true;
                 }
                 case "3" -> {
@@ -313,6 +313,12 @@ public class ChartList {
                 }
             }
         }
+    }
+
+    public boolean addResolving(ChartObject chart, String toListName) {
+        return contains(chart.getName()) ?
+                mergeResolving(chart, toListName) :
+                addItem(chart);
     }
 
     public String getString() {
@@ -428,7 +434,7 @@ public class ChartList {
      * @param chartObject
      * @return
      */
-    public ChartObject set(int i, ChartObject chartObject) {
+    public ChartObject setItem(int i, ChartObject chartObject) {
 //        if (contains(chartObject.getName()))
 //            chartObject = resolveCollision(chartObject, charts, "этом списке'");
         names.set(i, chartObject.getName());
@@ -440,7 +446,7 @@ public class ChartList {
      * @param i
      * @param chartObject
      */
-    public void add(int i, ChartObject chartObject) {
+    public void insertItem(int i, ChartObject chartObject) {
         charts.add(i, chartObject);
         names.add(i, chartObject.getName());
     }
@@ -577,7 +583,7 @@ public class ChartList {
      * @return карту из списка с соответствующим номером,
      * или {@code пусто}, если указан номер за пределами списка.
      */
-    public ChartObject getChart(int i) {
+    public ChartObject get(int i) {
         return i >= 0 && i < charts.size() ?
                 charts.get(i) :
                 null;
@@ -590,8 +596,8 @@ public class ChartList {
      * @return карту с соответствующим именем, или {@code пусто},
      * если карты с таким именем здесь нет.
      */
-    public ChartObject getChart(String name) {
-        return getChart(indexOf(name));
+    public ChartObject get(String name) {
+        return get(indexOf(name));
     }
 
     /**

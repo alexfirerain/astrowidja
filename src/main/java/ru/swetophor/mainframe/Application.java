@@ -6,7 +6,7 @@ import ru.swetophor.celestialmechanics.AstraEntity;
 import ru.swetophor.celestialmechanics.Chart;
 import ru.swetophor.celestialmechanics.ChartObject;
 
-import java.util.*;
+import java.util.Scanner;
 
 import static ru.swetophor.mainframe.Decorator.*;
 import static ru.swetophor.mainframe.Settings.*;
@@ -27,6 +27,21 @@ public class Application {
                 Венера 35 19 47
                 Марс 143 35 4
                 """;
+
+    protected static final ChartList DESK = new ChartList();
+
+
+    private static void printChartStat(ChartObject chart) {
+        System.out.println(chart.getAstrasList());
+        System.out.println(chart.getAspectTable());
+        System.out.println(chart.resonanceAnalysisVerbose(Settings.getEdgeHarmonic()));
+    }
+
+    private static void welcome() {
+        System.out.printf("%sСчитаем резонансы с приближением в %.0f° (1/%d часть круга) до числа %d%n%n",
+                frameText("Начато исполнение АстроВидьи!", 30, '*'),
+                getPrimalOrb(), getOrbDivisor(), getEdgeHarmonic());
+    }
 
     public static void main(String[] args) {
         welcome();
@@ -51,30 +66,8 @@ public class Application {
         mainCycle();
 
         if (autosave)
-            Storage.saveTableToFile(LIST, autosaveName());
+            Storage.saveTableToFile(DESK, autosaveName());
     }
-
-
-    private static void printChartStat(ChartObject chart) {
-        System.out.println(chart.getAstrasList());
-        System.out.println(chart.getAspectTable());
-        System.out.println(chart.resonanceAnalysisVerbose(Settings.getEdgeHarmonic()));
-    }
-
-    private static void welcome() {
-        System.out.printf("%sСчитаем резонансы с приближением в %.0f° (1/%d часть круга) до числа %d%n%n",
-                frameText("Начато исполнение АстроВидьи!", 30, '*'),
-                getPrimalOrb(), getOrbDivisor(), getEdgeHarmonic());
-    }
-
-    /**
-     * Стол, на котором лежат карты, загруженные в АстроВидью.
-     */
-    static private final Map<String, ChartObject> DESK = new HashMap<>();
-
-    static private final List<ChartObject> TABLE = new ArrayList<>();
-
-    protected static final ChartList LIST = new ChartList();
 
     private static void mainCycle() {
         String MENU = frameText("""
@@ -109,10 +102,10 @@ public class Application {
         String order = keyboard.nextLine();
         if (order.isBlank())
             return;
-        if (order.matches("^\\d+")) {
+        if (order.matches("^\\d+"))
             try {
-                int i = Integer.parseInt(order);
-                ChartObject result = LIST.getChart(i - 1);
+                int i = Integer.parseInt(order) - 1;
+                ChartObject result = DESK.get(i);
                 if (result != null)
                     printChartStat(result);
                 else
@@ -120,24 +113,24 @@ public class Application {
             } catch (NumberFormatException e) {
                 System.out.println("Число не распознано.");
             }
-        } else if (LIST.contains(order))
-            printChartStat(LIST.getChart(order));
+        else if (DESK.contains(order))
+            printChartStat(DESK.get(order));
         else
             System.out.println("Карты с именем " + order + " не найдено.");
     }
 
     /**
-     * Выводит на экран список карт, лежащих на {@link #LIST столе}, то есть загруженных в программу.
+     * Выводит на экран список карт, лежащих на {@link #DESK столе}, то есть загруженных в программу.
      */
     private static void listCharts() {
-        System.out.println(frameText(LIST.isEmpty() ?
-                    "Ни одной карты не загружено." :
-                    LIST.toString(),
+        System.out.println(frameText(DESK.isEmpty() ?
+                        "Ни одной карты не загружено." :
+                        DESK.toString(),
                 30, 80, SINGULAR_FRAME));
     }
 
     /**
-     * Запрашивает, какую карту со {@link #LIST стола} взять в работу,
+     * Запрашивает, какую карту со {@link #DESK стола} взять в работу,
      * т.е. запустить в {@link #workCycle(ChartObject) цикле процедур для карты}.
      */
     public static void takeChart() {
@@ -145,23 +138,20 @@ public class Application {
         String order = keyboard.nextLine();
         if (order.isBlank())
             return;
-        if (order.matches("^\\d+")) {
+        if (order.matches("^\\d+"))
             try {
-                int i = Integer.parseInt(order);
-                if (i > 0 && i <= TABLE.size())
-                    workCycle(TABLE.get(i - 1));
+                int i = Integer.parseInt(order) - 1;
+                if (i >= 0 && i < DESK.size())
+                    workCycle(DESK.get(i));
                 else
-                    System.out.println("На столе всего " + TABLE.size() + " карт.");
+                    System.out.println("На столе всего " + DESK.size() + " карт.");
             } catch (NumberFormatException e) {
                 System.out.println("Число не распознано.");
             }
-        } else {
-            TABLE.stream()
-                    .filter(co -> co.getName().equals(order))
-                    .findFirst()
-                    .ifPresentOrElse(Application::workCycle,
-                            () -> System.out.println("Карты '" + order + "' нет на столе."));
-        }
+        else if (DESK.contains(order))
+            workCycle(DESK.get(order));
+        else
+            System.out.println("Карты '" + order + "' нет на столе.");
     }
 
     private static void workCycle(ChartObject chart) {
@@ -198,19 +188,20 @@ public class Application {
     }
 
     /**
-     * Добавляет карту на {@link #LIST стол}. Если карта с таким именем уже
+     * Добавляет карту на {@link #DESK стол}. Если карта с таким именем уже
      * присутствует, запрашивает решение у юзера.
+     *
      * @param chart добавляемая карта.
      */
     private static void addChart(ChartObject chart) {
-        if (LIST.contains(chart.getName()) ?
-                LIST.mergeResolving(chart, "на столе") :
-                LIST.add(chart))
+        if (DESK.contains(chart.getName()) ?
+                DESK.mergeResolving(chart, "на столе") :
+                DESK.add(chart))
             System.out.println("Карта загружена: " + chart);
     }
 
     /**
-     * Добавляет {@link #LIST в реестр} произвольное количество карт из аргументов.
+     * Добавляет {@link #DESK в реестр} произвольное количество карт из аргументов.
      * Если какая-то карта совпадает с уже записанной, у юзера
      * запрашивается решение.
      * @param charts добавляемые карты.
@@ -221,12 +212,12 @@ public class Application {
     }
 
     /**
-     * Прочитывает карты из файла в папке базы данных на {@link Application#LIST стол} {@link Application АстроВидьи}.
+     * Прочитывает карты из файла в папке базы данных на {@link Application#DESK стол} {@link Application АстроВидьи}.
      *
      * @param fileName имя файла в папке базы данных.
      */
     public static void loadFromFile(String fileName) {
         Storage.readChartsFromFile(fileName)
-                .forEach(c -> LIST.mergeResolving(c, "на столе"));
+                .forEach(c -> DESK.addResolving(c, "на столе"));
     }
 }
