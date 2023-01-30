@@ -1,6 +1,6 @@
 package ru.swetophor.celestialmechanics;
 
-import ru.swetophor.resogrid.Harmonics;
+import ru.swetophor.harmonix.Harmonics;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.round;
 import static java.lang.String.format;
 import static ru.swetophor.celestialmechanics.ZodiacSign.zodiumIcon;
 

@@ -2,7 +2,7 @@ package ru.swetophor.celestialmechanics;
 
 import lombok.Getter;
 import lombok.Setter;
-import ru.swetophor.resogrid.Matrix;
+import ru.swetophor.harmonix.Matrix;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -11,6 +11,7 @@
       <set>
         <option value="ru.swetophor" />
         <option value="ru.swetophor.celestialmechanics" />
+        <option value="ru.swetophor.harmonix" />
         <option value="ru.swetophor.mainframe" />
         <option value="ru.swetophor.resogrid" />
       </set>

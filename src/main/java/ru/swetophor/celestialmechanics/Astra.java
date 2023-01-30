@@ -1,7 +1,7 @@
 package ru.swetophor.celestialmechanics;
 
-import ru.swetophor.resogrid.Aspect;
-import ru.swetophor.resogrid.Matrix;
+import ru.swetophor.harmonix.Aspect;
+import ru.swetophor.harmonix.Matrix;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;

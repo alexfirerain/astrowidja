@@ -1,4 +1,4 @@
-package ru.swetophor.resogrid;
+package ru.swetophor.harmonix;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;

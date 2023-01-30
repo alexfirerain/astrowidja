@@ -1,4 +1,4 @@
-package ru.swetophor.resogrid;
+package ru.swetophor.harmonix;
 
 import ru.swetophor.celestialmechanics.CelestialMechanics;
 import ru.swetophor.mainframe.Settings;

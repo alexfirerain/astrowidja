@@ -1,4 +1,4 @@
-package ru.swetophor.resogrid;
+package ru.swetophor.harmonix;
 
 public enum MatrixType {
     COSMOGRAM, SYNASTRY

@@ -2,9 +2,9 @@ package ru.swetophor.celestialmechanics;
 
 
 import lombok.Setter;
+import ru.swetophor.harmonix.Matrix;
+import ru.swetophor.harmonix.Pattern;
 import ru.swetophor.mainframe.Settings;
-import ru.swetophor.resogrid.Matrix;
-import ru.swetophor.resogrid.Pattern;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -125,10 +125,10 @@ public class Chart extends ChartObject {
     }
 
     public double getAstraPosition(String name) {
-        for (Astra a : astras)
-            if (a.getName().equals(name))
-                return a.getZodiacPosition();
-        throw new IllegalArgumentException("Astra " + name + " not found.");
+        Astra a = getAstra(name);
+        if (a == null)
+            throw new IllegalArgumentException("Astra " + name + " not found.");
+        return a.getZodiacPosition();
     }
 
     public static Chart composite(Chart chart_a, Chart chart_b) {
@@ -270,16 +270,18 @@ public class Chart extends ChartObject {
                     output.append("%d: ".formatted(key));
                     if (list.isEmpty())
                         output.append("-\n");
-                    else
-                        range(0, list.size())
-                            .forEach(i -> {
-                                list.get(i)
-                                        .getAstrasByConnectivity().stream()
-                                        .map(Astra::getSymbol)
-                                        .forEach(output::append);
-                                output.append(i < list.size() - 1 ?
-                                        " | " : "\n");
-                            });
+                    else {
+                        output.append(list.stream()
+                                        .map(Pattern::getString)
+                                        .collect(Collectors.joining(" | ")))
+                                .append("\n");
+//
+//                        for (int i = 0; i < list.size(); i++) {
+//                            output.append(list.get(i).getString());
+//                            output.append(i < list.size() - 1 ?
+//                                    " | " : "\n");
+//                        }
+                    }
                 });
         return output.toString();
     }

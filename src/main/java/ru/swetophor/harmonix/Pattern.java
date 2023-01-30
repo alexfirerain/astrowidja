@@ -1,4 +1,4 @@
-package ru.swetophor.resogrid;
+package ru.swetophor.harmonix;
 
 import ru.swetophor.celestialmechanics.Astra;
 import ru.swetophor.celestialmechanics.AstraEntity;
@@ -108,6 +108,13 @@ public class Pattern {
                         .mapToDouble(pe -> pe.getTotalClearance() / (size() - 1))
                         .sum() /
                         size());
+    }
+
+    public String getString() {
+        return getAstrasByConnectivity().stream()
+                .map(Astra::getSymbol)
+                .map(Object::toString)
+                .collect(Collectors.joining());
     }
 
     /**

@@ -35,10 +35,22 @@ public class Storage {
         }
     }
 
-    static File base = new File(baseDir);
-    static List<File> baseContent = getBaseContent();
+    protected static File base = new File(baseDir);
+    protected static List<File> baseContent = getBaseContent();
 
-    public static String displayFolder() {
+    protected static List<ChartList> chartLibrary = scanLibrary();
+
+    public static List<ChartList> scanLibrary() {
+        List<File> list = getBaseContent();
+        return list != null ?
+                list.stream()
+                        .map(f -> readChartsFromFile(f.getName()))
+                        .toList() :
+                new ArrayList<>();
+    }
+
+
+    public static String showLibrary() {
         baseContent = getBaseContent();
         if (baseContent == null) return null;
         return IntStream.range(0, baseContent.size())
@@ -49,7 +61,7 @@ public class Storage {
     static void manageCharts() {
         System.out.println("В базе присутствуют следующие файлы и карты:");
 
-        String content = reportFullBasesContent();
+        String content = reportBaseContentExpanded();
         if (content == null)
             content = "Не удалось получить содержимое базы.";
 
@@ -66,7 +78,7 @@ public class Storage {
     }
 
 
-    private static String reportFullBasesContent() {
+    private static String reportBaseContentExpanded() {
         if (baseContent == null)
             return null;
         List<String> fileNames = baseContent.stream().map(File::getName).toList();

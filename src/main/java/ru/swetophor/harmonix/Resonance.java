@@ -1,4 +1,4 @@
-package ru.swetophor.resogrid;
+package ru.swetophor.harmonix;
 
 import lombok.Setter;
 import ru.swetophor.celestialmechanics.Astra;
@@ -13,8 +13,8 @@ import java.util.stream.IntStream;
 import static ru.swetophor.celestialmechanics.CelestialMechanics.getArcForHarmonic;
 import static ru.swetophor.celestialmechanics.Mechanics.findMultiplier;
 import static ru.swetophor.celestialmechanics.Mechanics.secondFormat;
+import static ru.swetophor.harmonix.ResonanceType.*;
 import static ru.swetophor.mainframe.Interpreter.ResonanceDescription;
-import static ru.swetophor.resogrid.ResonanceType.*;
 
 /**
  * Гармонический анализ взаимодействия некоторых двух астр.

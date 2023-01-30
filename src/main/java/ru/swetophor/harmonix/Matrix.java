@@ -1,4 +1,4 @@
-package ru.swetophor.resogrid;
+package ru.swetophor.harmonix;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static ru.swetophor.celestialmechanics.CelestialMechanics.CIRCLE;
-import static ru.swetophor.resogrid.MatrixType.COSMOGRAM;
-import static ru.swetophor.resogrid.MatrixType.SYNASTRY;
+import static ru.swetophor.harmonix.MatrixType.COSMOGRAM;
+import static ru.swetophor.harmonix.MatrixType.SYNASTRY;
 
 /**
  * Двумерная таблица, получающая два массива астр

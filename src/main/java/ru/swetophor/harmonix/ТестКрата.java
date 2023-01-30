@@ -1,4 +1,4 @@
-package ru.swetophor.resogrid;
+package ru.swetophor.harmonix;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
