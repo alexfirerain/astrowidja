@@ -190,22 +190,6 @@ public class Storage {
         }
     }
 
-    private static void dropListToFile(List<? extends ChartObject> content, String file) {
-        try (PrintWriter out = new PrintWriter(Path.of(baseDir, file).toFile())) {
-            // TODO: if exists
-            out.println(content.stream()
-                    .map(ChartObject::getString)
-                    .collect(Collectors.joining()));
-            System.out.printf("Карты {%s} записаны в файл %s.%n",
-                    content.stream()
-                            .map(ChartObject::getName)
-                            .collect(Collectors.joining(", ")),
-                    file);
-        } catch (FileNotFoundException e) {
-            System.out.printf("Запись в файл %s обломалась: %s%n", file, e.getLocalizedMessage());
-        }
-    }
-
     /**
      * Проверяет, есть ли в указанном файле карта с указанным именем.
      *
@@ -221,30 +205,6 @@ public class Storage {
         } catch (IOException e) {
             System.out.printf("Не удалось прочесть %s: %s", baseFile.getName(), e.getLocalizedMessage());
             return false;
-        }
-    }
-
-    /**
-     * Прочитывает список карт из формата *.awb.
-     * Если файл не существует, то пустой список.
-     *
-     * @param file указанный файл.
-     * @return список карт, прочитанных из файла.
-     */
-    public static List<Chart> readChartsFromFile(File file) {
-        if (!file.exists()) {
-            System.out.printf("Не удалось найти файл '%s'%n", file);
-            return new ArrayList<>();
-        }
-        try {
-            return Arrays.stream(Files.readString(file.toPath())
-                            .split("#"))
-                    .filter(s -> !s.isBlank())
-                    .map(Chart::readFromString)
-                    .toList();
-        } catch (IOException e) {
-            System.out.printf("Не удалось прочесть файл '%s': %s%n", file, e.getLocalizedMessage());
-            return new ArrayList<>();
         }
     }
 

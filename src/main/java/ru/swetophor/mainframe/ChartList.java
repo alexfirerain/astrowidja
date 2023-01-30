@@ -367,7 +367,7 @@ public class ChartList {
      * конфликта {@link #mergeResolving(ChartObject, String)} (с названием списка "этот список").
      *
      * @param chart
-     * @return
+     * @return {@code true}, есдли список изменился вследствие операции.
      */
     public boolean add(ChartObject chart) {
         int mod = this.modCount;
@@ -424,9 +424,11 @@ public class ChartList {
      * Опустошает список карт (и имён).
      */
     public void clear() {
-        charts.clear();
-        names.clear();
-        ++this.modCount;
+        if (!isEmpty()) {
+            charts.clear();
+            names.clear();
+            ++this.modCount;
+        }
     }
 
     /**
@@ -434,9 +436,7 @@ public class ChartList {
      * @param chartObject
      * @return
      */
-    public ChartObject setItem(int i, ChartObject chartObject) {
-//        if (contains(chartObject.getName()))
-//            chartObject = resolveCollision(chartObject, charts, "этом списке'");
+    private ChartObject setItem(int i, ChartObject chartObject) {
         names.set(i, chartObject.getName());
         ++this.modCount;
         return charts.set(i, chartObject);
