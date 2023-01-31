@@ -194,9 +194,7 @@ public class Application {
      * @param chart добавляемая карта.
      */
     private static void addChart(ChartObject chart) {
-        if (DESK.contains(chart.getName()) ?
-                DESK.mergeResolving(chart, "на столе") :
-                DESK.add(chart))
+        if (DESK.addResolving(chart, "на столе"))
             System.out.println("Карта загружена: " + chart);
     }
 

@@ -100,7 +100,7 @@ public class Chart extends ChartObject {
     public String getAstrasList() {
         StringBuilder list = new StringBuilder("%nЗодиакальные позиции (%s):%n".formatted(name));
         astras.forEach(next -> list.append(
-                "%s\t %s%n".formatted(
+                        "%s\t %s%n".formatted(
                                 next.getNameWithZodiacDegree(),
                                 zodiacFormat(next.getZodiacPosition())
                         )
@@ -109,6 +109,11 @@ public class Chart extends ChartObject {
         return list.toString();
     }
 
+    /**
+     * Текстовое соответствия карты (заголовок).
+     *
+     * @return строка "имя (тип, ИД)"
+     */
     @Override
     public String toString() {
         return "%s (%s, №%d)".formatted(name, type, ID);

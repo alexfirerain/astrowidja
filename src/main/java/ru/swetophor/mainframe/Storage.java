@@ -1,6 +1,5 @@
 package ru.swetophor.mainframe;
 
-import ru.swetophor.celestialmechanics.Chart;
 import ru.swetophor.celestialmechanics.ChartObject;
 
 import java.io.File;
@@ -35,18 +34,40 @@ public class Storage {
         }
     }
 
+    /**
+     * Рабочая папка.
+     */
     protected static File base = new File(baseDir);
+    /**
+     * Список файлов в рабочей папке.
+     */
     protected static List<File> baseContent = getBaseContent();
-
+    /**
+     * Список списков карт, соответствующих файлам в рабочей папке.
+     */
     protected static List<ChartList> chartLibrary = scanLibrary();
 
-    public static List<ChartList> scanLibrary() {
-        List<File> list = getBaseContent();
-        return list != null ?
-                list.stream()
-                        .map(f -> readChartsFromFile(f.getName()))
-                        .toList() :
-                new ArrayList<>();
+    /**
+     * Прочитывает список файлов из рабочей папки.
+     *
+     * @return список имён файлов, присутствующих в рабочей папке в момент вызова.
+     */
+    protected static List<String> tableOfContents() {
+        return getBaseContent().stream()
+                .map(File::getName)
+                .toList();
+    }
+
+    /**
+     * Прочитывает содержание всех файлов с картами.
+     * Если по какой-то причине таковых не найдено, то пустой список.
+     *
+     * @return список списков карт, соответствующих файлам в рабочей папке.
+     */
+    private static List<ChartList> scanLibrary() {
+        return tableOfContents().stream()
+                .map(Storage::readChartsFromFile)
+                .toList();
     }
 
 
@@ -54,7 +75,7 @@ public class Storage {
         baseContent = getBaseContent();
         if (baseContent == null) return null;
         return IntStream.range(0, baseContent.size())
-                .mapToObj(i -> (i + 1) + ". " + baseContent.get(i).getName() + "\n")
+                .mapToObj(i -> "%d. %s%n".formatted(i + 1, baseContent.get(i).getName()))
                 .collect(Collectors.joining());
     }
 
@@ -68,39 +89,42 @@ public class Storage {
         System.out.println(Decorator.frameText(content, 40, '*'));
     }
 
+    /**
+     * Прочитывает и отдаёт список файлов в рабочей папке.
+     *
+     * @return список файлов в папке базы. Если путь к базе не определён,
+     * или её файл не существует или не является папкой, то пустой список.
+     */
     private static List<File> getBaseContent() {
-        if (base.listFiles() == null)
-            return null;
-        return Arrays.stream(Objects.requireNonNull(base.listFiles()))
-                .filter(x -> !x.isDirectory())
-                .filter(file -> file.getName().endsWith(".awb") || file.getName().endsWith(".awc"))
-                .collect(Collectors.toList());
+        return base == null || !base.exists() || base.listFiles() == null ?
+                new ArrayList<>() :
+                Arrays.stream(Objects.requireNonNull(base.listFiles()))
+                        .filter(file -> !file.isDirectory())
+                        .filter(file -> file.getName().endsWith(".awb") || file.getName().endsWith(".awc"))
+                        .collect(Collectors.toList());
     }
 
 
     private static String reportBaseContentExpanded() {
-        if (baseContent == null)
-            return null;
-        List<String> fileNames = baseContent.stream().map(File::getName).toList();
+        chartLibrary = scanLibrary();
+
         StringBuilder output = new StringBuilder();
-        for (String filename : fileNames) {
+        List<String> tableOfContents = tableOfContents();
+
+        for (int j = 0; j < tableOfContents.size(); j++) {
+            String filename = tableOfContents.get(j);
             output.append(filename).append("\n");
-            try {
-                String[] names = getNames(filename);
+            String[] names = chartLibrary.get(j).getNames().toArray(String[]::new);
 
-                if (filename.endsWith(".awb"))
-                    IntStream.range(0, names.length)
-                            .mapToObj(i -> " %3d. %s%n"
-                                    .formatted(i + 1, names[i]))
-                            .forEach(output::append);
+            if (filename.endsWith(".awb"))
+                IntStream.range(0, names.length)
+                        .mapToObj(i -> " %3d. %s%n"
+                                .formatted(i + 1, names[i]))
+                        .forEach(output::append);
 
-                if (filename.endsWith(".awc") && names.length > 0)
-                    output.append(names[0]);
+            if (filename.endsWith(".awc") && names.length > 0)
+                output.append(names[0]);
 
-            } catch (IOException e) {
-                output.append("Файл %s не читается: %s"
-                        .formatted(filename, e.getLocalizedMessage()));
-            }
         }
 
         return output.toString();
@@ -108,14 +132,6 @@ public class Storage {
 
     private static String[] getNames(String filename) throws IOException {
         return Files.readString(Path.of(baseDir, filename))
-                .lines()
-                .filter(line -> line.startsWith("#") && line.length() > 1)
-                .map(line -> line.substring(1))
-                .toArray(String[]::new);
-    }
-
-    private static String[] getNames(File filename) throws IOException {
-        return Files.readString(filename.toPath())
                 .lines()
                 .filter(line -> line.startsWith("#") && line.length() > 1)
                 .map(line -> line.substring(1))
@@ -136,7 +152,22 @@ public class Storage {
     }
 
     public static void moveChartsToFile(String source, String target, int... charts) {
+        chartLibrary = scanLibrary();
+        ChartList sourceList = chartLibrary.get(tableOfContents().indexOf(source));
+        ChartList targetList = chartLibrary.get(tableOfContents().indexOf(target));
 
+        Arrays.stream(charts)
+                .mapToObj(sourceList::get)
+                .toList()
+                .stream()
+                .filter(c -> targetList.addResolving(c, target))
+                .map(ChartObject::getName)
+                .forEach(sourceList::remove);
+
+        if (!sourceList.equals(readChartsFromFile(source)))
+            dropListToFile(sourceList, source);
+        if (!targetList.equals(readChartsFromFile(target)))
+            dropListToFile(targetList, target);
     }
 
     public static void putChartToBase(ChartObject chart, String file) {
@@ -147,17 +178,18 @@ public class Storage {
 
     /**
      * Прочитывает список карт из формата *.awb
-     *
+     *  Если файл не существует или чтение обламывается,
+     *  выводит об этом сообщение
      * @param file имя файла в папке данных.
      * @return список карт, прочитанных из файла.
-     * Если файл не существует, то пустой список.
+     * Если файл не существует или не читается, то пустой список.
      */
     public static ChartList readChartsFromFile(String file) {
         ChartList read = new ChartList();
         Path filePath = Path.of(baseDir, file);
-        if (!Files.exists(filePath)) {
+        if (!Files.exists(filePath))
             System.out.printf("Не удалось обнаружить файла '%s'%n", file);
-        } else {
+        else
             try {
                 Arrays.stream(Files.readString(filePath)
                                 .split("#"))
@@ -167,7 +199,6 @@ public class Storage {
             } catch (IOException e) {
                 System.out.printf("Не удалось прочесть файл '%s': %s%n", file, e.getLocalizedMessage());
             }
-        }
         return read;
     }
 
@@ -187,24 +218,6 @@ public class Storage {
                     file);
         } catch (FileNotFoundException e) {
             System.out.printf("Запись в файл %s обломалась: %s%n", file, e.getLocalizedMessage());
-        }
-    }
-
-    /**
-     * Проверяет, есть ли в указанном файле карта с указанным именем.
-     *
-     * @param baseFile указанный файл.
-     * @param chart    указанная карта.
-     * @return присутствует ли запись с указанным именем в указанном файле *.awb.
-     */
-    public static boolean containsChartName(File baseFile, ChartObject chart) {
-        try {
-            return Arrays.stream(
-                            getNames(baseFile))
-                    .anyMatch(n -> n.equals(chart.getName()));
-        } catch (IOException e) {
-            System.out.printf("Не удалось прочесть %s: %s", baseFile.getName(), e.getLocalizedMessage());
-            return false;
         }
     }
 

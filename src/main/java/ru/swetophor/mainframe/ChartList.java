@@ -255,10 +255,7 @@ public class ChartList {
         if (mergingList == null || mergingList.isEmpty())
             return addingCharts;
         for (ChartObject adding : addingCharts.getCharts())
-            if (mergingList.contains(adding.getName()))
-                mergingList.mergeResolving(adding, listName);
-            else
-                mergingList.addItem(adding);
+                mergingList.addResolving(adding, listName);
         return mergingList;
     }
 
@@ -273,7 +270,8 @@ public class ChartList {
      * @param controversial добавляемая карта, имя которой, как предварительно уже определено,
      *                      уже присутствует в этом списке.
      * @param listName      название файла или иного списка, в который добавляется карта, в предложном падеже.
-     * @return
+     * @return {@code да}, если добавление карты (с переименованием либо с заменой) состоялось,
+     *          {@code нет}, если была выбрана отмена.
      */
     public boolean mergeResolving(ChartObject controversial, String listName) {
         while (true) {
@@ -315,12 +313,31 @@ public class ChartList {
         }
     }
 
+    /**
+     * Процедура добавления карты к списку. Если название карты входит в
+     * коллизию с именем уже присутствующей карты, запускается интерактивная процедура
+     * в соответствии с методом {@link #mergeResolving(ChartObject, String)}.
+     *
+     * @param chart      добавляемая карта.
+     * @param toListName название пополняемого списка (в предложном падеже,
+     *                   аналогично вышеуказанному методу).
+     * @return {@code ДА}, если список был обновлён в результате операции, или {@code НЕТ},
+     * если была выбрана отмена.
+     */
     public boolean addResolving(ChartObject chart, String toListName) {
         return contains(chart.getName()) ?
                 mergeResolving(chart, toListName) :
                 addItem(chart);
     }
 
+    /**
+     * Выдаёт текстовое представление всех карт списка
+     * (только типа {@link ChartType#COSMOGRAM космограмма})
+     * в том виде, как предоставляется {@link ChartObject#getString()}.
+     *
+     * @return строку, конкатенирующую строковые представления всех
+     * космограмм, содержащихся в этом списке.
+     */
     public String getString() {
         return charts.stream()
                 .filter(chart -> chart.getType() == ChartType.COSMOGRAM)
@@ -366,8 +383,8 @@ public class ChartList {
      * Если карта с таким именем уже в наличии, запускает интерактивную процедуру разрешения
      * конфликта {@link #mergeResolving(ChartObject, String)} (с названием списка "этот список").
      *
-     * @param chart
-     * @return {@code true}, есдли список изменился вследствие операции.
+     * @param chart добавляемая.
+     * @return {@code true}, если список изменился в результате операции.
      */
     public boolean add(ChartObject chart) {
         int mod = this.modCount;
