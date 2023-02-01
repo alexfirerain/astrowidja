@@ -681,7 +681,7 @@ public class ChartList {
         charts.remove(index);
     }
 
-    public void addAll(ChartList adding) {
-        addAll(adding.getCharts());
+    public boolean addAll(ChartList adding) {
+        return addAll(adding.getCharts());
     }
 }

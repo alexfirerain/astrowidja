@@ -8,10 +8,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -50,7 +47,8 @@ public class Storage {
     /**
      * Прочитывает список файлов из рабочей папки.
      *
-     * @return список имён файлов, присутствующих в рабочей папке в момент вызова.
+     * @return список имён файлов АстроВидьи, присутствующих в рабочей папке
+     * в момент вызова, сортированный по дате последнего изменения.
      */
     protected static List<String> tableOfContents() {
         return getBaseContent().stream()
@@ -70,30 +68,32 @@ public class Storage {
                 .toList();
     }
 
+    /**
+     * Выдаёт строковое представление содержимого рабочей папки.
+     *
+     * @return нумерованный (начиная с 1) построчный список
+     * файлов *.awb и *.awc в рабочей папке, сортированный по дате изменения.
+     */
+    public static String listLibrary() {
+        List<String> names = tableOfContents();
 
-    public static String showLibrary() {
-        baseContent = getBaseContent();
-        if (baseContent == null) return null;
-        return IntStream.range(0, baseContent.size())
-                .mapToObj(i -> "%d. %s%n".formatted(i + 1, baseContent.get(i).getName()))
+        return IntStream.range(0, names.size())
+                .mapToObj(i -> "%d. %s%n"
+                        .formatted(i + 1, names.get(i)))
                 .collect(Collectors.joining());
     }
 
-    static void manageCharts() {
+    static void fullBaseReport() {
         System.out.println("В базе присутствуют следующие файлы и карты:");
-
-        String content = reportBaseContentExpanded();
-        if (content == null)
-            content = "Не удалось получить содержимое базы.";
-
-        System.out.println(Decorator.frameText(content, 40, '*'));
+        System.out.println(Decorator.frameText(reportBaseContentExpanded(), 40, '*'));
     }
 
     /**
      * Прочитывает и отдаёт список файлов в рабочей папке.
      *
-     * @return список файлов в папке базы. Если путь к базе не определён,
+     * @return список файлов *.awb и *.awc в папке базы. Если путь к базе не определён,
      * или её файл не существует или не является папкой, то пустой список.
+     * Файлы в списке сортируются по дате изменения.
      */
     private static List<File> getBaseContent() {
         return base == null || !base.exists() || base.listFiles() == null ?
@@ -101,6 +101,7 @@ public class Storage {
                 Arrays.stream(Objects.requireNonNull(base.listFiles()))
                         .filter(file -> !file.isDirectory())
                         .filter(file -> file.getName().endsWith(".awb") || file.getName().endsWith(".awc"))
+                        .sorted(Comparator.comparing(File::lastModified))
                         .collect(Collectors.toList());
     }
 
@@ -111,19 +112,19 @@ public class Storage {
         StringBuilder output = new StringBuilder();
         List<String> tableOfContents = tableOfContents();
 
-        for (int j = 0; j < tableOfContents.size(); j++) {
-            String filename = tableOfContents.get(j);
-            output.append(filename).append("\n");
-            String[] names = chartLibrary.get(j).getNames().toArray(String[]::new);
+        for (int f = 0; f < tableOfContents.size(); f++) {
+            String filename = tableOfContents.get(f);
+            output.append(filename).append(":\n");
+            List<String> chartNames = chartLibrary.get(f).getNames();
 
             if (filename.endsWith(".awb"))
-                IntStream.range(0, names.length)
-                        .mapToObj(i -> " %3d. %s%n"
-                                .formatted(i + 1, names[i]))
+                IntStream.range(0, chartNames.size())
+                        .mapToObj(i -> "\t%3d. %s%n"
+                                .formatted(i + 1, chartNames.get(i)))
                         .forEach(output::append);
 
-            if (filename.endsWith(".awc") && names.length > 0)
-                output.append(names[0]);
+            if (filename.endsWith(".awc") && !chartNames.isEmpty())
+                output.append(chartNames.get(0));
 
         }
 
@@ -140,7 +141,10 @@ public class Storage {
 
     public static void saveTableToFile(ChartList table, String target) {
         ChartList fileContent = readChartsFromFile(target);
-        fileContent.addAll(table);
+        if (!fileContent.addAll(table)) {
+            System.out.println("Никаких новых карт в файл не добавлено.");
+            return;
+        }
         String drop = fileContent.getString();
 
         try (PrintWriter out = new PrintWriter(Path.of(baseDir, target).toFile())) {

@@ -84,7 +84,7 @@ public class Application {
             switch (keyboard.nextLine()) {
                 case "1" -> listCharts();
                 case "2" -> Settings.editSettings();
-                case "3" -> Storage.manageCharts();
+                case "3" -> Storage.fullBaseReport();
                 case "4" -> showChart();
                 case "5" -> addChart(enterChartData());
                 case "0" -> exit = true;
