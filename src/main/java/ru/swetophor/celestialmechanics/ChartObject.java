@@ -59,6 +59,8 @@ abstract public class ChartObject {
 
     public abstract List<Astra> getAstras();
 
+    public abstract String getCaption();
+
     /**
      * @return строку с перечислением зодиакальных положений астр.
      */
@@ -66,7 +68,7 @@ abstract public class ChartObject {
 
     public abstract String getAspectTable();
 
-    protected String getCaption(String title) {
+    public String getCaption(String title) {
         return Decorator.frameText(title, 30, '*');
     }
 

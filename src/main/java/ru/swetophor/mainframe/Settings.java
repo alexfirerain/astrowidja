@@ -53,7 +53,7 @@ public class Settings {
         showSettingsMenu();
 
         while (true) {
-            String command = Application.keyboard.nextLine();
+            String command = Application.KEYBOARD.nextLine();
             if (command.isBlank())
                 break;
             int delimiter = command.indexOf("=");

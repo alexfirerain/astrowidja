@@ -17,7 +17,7 @@ import static ru.swetophor.mainframe.Settings.*;
  * программы как таковой
  */
 public class Application {
-    static final Scanner keyboard = new Scanner(System.in);
+    static final Scanner KEYBOARD = new Scanner(System.in);
     static public int id = 0;
 
     static String SW = """
@@ -81,11 +81,11 @@ public class Application {
         boolean exit = false;
         while (!exit) {
             System.out.println(MENU);
-            switch (keyboard.nextLine()) {
+            switch (KEYBOARD.nextLine()) {
                 case "1" -> listCharts();
                 case "2" -> Settings.editSettings();
                 case "3" -> Storage.fullBaseReport();
-                case "4" -> showChart();
+                case "4" -> takeChart();
                 case "5" -> addChart(enterChartData());
                 case "0" -> exit = true;
             }
@@ -99,7 +99,7 @@ public class Application {
      */
     private static void showChart() {
         System.out.print("Укажите карту по номеру на столе или по имени: ");
-        String order = keyboard.nextLine();
+        String order = KEYBOARD.nextLine();
         if (order.isBlank())
             return;
         if (order.matches("^\\d+"))
@@ -133,9 +133,9 @@ public class Application {
      * Запрашивает, какую карту со {@link #DESK стола} взять в работу,
      * т.е. запустить в {@link #workCycle(ChartObject) цикле процедур для карты}.
      */
-    public static void takeChart() {
+    public static void takeChart() {    // TODO: абстрагировать процедуру поиска на столе по номеру или имени
         System.out.print("Укажите карту по имени или номеру на столе: ");
-        String order = keyboard.nextLine();
+        String order = KEYBOARD.nextLine();
         if (order.isBlank())
             return;
         if (order.matches("^\\d+"))
@@ -155,7 +155,40 @@ public class Application {
     }
 
     private static void workCycle(ChartObject chart) {
+        String CHART_MENU = """
+                    действия с картой:
+                "-> имя_файла"   = сохранить в файл
+                "+карта" = построить синастрию
+                "*карта" = построить композит
+                 
+                "1" = о положениях астр
+                "2" = о резонансах
+                "3" = о паттернах кратко
+                "4" = о паттернах со статистикой
+                """;
+        System.out.println(chart.getCaption());
+        System.out.println(chart.getAstrasList());
+        System.out.println(Decorator.frameText(CHART_MENU, 50, 100, SINGULAR_FRAME));
+        String input;
+        while (true) {
+            input = KEYBOARD.nextLine();
+            if (input == null || input.isBlank()) return;
 
+            if (input.startsWith("->")) {
+                Storage.putChartToBase(chart, input.substring(2).trim());
+            } else if (input.startsWith("+")) {
+
+            } else if (input.startsWith("*")) {
+
+            }
+            else switch (input) {
+                case "1" -> System.out.println(chart.getAstrasList());
+                case "2" -> System.out.println(chart.getAspectTable());
+                case "3" -> System.out.println(chart.resonanceAnalysis(getEdgeHarmonic()));
+                case "4" -> System.out.println(chart.resonanceAnalysisVerbose(getEdgeHarmonic()));
+                default -> System.out.println(frameText(CHART_MENU, 50, 100, SINGULAR_FRAME));
+            }
+        }
     }
 
     /**
@@ -169,20 +202,20 @@ public class Application {
      */
     private static Chart enterChartData() {
         System.out.print("Название новой карты: ");
-        Chart x = new Chart(keyboard.nextLine());
+        Chart x = new Chart(KEYBOARD.nextLine());
         for (AstraEntity a : AstraEntity.values()) {
             System.out.print(a.name + ": ");
-            String input = keyboard.nextLine();
+            String input = KEYBOARD.nextLine();
             if (input.isBlank())
                 continue;
             x.addAstra(Astra.readFromString(a.name + " " + input));
             System.out.println();
         }
         System.out.println("Ввод дополнительных астр в формате 'название градусы минуты секунды'");
-        String input = keyboard.nextLine();
+        String input = KEYBOARD.nextLine();
         while (!input.isBlank()) {
             x.addAstra(Astra.readFromString(input));
-            input = keyboard.nextLine();
+            input = KEYBOARD.nextLine();
         }
         return x;
     }
@@ -195,7 +228,7 @@ public class Application {
      */
     private static void addChart(ChartObject chart) {
         if (DESK.addResolving(chart, "на столе"))
-            System.out.println("Карта загружена: " + chart);
+            System.out.println("Карта загружена на стол: " + chart);
     }
 
     /**

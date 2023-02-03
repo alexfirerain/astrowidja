@@ -83,6 +83,7 @@ public class Chart extends ChartObject {
         aspects = new Matrix(astras);
     }
 
+
     @Override
     public String getAspectTable() {
         calculateAspectTable();
@@ -90,6 +91,7 @@ public class Chart extends ChartObject {
                 aspects.resultsOutput();
     }
 
+    @Override
     public String getCaption() {
         return super.getCaption("%s: %s (№%d)"
                 .formatted(type, name, ID));

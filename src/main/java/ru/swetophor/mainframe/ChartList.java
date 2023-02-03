@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static ru.swetophor.mainframe.Application.keyboard;
+import static ru.swetophor.mainframe.Application.KEYBOARD;
 
 /**
  * Список карт-объектов, воспроизводящий многие функции обычного списка.
@@ -95,7 +95,7 @@ public class ChartList {
                     2. добавить под новым именем
                     0. отмена
                     """, controversial.getName(), listName);
-            switch (keyboard.nextLine()) {
+            switch (KEYBOARD.nextLine()) {
                 case "1" -> {
                     list.stream()
                             .filter(c -> c.getName()
@@ -108,7 +108,7 @@ public class ChartList {
                     String name;
                     do {
                         System.out.print("Новое имя: ");
-                        name = keyboard.nextLine();         // TODO: допустимое имя
+                        name = KEYBOARD.nextLine();         // TODO: допустимое имя
                         System.out.println();
                     } while (containsName(list, name));
                     controversial.setName(name);
@@ -148,7 +148,7 @@ public class ChartList {
                     listName.startsWith("на ") ?
                             listName :
                             "в " + listName);
-            switch (keyboard.nextLine()) {
+            switch (KEYBOARD.nextLine()) {
                 case "1" -> {
                     list.stream()
                             .filter(c -> c.getName()
@@ -161,7 +161,7 @@ public class ChartList {
                     String name;
                     do {
                         System.out.print("Новое имя: ");
-                        name = keyboard.nextLine();         // TODO: допустимое имя
+                        name = KEYBOARD.nextLine();         // TODO: допустимое имя
                         System.out.println();
                     } while (containsName(list, name));
                     controversial.setName(name);
@@ -199,7 +199,7 @@ public class ChartList {
                     listName.startsWith("на ") ?
                             listName :
                             "в " + listName);
-            switch (keyboard.nextLine()) {
+            switch (KEYBOARD.nextLine()) {
                 case "1" -> {
                     list.remove(controversial.getName());
                     list.addItem(controversial);
@@ -209,7 +209,7 @@ public class ChartList {
                     String rename;
                     do {
                         System.out.print("Новое имя: ");
-                        rename = keyboard.nextLine();         // TODO: допустимое имя
+                        rename = KEYBOARD.nextLine();         // TODO: допустимое имя
                         System.out.println();
                     } while (list.contains(rename));
                     controversial.setName(rename);
@@ -286,12 +286,12 @@ public class ChartList {
                     listName.startsWith("на ") ?
                             listName :
                             "в " + listName);
-            switch (keyboard.nextLine()) {
+            switch (KEYBOARD.nextLine()) {
                 case "1" -> {
                     String rename;
                     do {
                         System.out.print("Новое имя: ");
-                        rename = keyboard.nextLine();         // TODO: допустимое имя
+                        rename = KEYBOARD.nextLine();         // TODO: допустимое имя
                         System.out.println();
                     } while (contains(rename));
                     controversial.setName(rename);
