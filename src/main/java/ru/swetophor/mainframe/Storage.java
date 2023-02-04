@@ -176,7 +176,7 @@ public class Storage {
 
     public static void putChartToBase(ChartObject chart, String file) {
         ChartList fileContent = readChartsFromFile(file);
-        if (fileContent.add(chart))
+        if (fileContent.addResolving(chart, file))
             dropListToFile(fileContent, file);
     }
 
@@ -199,7 +199,7 @@ public class Storage {
                                 .split("#"))
                         .filter(s -> !s.isBlank())
                         .map(ChartObject::readFromString)
-                        .forEach(read::add);
+                        .forEach(chart -> read.addResolving(chart, file));
             } catch (IOException e) {
                 System.out.printf("Не удалось прочесть файл '%s': %s%n", file, e.getLocalizedMessage());
             }

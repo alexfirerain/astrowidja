@@ -1,10 +1,7 @@
 package ru.swetophor.mainframe;
 
 
-import ru.swetophor.celestialmechanics.Astra;
-import ru.swetophor.celestialmechanics.AstraEntity;
-import ru.swetophor.celestialmechanics.Chart;
-import ru.swetophor.celestialmechanics.ChartObject;
+import ru.swetophor.celestialmechanics.*;
 
 import java.util.Scanner;
 
@@ -39,7 +36,7 @@ public class Application {
 
     private static void welcome() {
         System.out.printf("%sСчитаем резонансы с приближением в %.0f° (1/%d часть круга) до числа %d%n%n",
-                frameText("Начато исполнение АстроВидьи!", 30, '*'),
+                asteriskFrame("Начато исполнение АстроВидьи!"),
                 getPrimalOrb(), getOrbDivisor(), getEdgeHarmonic());
     }
 
@@ -69,15 +66,19 @@ public class Application {
             Storage.saveTableToFile(DESK, autosaveName());
     }
 
+    /**
+     * Основное меню и основной рабочий цикл АстроВидьи.
+     */
     private static void mainCycle() {
-        String MENU = frameText("""
-                1. карты на столе
-                2. настройки
-                3. управление картами
-                4. показать карту
-                5. добавить карту с клавиатуры
-                0. выход
-                    """, 20, 60, DOUBLE_FRAME);
+        listCharts();
+        String MENU = doubleFrame(  """
+                            1. карты на столе
+                            2. настройки
+                            3. списки карт
+                            4. работа с картой
+                            5. добавить карту с клавиатуры
+                            0. выход
+                            """);
         boolean exit = false;
         while (!exit) {
             System.out.println(MENU);
@@ -123,17 +124,19 @@ public class Application {
      * Выводит на экран список карт, лежащих на {@link #DESK столе}, то есть загруженных в программу.
      */
     private static void listCharts() {
-        System.out.println(frameText(DESK.isEmpty() ?
-                        "Ни одной карты не загружено." :
-                        DESK.toString(),
-                30, 80, SINGULAR_FRAME));
+        System.out.println(singularFrame(DESK.isEmpty() ?
+                                "Ни одной карты не загружено." :
+                                DESK.toString())
+        );
     }
 
     /**
      * Запрашивает, какую карту со {@link #DESK стола} взять в работу,
      * т.е. запустить в {@link #workCycle(ChartObject) цикле процедур для карты}.
+     * Если карта не опознана по номеру на столе или имени, не делает ничего.
+     * Но функция поиска сама выводит сообщения, если не нашла.
      */
-    public static void takeChart() {    // TODO: абстрагировать процедуру поиска на столе по номеру или имени
+    public static void takeChart() {
         System.out.print("Укажите карту по имени или номеру на столе: ");
         String order = KEYBOARD.nextLine();
         ChartObject taken = DESK.findChart(order, "на столе");
@@ -141,6 +144,12 @@ public class Application {
         workCycle(taken);
     }
 
+    /**
+     * Цикл работы с картой. Предоставялет действия,
+     * которые можно выполнить с картой: просмотр статистики,
+     * сохранение в список (файл), построение средней и синастрической карт.
+     * @param chart карта, являющаяся предметом работы.
+     */
     private static void workCycle(ChartObject chart) {
         String CHART_MENU = """
                     действия с картой:
@@ -155,7 +164,7 @@ public class Application {
                 """;
         System.out.println(chart.getCaption());
         System.out.println(chart.getAstrasList());
-        System.out.println(Decorator.frameText(CHART_MENU, 50, 100, SINGULAR_FRAME));
+        System.out.println(singularFrame(CHART_MENU));
         String input;
         while (true) {
             input = KEYBOARD.nextLine();
@@ -163,19 +172,28 @@ public class Application {
 
             if (input.startsWith("->")) {
                 Storage.putChartToBase(chart, input.substring(2).trim());
-            } else if (input.startsWith("+")) {
-
-            } else if (input.startsWith("*")) {
-
+            } else if (input.startsWith("+") && chart instanceof Chart) {
+                ChartObject counterpart = DESK.findChart(input.substring(1).trim(), "на столе");
+                if (counterpart instanceof Chart)
+                    addChart(new Synastry((Chart) chart, (Chart) counterpart));
+            } else if (input.startsWith("*") && chart instanceof Chart) {
+                ChartObject counterpart = DESK.findChart(input.substring(1).trim(), "на столе");
+                if (counterpart instanceof Chart)
+                    addChart(Chart.composite((Chart) chart, (Chart) counterpart));
             }
             else switch (input) {
                 case "1" -> System.out.println(chart.getAstrasList());
                 case "2" -> System.out.println(chart.getAspectTable());
                 case "3" -> System.out.println(chart.resonanceAnalysis(getEdgeHarmonic()));
                 case "4" -> System.out.println(chart.resonanceAnalysisVerbose(getEdgeHarmonic()));
-                default -> System.out.println(frameText(CHART_MENU, 50, 100, SINGULAR_FRAME));
+                default -> System.out.println(singularFrame(CHART_MENU));
             }
         }
+    }
+
+    private static void listsCycle() {
+
+
     }
 
     /**
@@ -230,12 +248,14 @@ public class Application {
     }
 
     /**
-     * Прочитывает карты из файла в папке базы данных на {@link Application#DESK стол} {@link Application АстроВидьи}.
+     * Прочитывает карты из файла в папке базы данных на {@link #DESK стол} {@link Application АстроВидьи}.
      *
      * @param fileName имя файла в папке базы данных.
      */
     public static void loadFromFile(String fileName) {
         Storage.readChartsFromFile(fileName)
                 .forEach(c -> DESK.addResolving(c, "на столе"));
+        System.out.println("Загружены карты из " + fileName);
     }
+
 }
