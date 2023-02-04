@@ -225,5 +225,50 @@ public class Storage {
         }
     }
 
+    /**
+     * Находит и возвращает список карт, соответствующий файлу в рабочей папке,
+     * по имени файла или по его номеру в списке, предоставляемом {@link #listLibrary()}
+     *
+     * @param order строка запроса (имя или часть имени файла или целое число).
+     * @return если аргумент соответствует натуральному числу, не превышающему количество
+     * файлов с картами в рабочей папке, то список карт из файла с таким номером
+     * (файлы сортированы по дате изменения).
+     * В прочих случаях — список из первого найденного
+     * файла с именем, начинающимся со строки, переданной как аргумент.
+     * Если ни одним из способов файл не найден, то пустой список.
+     */
+    public ChartList findList(String order) {
+        ChartList list = new ChartList();
+        if (order == null || order.isBlank())
+            return list;
+        List<ChartList> base = scanLibrary();
+
+        if (order.matches("^\\d+"))
+            try {
+                int i = Integer.parseInt(order) - 1;
+                if (i >= 0 && i < base.size())
+                    list = base.get(i);
+                else {
+                    System.out.printf("В базе всего %d файлов%n", base.size());
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Число не распознано.");
+            }
+        else {
+            int index = -1;
+            List<String> tableOfContents = tableOfContents();
+            for (int i = 0; i < tableOfContents.size(); i++)
+                if (tableOfContents.get(i).startsWith(order)) {
+                    index = i;
+                    break;
+                }
+            if (index == -1)
+                System.out.println("Нет файла с именем на " + order);
+            else
+                list = base.get(index);
+        }
+        return list;
+    }
+
 
 }

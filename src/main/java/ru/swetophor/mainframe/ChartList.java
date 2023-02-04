@@ -684,4 +684,42 @@ public class ChartList {
     public boolean addAll(ChartList adding) {
         return addAll(adding.getCharts());
     }
+
+    public ChartObject findChart(String order, String inList) {
+        if (order == null || order.isBlank())
+            return null;
+        if (!inList.startsWith("на "))
+            inList = "в " + inList;
+
+        if (order.matches("^\\d+"))
+            try {
+                int i = Integer.parseInt(order) - 1;
+                if (i >= 0 && i < size())
+                    return get(i);
+                else {
+                    System.out.printf("Всего %d карт %s%n", size(), inList);
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Число не распознано.");
+            }
+        else if (contains(order))
+            return get(order);
+        else {
+            System.out.printf("Карты '%s' нет %s%n", order, inList);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChartList chartList = (ChartList) o;
+        return charts.equals(chartList.charts);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(charts);
+    }
 }

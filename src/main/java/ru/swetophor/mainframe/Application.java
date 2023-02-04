@@ -136,22 +136,9 @@ public class Application {
     public static void takeChart() {    // TODO: абстрагировать процедуру поиска на столе по номеру или имени
         System.out.print("Укажите карту по имени или номеру на столе: ");
         String order = KEYBOARD.nextLine();
-        if (order.isBlank())
-            return;
-        if (order.matches("^\\d+"))
-            try {
-                int i = Integer.parseInt(order) - 1;
-                if (i >= 0 && i < DESK.size())
-                    workCycle(DESK.get(i));
-                else
-                    System.out.println("На столе всего " + DESK.size() + " карт.");
-            } catch (NumberFormatException e) {
-                System.out.println("Число не распознано.");
-            }
-        else if (DESK.contains(order))
-            workCycle(DESK.get(order));
-        else
-            System.out.println("Карты '" + order + "' нет на столе.");
+        ChartObject taken = DESK.findChart(order, "на столе");
+        if (taken == null) return;
+        workCycle(taken);
     }
 
     private static void workCycle(ChartObject chart) {
