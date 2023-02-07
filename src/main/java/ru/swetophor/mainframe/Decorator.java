@@ -5,6 +5,12 @@ import java.util.Arrays;
 import java.util.Date;
 
 public class Decorator {
+    public static final char[] ASTERISK_FRAME = {'*'};
+    public static final char[] SINGULAR_FRAME = {'┌', '─', '┐', '│', '└', '┘'};
+    public static final char[] DOUBLE_FRAME = {'╔', '═', '╗', '║', '╚', '╝'};
+    public static final char[] HALF_DOUBLE_FRAME = {'┌', '─', '╖', '│', '║', '╘', '═', '╝'};
+
+
     public static String autosaveName() {
         return "сохранение %s.awb"
                 .formatted(new SimpleDateFormat("E d MMMM .yy HH-mm")
@@ -12,8 +18,8 @@ public class Decorator {
     }
 
     public static String frameText(String text,
-                            int minWidth,
-                            int maxWidth,
+                                   int minWidth,
+                                   int maxWidth,
                             char leftTop,
                             char horizontal,
                             char rightTop,
@@ -48,8 +54,6 @@ public class Decorator {
     public static String frameText(String text, int minWidth, char symbol) {
         return frameText(text, minWidth, 80, symbol, symbol, symbol, symbol, symbol, symbol);
     }
-
-    public static final char[] HALF_DOUBLE_FRAME = {'┌', '─', '╖', '│', '║', '╘', '═', '╝'};
 
     public static String frameText(String text, int minWidth, int maxWidth, char[] pattern) {
         return switch (pattern.length) {
@@ -136,9 +140,6 @@ public class Decorator {
         return buildMidleString(border, border, text, length);
     }
 
-    public static final char[] DOUBLE_FRAME = {'╔', '═', '╗', '║', '╚', '╝'};
-    public static final char[] SINGULAR_FRAME = {'┌', '─', '┐', '│', '└', '┘'};
-
     /**
      * Выдаёт строку указанной длины, составленную как строка обрамлённого текста
      * с различным символом для левой и правой декоративной границы.
@@ -155,7 +156,6 @@ public class Decorator {
                         complementString(text, length - 4),
                         rightBorder);
     }
-    public static final char[] ASTERISK_FRAME = {'*'};
 
     /*
         Фасадные функции.

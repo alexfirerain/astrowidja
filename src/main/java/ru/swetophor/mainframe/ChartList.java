@@ -449,9 +449,12 @@ public class ChartList {
     }
 
     /**
-     * @param i
-     * @param chartObject
-     * @return
+     * Заменяет элемент с указанным номером в списке на указанный объект.
+     *
+     * @param i           в какую позицию ставим элемент.
+     * @param chartObject что за элемент.
+     * @return объект, надвшийся по этому адресу прежде.
+     * @throws IndexOutOfBoundsException если указана неадекватная позиция i.
      */
     private ChartObject setItem(int i, ChartObject chartObject) {
         names.set(i, chartObject.getName());

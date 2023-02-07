@@ -29,9 +29,9 @@ public class Application {
 
 
     private static void printChartStat(ChartObject chart) {
-        System.out.println(chart.getAstrasList());
-        System.out.println(chart.getAspectTable());
-        System.out.println(chart.resonanceAnalysisVerbose(Settings.getEdgeHarmonic()));
+        print(chart.getAstrasList());
+        print(chart.getAspectTable());
+        print(chart.resonanceAnalysisVerbose(Settings.getEdgeHarmonic()));
     }
 
     private static void welcome() {
@@ -71,17 +71,17 @@ public class Application {
      */
     private static void mainCycle() {
         listCharts();
-        String MENU = doubleFrame(  """
-                            1. карты на столе
-                            2. настройки
-                            3. списки карт
-                            4. работа с картой
-                            5. добавить карту с клавиатуры
-                            0. выход
-                            """);
+        String MENU = """
+                1. карты на столе
+                2. настройки
+                3. списки карт
+                4. работа с картой
+                5. добавить карту с клавиатуры
+                0. выход
+                """;
         boolean exit = false;
         while (!exit) {
-            System.out.println(MENU);
+            printInDoubleFrame(MENU);
             switch (KEYBOARD.nextLine()) {
                 case "1" -> listCharts();
                 case "2" -> Settings.editSettings();
@@ -91,7 +91,7 @@ public class Application {
                 case "0" -> exit = true;
             }
         }
-        System.out.println("Спасибо за ведание резонансов!");
+        print("Спасибо за ведание резонансов!");
     }
 
     /**
@@ -124,9 +124,9 @@ public class Application {
      * Выводит на экран список карт, лежащих на {@link #DESK столе}, то есть загруженных в программу.
      */
     private static void listCharts() {
-        System.out.println(singularFrame(DESK.isEmpty() ?
-                                "Ни одной карты не загружено." :
-                                DESK.toString())
+        printInFrame(DESK.isEmpty() ?
+                "Ни одной карты не загружено." :
+                DESK.toString()
         );
     }
 
@@ -162,9 +162,9 @@ public class Application {
                 "3" = о паттернах кратко
                 "4" = о паттернах со статистикой
                 """;
-        System.out.println(chart.getCaption());
-        System.out.println(chart.getAstrasList());
-        System.out.println(singularFrame(CHART_MENU));
+        print(chart.getCaption());
+        print(chart.getAstrasList());
+        printInFrame(CHART_MENU);
         String input;
         while (true) {
             input = KEYBOARD.nextLine();
@@ -182,12 +182,12 @@ public class Application {
                     addChart(Chart.composite((Chart) chart, (Chart) counterpart));
             }
             else switch (input) {
-                case "1" -> System.out.println(chart.getAstrasList());
-                case "2" -> System.out.println(chart.getAspectTable());
-                case "3" -> System.out.println(chart.resonanceAnalysis(getEdgeHarmonic()));
-                case "4" -> System.out.println(chart.resonanceAnalysisVerbose(getEdgeHarmonic()));
-                default -> System.out.println(singularFrame(CHART_MENU));
-            }
+                    case "1" -> print(chart.getAstrasList());
+                    case "2" -> print(chart.getAspectTable());
+                    case "3" -> print(chart.resonanceAnalysis(getEdgeHarmonic()));
+                    case "4" -> print(chart.resonanceAnalysisVerbose(getEdgeHarmonic()));
+                    default -> printInFrame(CHART_MENU);
+                }
         }
     }
 
@@ -214,9 +214,9 @@ public class Application {
             if (input.isBlank())
                 continue;
             x.addAstra(Astra.readFromString(a.name + " " + input));
-            System.out.println();
+            print();
         }
-        System.out.println("Ввод дополнительных астр в формате 'название градусы минуты секунды'");
+        print("Ввод дополнительных астр в формате 'название градусы минуты секунды'");
         String input = KEYBOARD.nextLine();
         while (!input.isBlank()) {
             x.addAstra(Astra.readFromString(input));
@@ -233,7 +233,7 @@ public class Application {
      */
     private static void addChart(ChartObject chart) {
         if (DESK.addResolving(chart, "на столе"))
-            System.out.println("Карта загружена на стол: " + chart);
+            print("Карта загружена на стол: " + chart);
     }
 
     /**
@@ -255,7 +255,32 @@ public class Application {
     public static void loadFromFile(String fileName) {
         Storage.readChartsFromFile(fileName)
                 .forEach(c -> DESK.addResolving(c, "на столе"));
-        System.out.println("Загружены карты из " + fileName);
+        print("Загружены карты из " + fileName);
     }
+
+    private static void print(String text) {
+        System.out.println(text);
+    }
+
+    private static void print() {
+        System.out.println();
+    }
+
+    private static void printInAsterisk(String text) {
+        System.out.println(asteriskFrame(text));
+    }
+
+    private static void printInFrame(String text) {
+        System.out.println(singularFrame(text));
+    }
+
+    private static void printInDoubleFrame(String text) {
+        System.out.println(doubleFrame(text));
+    }
+
+    private static void printInSemiDouble(String text) {
+        System.out.println(halfDoubleFrame(text));
+    }
+
 
 }
