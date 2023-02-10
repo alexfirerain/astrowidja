@@ -12,6 +12,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static ru.swetophor.mainframe.Application.*;
+
 /**
  * Предоставляет модель хранения данных в файлах попки базы данных.
  * Содержит список всех доступных карт и инструментарий по управлению картами.
@@ -35,10 +37,6 @@ public class Storage {
      * Рабочая папка.
      */
     protected static File base = new File(baseDir);
-    /**
-     * Список файлов в рабочей папке.
-     */
-    protected static List<File> baseContent = getBaseContent();
     /**
      * Список списков карт, соответствующих файлам в рабочей папке.
      */
@@ -106,7 +104,7 @@ public class Storage {
     }
 
 
-    private static String reportBaseContentExpanded() {
+    public static String reportBaseContentExpanded() {
         chartLibrary = scanLibrary();
 
         StringBuilder output = new StringBuilder();
@@ -114,7 +112,7 @@ public class Storage {
 
         for (int f = 0; f < tableOfContents.size(); f++) {
             String filename = tableOfContents.get(f);
-            output.append(filename).append(":\n");
+            output.append("%d. ".formatted(f + 1)).append(filename).append(":\n");
             List<String> chartNames = chartLibrary.get(f).getNames();
 
             if (filename.endsWith(".awb"))
@@ -207,7 +205,7 @@ public class Storage {
     }
 
     /**
-     * Записывает содержимое картосписка (как возвращается {@link ChartList#getString()}
+     * Записывает содержимое картосписка (как возвращается {@link ChartList#getString()})
      * в файл по указанному адресу (относительно рабочей папки).
      * Существующий файл заменяется, несуществующий создаётся.
      *
@@ -237,7 +235,7 @@ public class Storage {
      * файла с именем, начинающимся со строки, переданной как аргумент.
      * Если ни одним из способов файл не найден, то пустой список.
      */
-    public ChartList findList(String order) {
+    public static ChartList findList(String order) {
         ChartList list = new ChartList();
         if (order == null || order.isBlank())
             return list;
@@ -271,4 +269,54 @@ public class Storage {
     }
 
 
+    public static String showList(String order) {
+        return findList(order).toString();
+    }
+
+    public static void deleteFile(String fileToDelete) {
+        try {
+            if (fileToDelete.matches("^\\d+")) {
+                int indexToDelete;
+                try {
+                    indexToDelete = Integer.parseInt(fileToDelete) - 1;
+                    if (indexToDelete < 0 || indexToDelete >= tableOfContents().size()) {
+                        print("в базе всего " + tableOfContents().size() + "файлов");
+                    } else {
+                        String nameToDelete = tableOfContents().get(indexToDelete);
+                        if (confirmDeletion(nameToDelete)) {
+                            if (!Files.deleteIfExists(Path.of(baseDir, nameToDelete)))
+                                print("не найдено файла " + nameToDelete);
+                        } else
+                            print("отмена удаления " + nameToDelete);
+                    }
+                } catch (NumberFormatException e) {
+                    print("не разобрать числа, " + e.getLocalizedMessage());
+                }
+            } else if (fileToDelete.endsWith("***")) {
+                String prefix = fileToDelete.substring(0, fileToDelete.length() - 3);
+                for (String name : tableOfContents())
+                    if (name.startsWith(prefix)) {
+                        if (confirmDeletion(name)) {
+                            if (!Files.deleteIfExists(Path.of(baseDir, name))) {
+                                print("не найдено файла " + name);
+                            }
+                        } else print("отмена удаления " + name);
+                    }
+            } else {
+                if (!fileToDelete.endsWith(".awb") && !fileToDelete.endsWith(".awc")) {
+                    fileToDelete = fileToDelete + ".awb";
+                }
+                if (!Files.deleteIfExists(Path.of(baseDir, fileToDelete))) {
+                    print("не найдено файла " + fileToDelete);
+                }
+            }
+        } catch (IOException e) {
+            printInAsterisk("ошибка чтения базы, " + e.getLocalizedMessage());
+        }
+    }
+
+    private static boolean confirmDeletion(String fileToDelete) {
+        printInFrame("Точно удалить " + fileToDelete + "?");
+        return Settings.yesValues.contains(KEYBOARD.nextLine().toLowerCase());
+    }
 }

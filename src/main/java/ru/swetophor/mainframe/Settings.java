@@ -10,8 +10,8 @@ import static ru.swetophor.celestialmechanics.CelestialMechanics.CIRCLE;
  * Класс-хранилище статических глобальных переменных АстроВидьи.
  */
 public class Settings {
-    private static final Set<String> yesValues = Set.of("да", "+", "yes", "true", "д", "y", "t", "1");
-    private static final Set<String> noValues = Set.of("нет", "-", "no", "false", "н", "n", "f", "0");
+    static final Set<String> yesValues = Set.of("да", "+", "yes", "true", "д", "y", "t", "1");
+    static final Set<String> noValues = Set.of("нет", "-", "no", "false", "н", "n", "f", "0");
     private static int edgeHarmonic = 108;
     private static int orbsDivisor = 30;
     private static boolean halfOrbsForDoubles = true;

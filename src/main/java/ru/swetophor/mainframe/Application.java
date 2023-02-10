@@ -145,9 +145,10 @@ public class Application {
     }
 
     /**
-     * Цикл работы с картой. Предоставялет действия,
-     * которые можно выполнить с картой: просмотр статистики,
+     * Цикл работы с картой.
+     * Предоставляет действия, которые можно выполнить с картой: просмотр статистики,
      * сохранение в список (файл), построение средней и синастрической карт.
+     *
      * @param chart карта, являющаяся предметом работы.
      */
     private static void workCycle(ChartObject chart) {
@@ -192,7 +193,38 @@ public class Application {
     }
 
     private static void listsCycle() {
+        String LIST_MENU = """
+                ("список" — список по номеру или имени,
+                 "карты" — карты по номеру или имени через пробел)
+                    =               = список файлов в базе
+                    ==              = полный список файлов и карт
+                    ххх список      = удалить файл
+                    
+                    список >>       = заменить стол на список
+                    список ->       = добавить список ко столу
+                    >> список       = заменить файл столом
+                    -> список       = добавить стол к списку
+                    
+                    карты -> список         = добавить карты со стола к списку
+                    список:карты -> список  = переместить карты из списка в список
+                """;
+        printInSemiDouble(LIST_MENU);
+        String input;
+        while (true) {
+            input = KEYBOARD.nextLine();
+            if (input == null || input.isBlank()) return;
 
+            if (input.equals("=")) {
+                printInAsterisk(Storage.listLibrary());
+
+            } else if (input.equals("==")) {
+                printInAsterisk(Storage.reportBaseContentExpanded());
+
+            } else if (input.toLowerCase().startsWith("xxx") || input.toLowerCase().startsWith("ххх")) {
+                String order = input.substring(3).trim();
+                Storage.deleteFile(order);
+            }
+        }
 
     }
 
@@ -258,7 +290,7 @@ public class Application {
         print("Загружены карты из " + fileName);
     }
 
-    private static void print(String text) {
+    static void print(String text) {
         System.out.println(text);
     }
 
@@ -266,19 +298,19 @@ public class Application {
         System.out.println();
     }
 
-    private static void printInAsterisk(String text) {
+    static void printInAsterisk(String text) {
         System.out.println(asteriskFrame(text));
     }
 
-    private static void printInFrame(String text) {
+    static void printInFrame(String text) {
         System.out.println(singularFrame(text));
     }
 
-    private static void printInDoubleFrame(String text) {
+    static void printInDoubleFrame(String text) {
         System.out.println(doubleFrame(text));
     }
 
-    private static void printInSemiDouble(String text) {
+    static void printInSemiDouble(String text) {
         System.out.println(halfDoubleFrame(text));
     }
 
