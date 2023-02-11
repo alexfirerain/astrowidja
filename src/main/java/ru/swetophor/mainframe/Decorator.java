@@ -1,8 +1,6 @@
 package ru.swetophor.mainframe;
 
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 
 public class Decorator {
     public static final char[] ASTERISK_FRAME = {'*'};
@@ -10,12 +8,6 @@ public class Decorator {
     public static final char[] DOUBLE_FRAME = {'╔', '═', '╗', '║', '╚', '╝'};
     public static final char[] HALF_DOUBLE_FRAME = {'┌', '─', '╖', '│', '║', '╘', '═', '╝'};
 
-
-    public static String autosaveName() {
-        return "сохранение %s.awb"
-                .formatted(new SimpleDateFormat("E d MMMM .yy HH-mm")
-                        .format(new Date()));
-    }
 
     public static String frameText(String text,
                                    int minWidth,
@@ -55,7 +47,7 @@ public class Decorator {
         return frameText(text, minWidth, 80, symbol, symbol, symbol, symbol, symbol, symbol);
     }
 
-    public static String frameText(String text, int minWidth, int maxWidth, char[] pattern) {
+    public static String frameText(String text, int minWidth, int maxWidth, char... pattern) {
         return switch (pattern.length) {
             case 1 -> frameText(text, minWidth, pattern[0]);
             case 6 -> frameText(text, minWidth, maxWidth,
@@ -70,11 +62,10 @@ public class Decorator {
     }
 
     private static String complementString(String string, int length) {
-        return length - string.length() <= 0 ?
+        int lack = length - string.length();
+        return lack <= 0 ?
                 string :
-                string +
-                        " ".repeat(length - string.length());
-
+                string + " ".repeat(lack);
     }
 
     /**
@@ -177,4 +168,27 @@ public class Decorator {
     }
 
 
+    static void print(String text) {
+        System.out.println(text);
+    }
+
+    static void print() {
+        System.out.println();
+    }
+
+    static void printInAsterisk(String text) {
+        System.out.println(asteriskFrame(text));
+    }
+
+    static void printInFrame(String text) {
+        System.out.println(singularFrame(text));
+    }
+
+    static void printInDoubleFrame(String text) {
+        System.out.println(doubleFrame(text));
+    }
+
+    static void printInSemiDouble(String text) {
+        System.out.println(halfDoubleFrame(text));
+    }
 }

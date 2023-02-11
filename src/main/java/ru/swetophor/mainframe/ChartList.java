@@ -707,9 +707,8 @@ public class ChartList {
             }
         else if (contains(order))
             return get(order);
-        else {
+        else
             System.out.printf("Карты '%s' нет %s%n", order, inList);
-        }
         return null;
     }
 

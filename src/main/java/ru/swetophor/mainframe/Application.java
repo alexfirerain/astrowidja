@@ -63,7 +63,7 @@ public class Application {
         mainCycle();
 
         if (autosave)
-            Storage.saveTableToFile(DESK, autosaveName());
+            Storage.saveTableToFile(DESK, Storage.autosaveName());
     }
 
     /**
@@ -192,42 +192,6 @@ public class Application {
         }
     }
 
-    private static void listsCycle() {
-        String LIST_MENU = """
-                ("список" — список по номеру или имени,
-                 "карты" — карты по номеру или имени через пробел)
-                    =               = список файлов в базе
-                    ==              = полный список файлов и карт
-                    ххх список      = удалить файл
-                    
-                    список >>       = заменить стол на список
-                    список ->       = добавить список ко столу
-                    >> список       = заменить файл столом
-                    -> список       = добавить стол к списку
-                    
-                    карты -> список         = добавить карты со стола к списку
-                    список:карты -> список  = переместить карты из списка в список
-                """;
-        printInSemiDouble(LIST_MENU);
-        String input;
-        while (true) {
-            input = KEYBOARD.nextLine();
-            if (input == null || input.isBlank()) return;
-
-            if (input.equals("=")) {
-                printInAsterisk(Storage.listLibrary());
-
-            } else if (input.equals("==")) {
-                printInAsterisk(Storage.reportBaseContentExpanded());
-
-            } else if (input.toLowerCase().startsWith("xxx") || input.toLowerCase().startsWith("ххх")) {
-                String order = input.substring(3).trim();
-                Storage.deleteFile(order);
-            }
-        }
-
-    }
-
     /**
      * Создаёт карту на основе юзерского ввода.
      * Предлагает ввести координаты в виде "градусы минуты секунды"
@@ -288,30 +252,6 @@ public class Application {
         Storage.readChartsFromFile(fileName)
                 .forEach(c -> DESK.addResolving(c, "на столе"));
         print("Загружены карты из " + fileName);
-    }
-
-    static void print(String text) {
-        System.out.println(text);
-    }
-
-    private static void print() {
-        System.out.println();
-    }
-
-    static void printInAsterisk(String text) {
-        System.out.println(asteriskFrame(text));
-    }
-
-    static void printInFrame(String text) {
-        System.out.println(singularFrame(text));
-    }
-
-    static void printInDoubleFrame(String text) {
-        System.out.println(doubleFrame(text));
-    }
-
-    static void printInSemiDouble(String text) {
-        System.out.println(halfDoubleFrame(text));
     }
 
 

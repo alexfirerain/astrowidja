@@ -45,6 +45,8 @@ public enum AstraEntity {
             for (String alt : s.also)
                 if (alt.equalsIgnoreCase(name))
                     return s;
+            if (String.valueOf(s.symbol).equals(name))
+                return s;
         }
         return null;
     }

@@ -8,11 +8,15 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static ru.swetophor.mainframe.Application.*;
+import static ru.swetophor.mainframe.Decorator.*;
+import static ru.swetophor.mainframe.Decorator.printInAsterisk;
+import static ru.swetophor.mainframe.Decorator.printInSemiDouble;
 
 /**
  * Предоставляет модель хранения данных в файлах попки базы данных.
@@ -83,7 +87,7 @@ public class Storage {
 
     static void fullBaseReport() {
         System.out.println("В базе присутствуют следующие файлы и карты:");
-        System.out.println(Decorator.frameText(reportBaseContentExpanded(), 40, '*'));
+        System.out.println(frameText(reportBaseContentExpanded(), 40, '*'));
     }
 
     /**
@@ -177,6 +181,18 @@ public class Storage {
         if (fileContent.addResolving(chart, file))
             dropListToFile(fileContent, file);
     }
+    public static boolean  putChartsToBase(String file, ChartObject... charts) {
+        ChartList fileContent = readChartsFromFile(file);
+        boolean changed = false;
+        for (ChartObject c : charts)
+            if (fileContent.addResolving(c, file))
+                changed = true;
+        if (changed)
+            dropListToFile(fileContent, file);
+        return changed;
+    }
+
+
 
     /**
      * Прочитывает список карт из формата *.awb
@@ -275,14 +291,15 @@ public class Storage {
 
     public static void deleteFile(String fileToDelete) {
         try {
+            List<String> fileList = tableOfContents();
             if (fileToDelete.matches("^\\d+")) {
                 int indexToDelete;
                 try {
                     indexToDelete = Integer.parseInt(fileToDelete) - 1;
-                    if (indexToDelete < 0 || indexToDelete >= tableOfContents().size()) {
-                        print("в базе всего " + tableOfContents().size() + "файлов");
+                    if (indexToDelete < 0 || indexToDelete >= fileList.size()) {
+                        print("в базе всего " + fileList.size() + "файлов");
                     } else {
-                        String nameToDelete = tableOfContents().get(indexToDelete);
+                        String nameToDelete = fileList.get(indexToDelete);
                         if (confirmDeletion(nameToDelete)) {
                             if (!Files.deleteIfExists(Path.of(baseDir, nameToDelete)))
                                 print("не найдено файла " + nameToDelete);
@@ -294,14 +311,19 @@ public class Storage {
                 }
             } else if (fileToDelete.endsWith("***")) {
                 String prefix = fileToDelete.substring(0, fileToDelete.length() - 3);
-                for (String name : tableOfContents())
+                for (String name : fileList) {
                     if (name.startsWith(prefix)) {
                         if (confirmDeletion(name)) {
                             if (!Files.deleteIfExists(Path.of(baseDir, name))) {
                                 print("не найдено файла " + name);
+                            } else {
+                                print(name + " удалился");
                             }
-                        } else print("отмена удаления " + name);
+                        } else {
+                            print("отмена удаления " + name);
+                        }
                     }
+                }
             } else {
                 if (!fileToDelete.endsWith(".awb") && !fileToDelete.endsWith(".awc")) {
                     fileToDelete = fileToDelete + ".awb";
@@ -318,5 +340,47 @@ public class Storage {
     private static boolean confirmDeletion(String fileToDelete) {
         printInFrame("Точно удалить " + fileToDelete + "?");
         return Settings.yesValues.contains(KEYBOARD.nextLine().toLowerCase());
+    }
+
+    public static String autosaveName() {
+        return "сохранение %s.awb"
+                .formatted(new SimpleDateFormat("E d MMMM .yy HH-mm")
+                        .format(new Date()));
+    }
+
+    private static void listsCycle() {
+        String LIST_MENU = """
+                ("список" — список по номеру или имени,
+                 "карты" — карты по номеру или имени через пробел)
+                    =               = список файлов в базе
+                    ==              = полный список файлов и карт
+                    ххх список      = удалить файл
+                    
+                    список >>       = заменить стол на список
+                    список ->       = добавить список ко столу
+                    >> список       = заменить файл столом
+                    -> список       = добавить стол к списку
+                    
+                    карты -> список         = добавить карты со стола к списку
+                    список:карты -> список  = переместить карты из списка в список
+                """;
+        printInSemiDouble(LIST_MENU);
+        String input;
+        while (true) {
+            input = KEYBOARD.nextLine();
+            if (input == null || input.isBlank()) return;
+
+            if (input.equals("=")) {
+                printInAsterisk(listLibrary());
+
+            } else if (input.equals("==")) {
+                printInAsterisk(reportBaseContentExpanded());
+
+            } else if (input.toLowerCase().startsWith("xxx") || input.toLowerCase().startsWith("ххх")) {
+                String order = input.substring(3).trim();
+                deleteFile(order);
+            }
+        }
+
     }
 }
