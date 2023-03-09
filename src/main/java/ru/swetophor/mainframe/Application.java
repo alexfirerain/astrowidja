@@ -123,7 +123,7 @@ public class Application {
     /**
      * Выводит на экран список карт, лежащих на {@link #DESK столе}, то есть загруженных в программу.
      */
-    private static void listCharts() {
+    protected static void listCharts() {
         printInFrame(DESK.isEmpty() ?
                 "Ни одной карты не загружено." :
                 DESK.toString()

@@ -229,6 +229,9 @@ public class Storage {
      * @param file    имя файла в рабочей папке.
      */
     private static void dropListToFile(ChartList content, String file) {
+        if (!file.endsWith(".awb") && !file.endsWith(".awc"))
+            file += content.size() == 1 ? ".awc" : ".awb";
+
         try (PrintWriter out = new PrintWriter(Path.of(baseDir, file).toFile())) {
             out.println(content.getString());
             System.out.printf("Карты {%s} записаны в файл %s.%n",
@@ -262,9 +265,8 @@ public class Storage {
                 int i = Integer.parseInt(order) - 1;
                 if (i >= 0 && i < base.size())
                     list = base.get(i);
-                else {
+                else
                     System.out.printf("В базе всего %d файлов%n", base.size());
-                }
             } catch (NumberFormatException e) {
                 System.out.println("Число не распознано.");
             }
@@ -363,6 +365,7 @@ public class Storage {
                     
                     карты -> список         = добавить карты со стола к списку
                     список:карты -> список  = переместить карты из списка в список
+                    список:карты +> список  = копировать карты из списка в список
                 """;
         printInSemiDouble(LIST_MENU);
         String input;
@@ -379,6 +382,30 @@ public class Storage {
             } else if (input.toLowerCase().startsWith("xxx") || input.toLowerCase().startsWith("ххх")) {
                 String order = input.substring(3).trim();
                 deleteFile(order);
+
+            } else if (input.endsWith(">>")) {
+                String order = input.substring(0, input.length() - 2).trim();
+                ChartList loadingList = findList(order);
+                if (loadingList == null || loadingList.isEmpty()) {     // TODO: write a confirmation general utility
+                    System.out.println("список не найден или пуст");
+                } else {
+                    DESK.clear();
+                    DESK.addAll(loadingList);
+                    listCharts();
+                }
+
+            } else if (input.endsWith("->")) {
+                String order = input.substring(0, input.length() - 2).trim();
+                ChartList loadingList = findList(order);
+                DESK.addAll(loadingList);
+                listCharts();
+
+            } else if (input.startsWith(">>")) {
+                String targetFilename = input.substring(2).trim();
+                dropListToFile(DESK, targetFilename);
+
+            } else if (input.startsWith("->")) {
+                saveTableToFile(DESK, input.substring(2).trim());
             }
         }
 
