@@ -4,7 +4,9 @@
     <option name="folders">
       <set>
         <option value="$PROJECT_DIR$/src/main/java" />
+        <option value="$PROJECT_DIR$/src/main/resources" />
         <option value="$PROJECT_DIR$/src/test/java" />
+        <option value="$PROJECT_DIR$/src/test/resources" />
       </set>
     </option>
     <option name="packages">

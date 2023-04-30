@@ -239,23 +239,23 @@ public class Chart extends ChartObject {
     }
 
     private String patternReport(int harmonic) {
-        StringBuilder string = new StringBuilder(harmonic + ": ");
+        StringBuilder output = new StringBuilder(harmonic + ": ");
 
         List<Pattern> groups = findPatterns(harmonic);
 
         if (groups.isEmpty())
-            return string.append("-").toString();
+            return output.append("-").toString();
 
         groups.stream()
                 .filter(group -> !group.getAstras().isEmpty())
                 .forEach(group -> {
                     group.getAstrasByConnectivity().stream()
                             .map(Astra::getSymbol)
-                            .forEach(string::append);
-                    string.append(" | ");
+                            .forEach(output::append);
+                    output.append(" | ");
                 });
 
-        return string.toString();
+        return output.toString();
     }
 
     //    @Override

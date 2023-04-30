@@ -9,7 +9,7 @@ public class CelestialMechanics {
     static double HALF_CIRCLE = 180.0;
 
     /**
-     * вычисляет эклиптическую дугу между двумя точками на большом круге
+     * Вычисляет эклиптическую дугу между двумя точками на большом круге
      *
      * @param a первая координата точки.
      * @param b вторая координата точки.
@@ -23,7 +23,7 @@ public class CelestialMechanics {
     }
 
     /**
-     * вычисляет эклиптическую дугу между астрами, переданными как объекты
+     * Вычисляет эклиптическую дугу между астрами, переданными как объекты
      *
      * @param a первая астра.
      * @param b вторая астра.
@@ -34,7 +34,7 @@ public class CelestialMechanics {
     }
 
     /**
-     * приводит дугу к расстоянию меж ея концами
+     * Приводит дугу к расстоянию меж ея концами
      */
     public static double normalizeArc(double a) {
         return getArc(normalizeCoordinate(a), 0);

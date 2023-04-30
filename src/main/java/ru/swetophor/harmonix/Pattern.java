@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static ru.swetophor.celestialmechanics.CelestialMechanics.calculateStrength;
 import static ru.swetophor.celestialmechanics.CelestialMechanics.getArcForHarmonic;
@@ -129,13 +130,14 @@ public class Pattern {
     public boolean isValid() {
         if (size() < 2)
             return false;
-        for (int i = 0; i < astras.size() - 1; i++)
-            for (int j = i + 1; j < astras.size(); j++)
-                if (astras.get(i)
-                        .isInDirectResonanceWith(astras.get(j),
-                                                harmonic))
-                    return true;
-        return false;
+
+        return IntStream.range(0, astras.size() - 1)
+                .anyMatch(i -> IntStream.range(i + 1, astras.size())
+                        .anyMatch(j ->
+                                astras.get(i)
+                                        .isInDirectResonanceWith(astras.get(j), harmonic)
+                        )
+                );
     }
     // TODO: в паттерне тоже будет ссылка на карту (одиночную или двойную!)
 

@@ -25,6 +25,9 @@ public class Application {
                 Марс 143 35 4
                 """;
 
+    /**
+     * Статический список карт в памяти работающей АстроВидьи.
+     */
     protected static final ChartList DESK = new ChartList();
 
 
