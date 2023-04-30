@@ -400,6 +400,7 @@ public class ChartList {
      * @return
      */
     public boolean addAll(Collection<ChartObject> collection) {
+        if (collection == null) return;
         int mod = this.modCount;
         collection.forEach(this::add);
         return this.modCount != mod;
