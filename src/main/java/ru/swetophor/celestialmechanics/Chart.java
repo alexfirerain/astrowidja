@@ -32,15 +32,29 @@ public class Chart extends ChartObject {
         type = ChartType.COSMOGRAM;
     }
 
+    /**
+     * Матрица резонансов между астрами карты.
+     */
     protected Matrix aspects;
 
 
     // конструктор
+
+    /**
+     * Конструктор пустой карты.
+     * @param name имя карты.
+     */
     public Chart(String name) {
         super(name);
     }
 
-
+    /**
+     * Конструктор карты на основе строки ввода,
+     * содержащей имя карты и, в следующих строках,
+     * описание каждой астры в подобающем формате.
+     * @param input входная строка.
+     * @return  сформированную карту.
+     */
     public static Chart readFromString(String input) {
         String[] lines = input.lines().toArray(String[]::new);
         if (lines.length == 0)

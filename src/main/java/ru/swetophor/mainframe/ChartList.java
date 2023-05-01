@@ -86,6 +86,7 @@ public class ChartList {
      * или {@code пусто}, если выбрано "отменить операцию".
      */
     public static ChartObject resolveCollision(ChartObject controversial, List<ChartObject> list, String listName) {
+        ChartObject result = controversial;
         boolean fixed = false;
         while (!fixed) {
             System.out.printf("""
@@ -111,12 +112,13 @@ public class ChartList {
                         name = KEYBOARD.nextLine();         // TODO: допустимое имя
                         System.out.println();
                     } while (containsName(list, name));
-                    controversial.setName(name);
+                    result.setName(name);
                     fixed = true;
                 }
                 case "0" -> {
                     System.out.println("Отмена добавления карты: " + controversial.getName());
-                    return null;
+                    result = null;
+                    fixed = true;
                 }
             }
         }
@@ -400,7 +402,7 @@ public class ChartList {
      * @return
      */
     public boolean addAll(Collection<ChartObject> collection) {
-        if (collection == null) return;
+        if (collection == null) return false;
         int mod = this.modCount;
         collection.forEach(this::add);
         return this.modCount != mod;

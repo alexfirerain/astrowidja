@@ -11,10 +11,10 @@ import static ru.swetophor.celestialmechanics.CelestialMechanics.normalizeCoordi
 
 /**
  * Прототип небесного те́ла — объект, имеющий:
- * <li> идентификатор
- * <li> положение
- * <li> физические свойства
- * <li> астральные свойства
+ * <li> идентификатор</li>
+ * <li> положение</li>
+ * <li> физические свойства</li>
+ * <li> астральные свойства</li>
  */
 public class Astra {
     /**
@@ -31,12 +31,33 @@ public class Astra {
     private double zodiacPosition;                        // положение в Зодиаке
 
     // конструкторы для задания координаты с/без минут и секунд
+
+    /**
+     * Конструктор на основе координаты в виде градусов, минут и секунд.
+     * @param name  имя астры.
+     * @param degree    градусы координаты.
+     * @param minute    минуты координаты.
+     * @param second    секунды координаты
+     */
     public Astra(String name, double degree, double minute, double second) {
         this(name, degree + minute/60 + second/3600);
     }
+
+    /**
+     * Конструктор на основе координаты в виде градусов и минут.
+     * @param name  имя астры.
+     * @param degree    градусы координаты.
+     * @param minute    минуты координаты.
+     */
     public Astra(String name, double degree, double minute) {
         this(name, degree + minute/60);
     }
+
+    /**
+     * Конструктор на основе координаты в виде вещественного числа.
+     * @param name  имя астры.
+     * @param degree    координата астры в double.
+     */
     public Astra(String name, double degree) {
         this.name = name;
         this.zodiacPosition = normalizeCoordinate(degree);
@@ -58,15 +79,29 @@ public class Astra {
         }
     }
 
+    /**
+     * Создаёт астру из строки специального формата.
+     * Если чтение не удаётся, сообщает об этом.
+     * @param input строка вида "астра координаты", где 'координаты' может быть
+     *              градусами, градусами и минутами или градусами,
+     *              минутами и секундами - через пробел.
+     * @return  заполненный объект Астра.
+     */
     public static Astra readFromString(String input) {
         var elements = input.split(" ");
-        if (elements.length == 0)
-            throw new IllegalArgumentException("текст не содержит строк");
+        Double[] coors = new Double[0];
 
-        var coors = IntStream.range(1, elements.length)
-                .mapToObj(i -> Double.parseDouble(elements[i]))
-                .collect(Collectors.toCollection(() -> new ArrayList<>(3)))
-                .toArray(Double[]::new);
+        try {
+            if (elements.length == 0)
+                throw new IllegalArgumentException("текст не содержит строк");
+
+            coors = IntStream.range(1, elements.length)
+                    .mapToObj(i -> Double.parseDouble(elements[i]))
+                    .collect(Collectors.toCollection(() -> new ArrayList<>(3)))
+                    .toArray(Double[]::new);
+        } catch (RuntimeException e) {
+            System.out.println("Не удалось прочитать строку '" + input + "': " + e.getMessage());
+        }
 
         return Astra.fromData(elements[0], coors);
     }
@@ -80,14 +115,26 @@ public class Astra {
         return "%s (%s)".formatted(name, getZodiacDegree());
     }
 
+    /**
+     * Сообщает название астры.
+     * @return название астры.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Возвращает ссылку на карту, в которой находится астра.
+     * @return карту неба, в котором находится астра.
+     */
     public Chart getHeaven() {
         return this.heaven;
     }
 
+    /**
+     * Сообщает зодиакальную позицию в виде вещественного числа.
+     * @return зодиакальное положение астры в небе от начала отсчёта.
+     */
     public double getZodiacPosition() {
         return this.zodiacPosition;
     }
@@ -141,10 +188,20 @@ public class Astra {
         return AstraEntity.findSymbolFor(this);
     }
 
+    /**
+     * Выдаёт строку, представляющую символ астры и её зодиакально положение.
+     * @return строку вида "символ (положение)",
+     * где 'положение' представлено как градус знака.
+     */
     public String getSymbolWithDegree() {
         return "%s (%s)".formatted(getSymbol(), getZodiacDegree());
     }
 
+    /**
+     * Выдаёт строку, представляющую символ астры и обладателя неба с нею.
+     * @return  строку вида "символ (обладатель)", где 'обладатель' -
+     * название карты, в которой расположена астра.
+     */
     public String getSymbolWithOwner() {
         return "%s (%s)".formatted(getSymbol(), heaven.getShortenedName(8));
     }

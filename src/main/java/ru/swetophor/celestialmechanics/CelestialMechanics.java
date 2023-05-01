@@ -4,8 +4,18 @@ import static java.lang.Math.abs;
 import static java.lang.Math.round;
 import static ru.swetophor.celestialmechanics.ZodiacSign.zodiumIcon;
 
-public class CelestialMechanics {
+/**
+ * Инструментальный класс, содержащий константы и методы
+ * для вычисления координат.
+ */
+public final class CelestialMechanics {
+    /**
+     * Круг в градусах, т.е. 360.
+     */
     public static final double CIRCLE = 360.0;
+    /**
+     * Полкруга в градусах, т.е. 180.
+     */
     static double HALF_CIRCLE = 180.0;
 
     /**
@@ -34,7 +44,9 @@ public class CelestialMechanics {
     }
 
     /**
-     * Приводит дугу к расстоянию меж ея концами
+     * Приводит дугу к расстоянию меж ея концами.
+     * @param a произвольная дуга в градусах.
+     * @return  абсолютное расстояние между концами дуги.
      */
     public static double normalizeArc(double a) {
         return getArc(normalizeCoordinate(a), 0);
@@ -133,6 +145,13 @@ public class CelestialMechanics {
         return isAhead(fromPlanet.getZodiacPosition(), planet.getZodiacPosition());
     }
 
+    /**
+     * Сообщает расстояние между астрами в карте некоторой гармоники.
+     * @param a первая астра.
+     * @param b вторая астра.
+     * @param harmonic  номер гармоники.
+     * @return  угловое расстояние между астрами в карте указанной гармоники.
+     */
     public static double getArcForHarmonic(Astra a, Astra b, int harmonic) {
         return normalizeArc(getArc(a, b) * harmonic);
     }

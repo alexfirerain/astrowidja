@@ -15,6 +15,9 @@ import static ru.swetophor.mainframe.Settings.*;
  */
 public class Application {
     static final Scanner KEYBOARD = new Scanner(System.in);
+    /**
+     * Счётчик для нумерации объектов типа КартОбъект.
+     */
     static public int id = 0;
 
     static String SW = """
@@ -37,6 +40,9 @@ public class Application {
         print(chart.resonanceAnalysisVerbose(Settings.getEdgeHarmonic()));
     }
 
+    /**
+     * Выводит сообщение при старте Астровидьи.
+     */
     private static void welcome() {
         System.out.printf("%sСчитаем резонансы с приближением в %.0f° (1/%d часть круга) до числа %d%n%n",
                 asteriskFrame("Начато исполнение АстроВидьи!"),
