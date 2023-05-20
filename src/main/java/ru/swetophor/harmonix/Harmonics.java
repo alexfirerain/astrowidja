@@ -4,6 +4,7 @@ import ru.swetophor.celestialmechanics.CelestialMechanics;
 import ru.swetophor.celestialmechanics.Mechanics;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -23,6 +24,68 @@ public class Harmonics extends Number implements Comparable<Harmonics> {
     public Harmonics(int number) {
         this.number = number;
         multipliers = Mechanics.multipliersExplicate(number).toArray(Integer[]::new);
+    }
+
+    public static void buildHeavens(int uptoNumber) {
+        StringBuilder report = new StringBuilder();
+        int heaven = 0;
+        for (int i = 1; i <= uptoNumber; i++) {
+            StringBuilder heavenBuilder = new StringBuilder();
+            List<Integer> multi = Mechanics.multipliersExplicate(i);
+            int n = 0;
+            int heavenSum = 0;
+            if (multi.size() == 1) {
+                heavenBuilder.append("\t%s Σ = %d (сложность %d)%n"
+                        .formatted(Mechanics.formatMultipliers(multi), Mechanics.multiSum(i), multi.size()));
+                n++;
+                heavenSum += Mechanics.multiSum(i);
+
+                while (Mechanics.multipliersExplicate(i + 1).size() > 1) {
+                    List<Integer> nextMulti = Mechanics.multipliersExplicate(++i);
+                    heavenBuilder.append("\t%s Σ = %d (сложность %d)%n"
+                            .formatted(Mechanics.formatMultipliers(nextMulti), Mechanics.multiSum(i), nextMulti.size()));
+                    n++;
+                    heavenSum += Mechanics.multiSum(i);
+                }
+                report.append("Небо №%d (высота = %.2f)%n"
+                        .formatted(heaven++, (double) heavenSum / (double) n))
+                      .append(heavenBuilder);
+            }
+        }
+        System.out.println(report);
+    }
+
+    public static void buildHeavensWithHarmonics(int uptoNumber) {
+        StringBuilder report = new StringBuilder();
+        int heaven = 0;
+        StringBuilder heavenBuilder = new StringBuilder();
+        int n = 0;
+        int heavenSum = 0;
+
+        for (Harmonics h : generateUpTo(uptoNumber))
+            if (h.isSimple()) {
+                if (!heavenBuilder.isEmpty())
+                    report.append("Небо №%d (высота = %.2f)%n"
+                                    .formatted(heaven++, (double) heavenSum / (double) n))
+                            .append(heavenBuilder);
+                heavenBuilder = new StringBuilder("\t%s Σ = %d (сложность %d)%n"
+                        .formatted(
+                                Mechanics.formatMultipliers(h.getMultipliers()),
+                                h.multipliersSum(),
+                                h.complexity()));
+                n = 1;
+                heavenSum = h.multipliersSum();
+            } else {
+                heavenBuilder.append("\t%s Σ = %d (сложность %d)%n"
+                        .formatted(
+                                Mechanics.formatMultipliers(h.getMultipliers()),
+                                h.multipliersSum(),
+                                h.complexity()));
+                n++;
+                heavenSum += h.multipliersSum();
+            }
+
+        System.out.println(report);
     }
 
     public int getNumber() {

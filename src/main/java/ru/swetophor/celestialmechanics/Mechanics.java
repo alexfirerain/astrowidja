@@ -9,6 +9,7 @@ import java.util.stream.IntStream;
 
 import static java.lang.Math.abs;
 import static java.lang.String.format;
+import static ru.swetophor.celestialmechanics.CelestialMechanics.*;
 import static ru.swetophor.celestialmechanics.ZodiacSign.zodiumIcon;
 
 /**
@@ -204,73 +205,11 @@ public class Mechanics {
         System.out.println(output);
     }
 
-    public static void buildHeavens(int uptoNumber) {
-        StringBuilder report = new StringBuilder();
-        int heaven = 0;
-        for (int i = 1; i <= uptoNumber; i++) {
-            StringBuilder heavenBuilder = new StringBuilder();
-            List<Integer> multi = multipliersExplicate(i);
-            int n = 0;
-            int heavenSum = 0;
-            if (multi.size() == 1) {
-                heavenBuilder.append("\t%s Σ = %d (сложность %d)%n"
-                        .formatted(formatMultipliers(multi), multiSum(i), multi.size()));
-                n++;
-                heavenSum += multiSum(i);
-
-                while (multipliersExplicate(i + 1).size() > 1) {
-                    List<Integer> nextMulti = multipliersExplicate(++i);
-                    heavenBuilder.append("\t%s Σ = %d (сложность %d)%n"
-                            .formatted(formatMultipliers(nextMulti), multiSum(i), nextMulti.size()));
-                    n++;
-                    heavenSum += multiSum(i);
-                }
-                report.append("Небо №%d (высота = %.2f)%n"
-                        .formatted(heaven++, (double) heavenSum / (double) n))
-                      .append(heavenBuilder);
-            }
-        }
-        System.out.println(report);
-    }
-
-    public static void buildHeavensWithHarmonics(int uptoNumber) {
-        StringBuilder report = new StringBuilder();
-        int heaven = 0;
-        StringBuilder heavenBuilder = new StringBuilder();
-        int n = 0;
-        int heavenSum = 0;
-
-        for (Harmonics h : Harmonics.generateUpTo(uptoNumber))
-            if (h.isSimple()) {
-                if (!heavenBuilder.isEmpty())
-                    report.append("Небо №%d (высота = %.2f)%n"
-                                    .formatted(heaven++, (double) heavenSum / (double) n))
-                            .append(heavenBuilder);
-                heavenBuilder = new StringBuilder("\t%s Σ = %d (сложность %d)%n"
-                        .formatted(
-                                formatMultipliers(h.getMultipliers()),
-                                h.multipliersSum(),
-                                h.complexity()));
-                n = 1;
-                heavenSum = h.multipliersSum();
-            } else {
-                heavenBuilder.append("\t%s Σ = %d (сложность %d)%n"
-                        .formatted(
-                                formatMultipliers(h.getMultipliers()),
-                                h.multipliersSum(),
-                                h.complexity()));
-                n++;
-                heavenSum += h.multipliersSum();
-            }
-
-        System.out.println(report);
-    }
-
 
     public static void main(String[] args) {
 //        displayMultipliers(108);
 //        buildHeavens(108);
-        buildHeavensWithHarmonics(144);
+        Harmonics.buildHeavensWithHarmonics(144);
     }
 
     /**
@@ -323,5 +262,45 @@ public class Mechanics {
 
     public static boolean isMultiple(int number, int multiplier) {
         return number % multiplier == 0;
+    }
+
+    public static Chart composite(Chart chart_a, Chart chart_b) {
+        if (chart_a == null || chart_b == null)
+            throw new IllegalArgumentException("карта для композита не найдена");
+        Chart composite = new Chart("Средняя карта %s и %s"
+                .formatted(chart_a.getName(), chart_b.getName()));
+
+        Astra sun = null, mercury = null, venus = null;
+        for (Astra astra : chart_a.getAstras()) {
+            Astra counterpart = chart_b.getAstra(astra.getName());
+            if (counterpart != null) {
+                Astra compositeAstra = new Astra(astra.getName(),
+                        findMedian(astra.getZodiacPosition(),
+                                counterpart.getZodiacPosition()));
+                composite.addAstra(compositeAstra);
+                AstraEntity innerBody = AstraEntity.getEntityByName(compositeAstra.getName());
+                if (innerBody != null)
+                    switch (innerBody) {
+                        case SOL -> sun = compositeAstra;
+                        case MER -> mercury = compositeAstra;
+                        case VEN -> venus = compositeAstra;
+                    }
+            }
+        }
+
+        if (sun != null) {
+            if (mercury != null &&
+                    getArc(sun, mercury) > 30.0) {
+                mercury.advanceCoordinateBy(HALF_CIRCLE);
+                composite.addAstra(mercury);
+            }
+            if (venus != null &&
+                    getArc(sun, venus) > 60.0) {
+                venus.advanceCoordinateBy(HALF_CIRCLE);
+                composite.addAstra(venus);
+            }
+        }
+
+        return composite;
     }
 }

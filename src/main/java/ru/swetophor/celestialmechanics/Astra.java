@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static ru.swetophor.celestialmechanics.CelestialMechanics.normalizeCoordinate;
+import static ru.swetophor.celestialmechanics.CelestialMechanics.*;
+import static ru.swetophor.mainframe.Settings.getPrimalOrb;
 
 /**
  * Прототип небесного те́ла — объект, имеющий:
@@ -63,6 +64,17 @@ public class Astra {
         this.zodiacPosition = normalizeCoordinate(degree);
     }
 
+    /**
+     * Статический генератор астры из имени и координаты в произвольной форме.
+     * В зависимости от количества аргументов, они трактуются как (1) градусы,
+     * (2) градусы и минуты, (3) градусы, минуты и секунды или (4) номер знака
+     * (1-12), градусы, минуты и секунды.
+     * @param name астра, которая будет построена.
+     * @param coordinate    одна, две, три или четыре величины, задающие координату.
+     * @return созданную на основе аргументов астру.
+     * @throws  IllegalArgumentException если количество аргументов, задающих
+     * координату, не равно одному, двум, трём или четырём.
+     */
     public static Astra fromData(String name, Double... coordinate) {
         switch (coordinate.length) {
             case 0 -> throw new IllegalArgumentException("координат нет");
@@ -74,6 +86,11 @@ public class Astra {
             }
             case 3 -> {
                 return new Astra(name, coordinate[0], coordinate[1], coordinate[2]);
+            }
+            case 4 -> {
+                double signNumber = (coordinate[0] - 1) % 12;
+                double degrees = signNumber * 30 + coordinate[1];
+                return new Astra(name, degrees, coordinate[2], coordinate[3]);
             }
             default -> throw new IllegalArgumentException("слишком много координат");
         }
@@ -179,10 +196,10 @@ public class Astra {
 
     /**
      * Выдаёт астрологический символ для астры, если она распознана по названию
-     * в библиотеке {@link AstraEntity}. Если имя не найдено среди псевдонимов,
-     * возвращается '*'.
+     * в библиотеке {@link AstraEntity АстроСущность}. Если имя не найдено среди псевдонимов,
+     * библиотекой возвращается '*'.
      *
-     * @return астрологический символ дя известных астр, '*' для неизвестных.
+     * @return определяемый классом АстроСущность астрологический символ для известных астр, '*' для неизвестных.
      */
     public char getSymbol() {
         return AstraEntity.findSymbolFor(this);
@@ -221,15 +238,18 @@ public class Astra {
                         coors[2]);
     }
 
-    public double getOrbInHarmonicWith(int harmonic, Astra counterpart) {
-        return heaven
-                .aspects
-                .findResonance(this, counterpart)
-                .getAspects().stream()
-                .filter(a -> a.hasResonance(harmonic))
-                .findFirst()
-                .map(Aspect::getClearance)
-                .orElseThrow();
+//    public double getOrbInHarmonicWith(int harmonic, Astra counterpart) {
+//        return getResonanceMatrix()
+//                .findResonance(this, counterpart)
+//                .getAspects().stream()
+//                .filter(a -> a.hasResonance(harmonic))
+//                .findFirst()
+//                .map(Aspect::getClearance)
+//                .orElseThrow();
+//    }
+
+    public double getArcInHarmonicWith(int harmonic, Astra counterpart) {
+        return getArcForHarmonic(this, counterpart, harmonic);
     }
 
     /**
@@ -244,7 +264,11 @@ public class Astra {
         // TODO: по поводу обращения к матрице синастрии вообще заново проархитектурить
     }
 
+//    public boolean isInDirectResonanceWith(Astra counterpart, int harmonic) {
+//        return getResonanceMatrix().astrasInResonance(this, counterpart, harmonic);
+//    }
+
     public boolean isInDirectResonanceWith(Astra counterpart, int harmonic) {
-        return getResonanceMatrix().astrasInResonance(this, counterpart, harmonic);
+        return getArcInHarmonicWith(harmonic, counterpart) <= getPrimalOrb();
     }
 }

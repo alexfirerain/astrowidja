@@ -28,6 +28,24 @@ public class Application {
                 Марс 143 35 4
                 """;
 
+    static String NL = """
+                Новолуние 19.V.23
+                Солнце 58 25 28
+                Луна 58 25 28
+                Меркурий 36 37 53
+                Венера 102 59 18
+                Марс 119 26 20
+                Церера 174 21 53
+                Юпитер 30 40 08
+                Сатурн 336 31 24
+                Хирон 18 16 30
+                Уран 49 30 15
+                Нептун 357 12 45
+                Плутон 300 17 24
+                Раху 32 51 40
+                Лилит 146 1 60
+            """;
+
     /**
      * Статический список карт в памяти работающей АстроВидьи.
      */
@@ -189,7 +207,7 @@ public class Application {
             } else if (input.startsWith("*") && chart instanceof Chart) {
                 ChartObject counterpart = DESK.findChart(input.substring(1).trim(), "на столе");
                 if (counterpart instanceof Chart)
-                    addChart(Chart.composite((Chart) chart, (Chart) counterpart));
+                    addChart(Mechanics.composite((Chart) chart, (Chart) counterpart));
             }
             else switch (input) {
                     case "1" -> print(chart.getAstrasList());
@@ -218,13 +236,13 @@ public class Application {
             String input = KEYBOARD.nextLine();
             if (input.isBlank())
                 continue;
-            x.addAstra(Astra.readFromString(a.name + " " + input));
+            x.addAstraFromString(a.name + " " + input);
             print();
         }
         print("Ввод дополнительных астр в формате 'название градусы минуты секунды'");
         String input = KEYBOARD.nextLine();
         while (!input.isBlank()) {
-            x.addAstra(Astra.readFromString(input));
+            x.addAstraFromString(input);
             input = KEYBOARD.nextLine();
         }
         return x;

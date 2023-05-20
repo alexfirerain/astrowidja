@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.IntStream.range;
 import static java.util.stream.IntStream.rangeClosed;
-import static ru.swetophor.celestialmechanics.CelestialMechanics.*;
 import static ru.swetophor.celestialmechanics.Mechanics.zodiacFormat;
 
 /**
@@ -93,6 +92,10 @@ public class Chart extends ChartObject {
         astras.add(astra);
     }
 
+    public void addAstraFromString(String input) {
+        addAstra(Astra.readFromString(input));
+    }
+
     private void calculateAspectTable() {
         aspects = new Matrix(astras);
     }
@@ -152,46 +155,6 @@ public class Chart extends ChartObject {
         return a.getZodiacPosition();
     }
 
-    public static Chart composite(Chart chart_a, Chart chart_b) {
-        if (chart_a == null || chart_b == null)
-            throw new IllegalArgumentException("карта для композита не найдена");
-        Chart composite = new Chart("Средняя карта %s и %s"
-                .formatted(chart_a.getName(), chart_b.getName()));
-
-        Astra sun = null, mercury = null, venus = null;
-        for (Astra astra : chart_a.getAstras()) {
-            Astra counterpart = chart_b.getAstra(astra.getName());
-            if (counterpart != null) {
-                Astra compositeAstra = new Astra(astra.getName(),
-                        findMedian(astra.getZodiacPosition(),
-                                counterpart.getZodiacPosition()));
-                composite.addAstra(compositeAstra);
-                AstraEntity innerBody = AstraEntity.getEntityByName(compositeAstra.getName());
-                if (innerBody != null)
-                    switch (innerBody) {
-                        case SOL -> sun = compositeAstra;
-                        case MER -> mercury = compositeAstra;
-                        case VEN -> venus = compositeAstra;
-                    }
-            }
-        }
-
-        if (sun != null) {
-            if (mercury != null &&
-                    getArc(sun, mercury) > 30.0) {
-                mercury.advanceCoordinateBy(HALF_CIRCLE);
-                composite.addAstra(mercury);
-            }
-            if (venus != null &&
-                    getArc(sun, venus) > 60.0) {
-                venus.advanceCoordinateBy(HALF_CIRCLE);
-                composite.addAstra(venus);
-            }
-        }
-
-        return composite;
-    }
-
 
     /**
      * Отдаёт астру карты по ея имени.
@@ -207,6 +170,13 @@ public class Chart extends ChartObject {
                 .orElse(null);
     }
 
+    /**
+     * Находит и возвращает список всех паттернов, образованных астрами
+     * данной карты по указанной гармонике.
+     * @param harmonic гармоника, по которой выделяются паттерны.
+     * @return список паттернов из астр этой карты, резонирующих
+     * по указанной гармонике.
+     */
     public List<Pattern> findPatterns(int harmonic) {
         List<Pattern> patterns = new ArrayList<>();
         boolean[] analyzed = new boolean[astras.size()];
@@ -218,11 +188,28 @@ public class Chart extends ChartObject {
         return patterns;
     }
 
+    /**
+     * Выдаёт паттерн, состоящий из астр данной карты, связанных с указанной астрой
+     * по указанной гармонике напрямую или посредством других астр.
+     * Исходная астра помещается сразу в паттерн, её номер отмечается как
+     * уже проверенный во вспомогательном массиве; затем функция рекурсивно
+     * запускается для каждой из ещё не проверенных астр, имеющих указанный
+     * резонанс с исходной, результат каждого вызова добавляется к паттерну.
+     *
+     * @param astraIndex индекс исходной астры в списке астр этой Карты.
+     * @param harmonic номер гармоники, по которому надо проверить узор.
+     * @param analyzed   вспомогательный массив, отмечающий, какие астры
+     *                   из списка астр этой Карты уже проверены на этот резонанс.
+     * @return  паттерн, содержащий исходную астру и все связанные с ней
+     *      по указанной гармонике астры из списка астр этой карты; паттерн,
+     *      содержащий одну исходную астру, если резонансов по этой гармонике нет.
+     */
     private Pattern gatherResonants(int astraIndex, int harmonic, boolean[] analyzed) {
+        Astra startingAstra = astras.get(astraIndex);
         analyzed[astraIndex] = true;
         Pattern currentPattern = new Pattern(harmonic);
-        currentPattern.addAstra(astras.get(astraIndex));
-        aspects.getConnectedAstras(astras.get(astraIndex), harmonic).stream()
+        currentPattern.addAstra(startingAstra);
+        aspects.getConnectedAstras(startingAstra, harmonic).stream()
                 .filter(a -> !analyzed[astras.indexOf(a)])
                 .map(a -> gatherResonants(astras.indexOf(a), harmonic, analyzed))
                 .forEach(currentPattern::addAllAstras);

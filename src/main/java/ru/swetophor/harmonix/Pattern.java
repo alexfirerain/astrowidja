@@ -41,13 +41,13 @@ public class Pattern {
         PatternElement added = new PatternElement(astra);
         for (PatternElement a : entries) {
             double clearance = getArcForHarmonic(astra, a.element, harmonic);
-            added.totalClearance += clearance;
-            a.totalClearance += clearance;
+            added.clearanceSum += clearance;
+            a.clearanceSum += clearance;
             totalClearance += clearance;
         }
         entries.add(added);
         entries.sort(Comparator
-                .comparingDouble(PatternElement::getTotalClearance)
+                .comparingDouble(PatternElement::getClearanceSum)
                 .thenComparing(pe -> AstraEntity.getAstraEntityNumber(pe.getElement())));
     }
 
@@ -80,7 +80,7 @@ public class Pattern {
                                                 pe.getElement().getSymbolWithDegree(),
                                                 calculateStrength(
                                                         getPrimalOrb() * size(),
-                                                        pe.getTotalClearance() / (size() - 1))))
+                                                        pe.getClearanceSum() / (size() - 1))))
                         .collect(Collectors.joining());
     }
 
@@ -106,13 +106,14 @@ public class Pattern {
         return calculateStrength(
                 getPrimalOrb(),
                 entries.stream()
-                        .mapToDouble(pe -> pe.getTotalClearance() / (size() - 1))
+                        .mapToDouble(pe -> pe.getClearanceSum() / (size() - 1))
                         .sum() /
                         size());
     }
 
     public String getString() {
-        return getAstrasByConnectivity().stream()
+        return entries.stream()
+                .map(PatternElement::getElement)
                 .map(Astra::getSymbol)
                 .map(Object::toString)
                 .collect(Collectors.joining());
@@ -128,8 +129,8 @@ public class Pattern {
      * наличествует.
      */
     public boolean isValid() {
-        if (size() < 2)
-            return false;
+//        if (size() < 2)
+//            return false;
 
         return IntStream.range(0, astras.size() - 1)
                 .anyMatch(i -> IntStream.range(i + 1, astras.size())
@@ -143,7 +144,7 @@ public class Pattern {
 
     static class PatternElement {
         private final Astra element;
-        private double totalClearance;
+        private double clearanceSum;
 
         public PatternElement(Astra astra) {
             element = astra;
@@ -154,8 +155,8 @@ public class Pattern {
             return this.element;
         }
 
-        public double getTotalClearance() {
-            return this.totalClearance;
+        public double getClearanceSum() {
+            return this.clearanceSum;
         }
     }
 
