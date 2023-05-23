@@ -9,6 +9,7 @@ import java.util.stream.IntStream;
 
 import static ru.swetophor.celestialmechanics.CelestialMechanics.*;
 import static ru.swetophor.mainframe.Settings.getPrimalOrb;
+import static ru.swetophor.mainframe.Settings.isHalfOrbsForDoubles;
 
 /**
  * Прототип небесного те́ла — объект, имеющий:
@@ -269,6 +270,9 @@ public class Astra {
 //    }
 
     public boolean isInDirectResonanceWith(Astra counterpart, int harmonic) {
-        return getArcInHarmonicWith(harmonic, counterpart) <= getPrimalOrb();
+        double effectiveOrb = heaven != counterpart.getHeaven() && isHalfOrbsForDoubles() ?
+                getPrimalOrb() / 2 : getPrimalOrb();
+        return getArcInHarmonicWith(harmonic, counterpart) <= getPrimalOrb() && harmonic != 1
+                || getArc(getZodiacPosition(), counterpart.getZodiacPosition()) <= effectiveOrb;
     }
 }
