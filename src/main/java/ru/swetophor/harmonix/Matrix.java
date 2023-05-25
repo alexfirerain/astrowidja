@@ -49,6 +49,14 @@ public class Matrix {
      */
     protected MatrixType type;
 
+    public boolean resonancePresent(Astra a, Astra b, int harmonic) {
+        if (a == null || b == null)
+            throw new IllegalArgumentException("астра нулевая");
+        return findResonance(a, b)
+                .hasGivenHarmonic(harmonic);
+    }
+
+
     /**
      * Выдаёт строку с перечислением всех резонансов между астрами Матрицы.
      * Если тип "Космограмма", выдаются резонансы каждой точки с каждой следующей по списку.
@@ -130,13 +138,15 @@ public class Matrix {
     public List<Resonance> getAllResonances() {
         List<Resonance> content = new ArrayList<>();
         switch (type) {
-            case SYNASTRY -> // таблица всех астр одной на все астры другой
-                    content = IntStream.range(0, datum1.length)
-                                .mapToObj(x -> Arrays.asList(resonances[x])
-                                    .subList(0, datum2.length))
-                                .flatMap(Collection::stream)
-                                .collect(Collectors.toList());
-            case COSMOGRAM -> {                               // полутаблица астр карты между собой
+            case SYNASTRY ->
+                // таблица всех астр одной на все астры другой
+                content = IntStream.range(0, datum1.length)
+                            .mapToObj(x -> Arrays.asList(resonances[x])
+                                .subList(0, datum2.length))
+                            .flatMap(Collection::stream)
+                            .collect(Collectors.toList());
+            case COSMOGRAM -> {
+                // полутаблица астр карты между собой
                 for (int i = 0; i < datum1.length; i++)
                     content.addAll(Arrays.asList(
                             resonances[i]).subList(i + 1, datum2.length));
@@ -152,7 +162,8 @@ public class Matrix {
      * Для синастрии выдаёт взаимодействие определённой астры первой карты
      * со всеми астрами второй.
      * @param astraOrdinal номер астры в списке астр карты.
-     * @return список резонансов, которые имеет астра с указанным номером.
+     * @return список резонансов, которые имеет астра с указанным номером,
+     * {@code null}, если индекс за пределами массива астр первой карты.
      */
     public List<Resonance> getResonancesFor(int astraOrdinal) {
         if (astraOrdinal < 0 || astraOrdinal >= datum1.length)
@@ -202,15 +213,23 @@ public class Matrix {
      * @return список резонансов, которые имеет указанная астра.
      */
     public List<Resonance> getResonancesFor(Astra astra) {
-        if (datum1.length == 0)
-            throw new IllegalStateException("Матрица пуста.");
+//        if (datum1.length == 0)
+//            throw new IllegalStateException("Матрица пуста.");
+
+        var isIn1stArrays = true;
+
+        for (Astra a : datum1) {
+            if (a.equals(astra)) {
+                break;
+            }
+        }
 
         if (astra.getHeaven() == datum1[0].getHeaven()) {
             for (int i = 0; i < datum1.length; i++)
                 if (datum1[i].equals(astra))
                     return getResonancesFor(i);
         } else {
-            if (datum2.length == 0) throw new IllegalStateException("Матрица пуста.");
+//            if (datum2.length == 0) throw new IllegalStateException("Матрица пуста.");
             if (datum2[0].getHeaven() != astra.getHeaven()) return null;
 
             for (int i = 0; i < datum2.length; i++)
@@ -271,19 +290,16 @@ public class Matrix {
     /**
      * Вытаскивает из матрицы конкретный объект резонанса
      * между двумя указанными астрами.
+     * Если это синастрия, аргументы могут следовать в любом порядке.
      *
-     * @param a первая астра (для синастрии астра из первой карты).
-     * @param b вторая астра (для синастрии астра со второй карты).
-     * @return резонанс из матрицы на пересечении строки первой астры
-     * с колонкой второй;
-     * если хотя бы одна из астр не найдена, или в обоих параметрах
-     * указана идентичная астра, то {@code null}.
+     * @param a первая астра.
+     * @param b вторая астра.
+     * @return резонанс из матрицы на пересечении первой астры со второй;
+     * если хотя бы одна из астр пуста или не содержится в матрице,
+     * или в обоих параметрах указана идентичная астра, то {@code null}.
      */
     public Resonance findResonance(Astra a, Astra b) {
-        if (datum1.length == 0 || datum2.length == 0)
-            throw new IllegalStateException("Матрица пуста.");
-
-        if (a.equals(b))
+        if (a == null || b == null || a.equals(b))
             return null;
 
         int x = -1, y = -1;
@@ -292,14 +308,27 @@ public class Matrix {
             if (datum1[i].equals(a))
                 x = i;
 
-        for (int i = 0; i < datum2.length; i++)
-            if (datum2[i].equals(b))
+        boolean reversed = false;
+
+        if (!Astra.ofSameHeaven(a, b) && x == -1)
+            for (int i = 0; i < datum2.length; i++)
+                if (datum2[i].equals(b)) {
+                    x = i;
+                    reversed = true;
+                }
+
+        if (x == -1) return null;
+
+        var secondMassive = reversed ? datum1 : datum2;
+        for (int i = 0; i < secondMassive.length; i++)
+            if (secondMassive[i].equals(b))
                 y = i;
 
-        if (x == -1 || y == -1)
-            return null;
+        if (y == -1) return null;
 
-        return resonances[x][y];
+        return reversed ?
+                resonances[y][x] :
+                resonances[x][y];
     }
 
 }

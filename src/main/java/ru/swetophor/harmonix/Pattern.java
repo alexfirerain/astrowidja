@@ -135,8 +135,7 @@ public class Pattern {
         return IntStream.range(0, astras.size() - 1)
                 .anyMatch(i -> IntStream.range(i + 1, astras.size())
                         .anyMatch(j ->
-                                astras.get(i)
-                                        .isInDirectResonanceWith(astras.get(j), harmonic)
+                                Matrix.resonancePresent(astras.get(i), astras.get(j), harmonic)
                         )
                 );
     }

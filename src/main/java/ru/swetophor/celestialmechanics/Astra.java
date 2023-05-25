@@ -124,6 +124,10 @@ public class Astra {
         return Astra.fromData(elements[0], coors);
     }
 
+    public static boolean ofSameHeaven(Astra a, Astra b) {
+        return a.getHeaven() == b.getHeaven();
+    }
+
     /**
      * Выдаёт инфу об астре в виде "название (градус_зодиака)"
      *
@@ -265,14 +269,14 @@ public class Astra {
         // TODO: по поводу обращения к матрице синастрии вообще заново проархитектурить
     }
 
-//    public boolean isInDirectResonanceWith(Astra counterpart, int harmonic) {
-//        return getResonanceMatrix().astrasInResonance(this, counterpart, harmonic);
-//    }
-
     public boolean isInDirectResonanceWith(Astra counterpart, int harmonic) {
-        double effectiveOrb = heaven != counterpart.getHeaven() && isHalfOrbsForDoubles() ?
-                getPrimalOrb() / 2 : getPrimalOrb();
-        return getArcInHarmonicWith(harmonic, counterpart) <= getPrimalOrb() && harmonic != 1
-                || getArc(getZodiacPosition(), counterpart.getZodiacPosition()) <= effectiveOrb;
+        return getResonanceMatrix().astrasInResonance(this, counterpart, harmonic);
     }
+
+//    public boolean isInDirectResonanceWith(Astra counterpart, int harmonic) {
+//        double effectiveOrb = heaven != counterpart.getHeaven() && isHalfOrbsForDoubles() ?
+//                getPrimalOrb() / 2 : getPrimalOrb();
+//        return getArcInHarmonicWith(harmonic, counterpart) <= getPrimalOrb() && harmonic != 1
+//                || getArc(getZodiacPosition(), counterpart.getZodiacPosition()) <= effectiveOrb;
+//    }
 }
