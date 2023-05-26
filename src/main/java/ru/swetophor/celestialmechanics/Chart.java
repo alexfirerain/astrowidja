@@ -60,13 +60,15 @@ public class Chart extends ChartObject {
             throw new IllegalArgumentException("текст не содержит строк");
 
         Chart newChart = new Chart(lines[0]);
-        Arrays.stream(lines, 1, lines.length)
-                .filter(line -> !line.isBlank()
-                        && !line.startsWith("//"))
-                .map(Astra::readFromString)
-                .forEach(newChart::addAstra);
-
-        return newChart;
+        var astras =
+                Arrays.stream(lines, 1, lines.length)
+                        .filter(line -> !line.isBlank()
+                                && !line.startsWith("//"))
+                        .map(Astra::readFromString)
+                        .collect(Collectors.toList());
+//                .forEach(newChart::addAstra);
+//        newChart.calculateAspectTable();
+        return new Chart(lines[0], astras);
     }
 
     @Override
@@ -85,6 +87,7 @@ public class Chart extends ChartObject {
     /**
      * Добавляет в карту астру. При этом если с таким именем астра
      * уже присутствует, она обновляется, заменяется.
+     * Матрица резонансов при этом не пересчитывается!
      * @param astra добавляемая астра.
      */
     public void addAstra(Astra astra) {
@@ -99,6 +102,12 @@ public class Chart extends ChartObject {
 
     public void addAstraFromString(String input) {
         addAstra(Astra.readFromString(input));
+    }
+
+    public Chart(String name, List<Astra> astras) {
+        super(name);
+        this.astras = astras;
+        calculateAspectTable();
     }
 
     private void calculateAspectTable() {
@@ -214,7 +223,7 @@ public class Chart extends ChartObject {
         analyzed[astraIndex] = true;
         Pattern currentPattern = new Pattern(harmonic, this);
         currentPattern.addAstra(startingAstra);
-        aspects.getConnectedAstras(startingAstra, harmonic).stream()
+        this.aspects.getConnectedAstras(startingAstra, harmonic).stream()
                 .filter(a -> !analyzed[astras.indexOf(a)])
                 .map(a -> gatherResonants(astras.indexOf(a), harmonic, analyzed))
                 .forEach(currentPattern::addAllAstras);
@@ -275,6 +284,7 @@ public class Chart extends ChartObject {
 //    }
     @Override
     public String resonanceAnalysis(int upToHarmonic) {
+        // TODO: переделать чтобы принимала vararg buildPatternAnalysis(upToHarmonic)
         StringBuilder output = new StringBuilder(
                 "Резонансные группы для %s до гармоники %d с исходным орбисом 1/%d%n"
                         .formatted(name, upToHarmonic, Settings.getOrbDivisor()));

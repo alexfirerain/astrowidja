@@ -52,6 +52,10 @@ public class Synastry extends MultiChart {
         return moments[1];
     }
 
+    public Matrix getOwnMatrix(Astra a) {
+        return a.getHeaven().getAspects();
+    }
+
     @Override
     public List<Astra> getAstras() {
         List<Astra> r = new ArrayList<>();
@@ -92,7 +96,7 @@ public class Synastry extends MultiChart {
      */
     @Override
     public String resonanceAnalysis(int upToHarmonic) {
-        return null;
+        return "краткий анализ паттернов резонансов в синастрии";
     }
 
     /**
@@ -101,7 +105,7 @@ public class Synastry extends MultiChart {
      */
     @Override
     public String resonanceAnalysisVerbose(int upToHarmonic) {
-        return null;
+        return "подробный анализ паттернов резонансов в синастрии";
     }
 
     /**
@@ -109,7 +113,7 @@ public class Synastry extends MultiChart {
      */
     @Override
     public String getString() {
-        return null;
+        return "представление карты";
     }
 
     /**
@@ -120,7 +124,16 @@ public class Synastry extends MultiChart {
      */
     @Override
     public boolean resonancePresent(Astra a, Astra b, int harmonic) {
-        return false;
+        if (!hasChart(a.getHeaven()) || !hasChart(b.getHeaven()) || harmonic < 1)
+            throw new IllegalArgumentException("астры не из тех карт или не положительная гармоника");
+        if (Astra.ofSameHeaven(a, b))
+            return a.getHeaven().resonancePresent(a, b, harmonic);
+        else
+            return aspects.resonancePresent(a, b, harmonic);
+    }
+
+    public boolean hasChart(Chart chart) {
+        return chart != null && (chart == moments[0] || chart == moments[1]);
     }
 
     public String getCaption() {

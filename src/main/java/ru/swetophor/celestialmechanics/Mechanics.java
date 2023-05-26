@@ -5,6 +5,7 @@ import ru.swetophor.harmonix.Harmonics;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static java.lang.Math.abs;
@@ -192,12 +193,15 @@ public class Mechanics {
         StringBuilder output = new StringBuilder();
         for (int i = 0; i <= upto; i++) {
             output.append("%3d → ".formatted(i));
-            List<Integer> multi = multipliersExplicate(i);
-            for (int m = 0; m < multi.size(); m++) {
-                output.append(multi.get(m));
-                if (m < multi.size() - 1)
-                    output.append(" + ");
-            }
+            var multi = multipliersExplicate(i);
+            output.append(multi.stream()
+                    .map(String::valueOf)
+                    .collect(Collectors.joining(" + ")));
+//            for (int m = 0; m < multi.size(); m++) {
+//                output.append(multi.get(m));
+//                if (m < multi.size() - 1)
+//                    output.append(" + ");
+//            }
             if (multi.size() > 1)
                 output.append(" = ").append(multiSum(i));
             output.append("\n");
@@ -207,7 +211,7 @@ public class Mechanics {
 
 
     public static void main(String[] args) {
-//        displayMultipliers(108);
+        displayMultipliers(108);
 //        buildHeavens(108);
         Harmonics.buildHeavensWithHarmonics(144);
     }
