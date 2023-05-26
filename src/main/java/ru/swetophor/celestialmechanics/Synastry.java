@@ -112,6 +112,17 @@ public class Synastry extends MultiChart {
         return null;
     }
 
+    /**
+     * @param a 
+     * @param b
+     * @param harmonic
+     * @return
+     */
+    @Override
+    public boolean resonancePresent(Astra a, Astra b, int harmonic) {
+        return false;
+    }
+
     public String getCaption() {
         return super.getCaption("%s: %s и %s (№%d)"
                 .formatted(

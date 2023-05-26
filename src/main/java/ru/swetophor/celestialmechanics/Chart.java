@@ -69,6 +69,11 @@ public class Chart extends ChartObject {
         return newChart;
     }
 
+    @Override
+    public boolean resonancePresent(Astra a, Astra b, int harmonic) {
+        return aspects.resonancePresent(a, b, harmonic);
+    }
+
 
     // функциональность
 
@@ -207,7 +212,7 @@ public class Chart extends ChartObject {
     private Pattern gatherResonants(int astraIndex, int harmonic, boolean[] analyzed) {
         Astra startingAstra = astras.get(astraIndex);
         analyzed[astraIndex] = true;
-        Pattern currentPattern = new Pattern(harmonic);
+        Pattern currentPattern = new Pattern(harmonic, this);
         currentPattern.addAstra(startingAstra);
         aspects.getConnectedAstras(startingAstra, harmonic).stream()
                 .filter(a -> !analyzed[astras.indexOf(a)])

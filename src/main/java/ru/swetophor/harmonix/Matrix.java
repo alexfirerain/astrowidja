@@ -50,10 +50,10 @@ public class Matrix {
     protected MatrixType type;
 
     public boolean resonancePresent(Astra a, Astra b, int harmonic) {
-        if (a == null || b == null)
-            throw new IllegalArgumentException("астра нулевая");
-        return findResonance(a, b)
-                .hasGivenHarmonic(harmonic);
+        Resonance resonance = findResonance(a, b);
+        if (resonance == null)
+            throw new IllegalArgumentException("резонанс не найден");
+        return resonance.hasGivenHarmonic(harmonic);
     }
 
 

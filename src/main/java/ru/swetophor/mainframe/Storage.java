@@ -350,7 +350,7 @@ public class Storage {
                         .format(new Date()));
     }
 
-    private static void listsCycle() {
+    protected static void listsCycle() {
         String LIST_MENU = """
                 ("список" — список по номеру или имени,
                  "карты" — карты по номеру или имени через пробел)

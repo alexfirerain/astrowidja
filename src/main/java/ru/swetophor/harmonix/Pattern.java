@@ -2,6 +2,7 @@ package ru.swetophor.harmonix;
 
 import ru.swetophor.celestialmechanics.Astra;
 import ru.swetophor.celestialmechanics.AstraEntity;
+import ru.swetophor.celestialmechanics.ChartObject;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -18,14 +19,17 @@ public class Pattern {
     List<PatternElement> entries = new ArrayList<>();
     int harmonic;
 
+    ChartObject heaven;
+
     double totalClearance = 0.0;
 
-    public Pattern(int harmonic) {
+    public Pattern(int harmonic, ChartObject host) {
         this.harmonic = harmonic;
+        this.heaven = host;
     }
 
-    public Pattern(int harmonic, List<Astra> astras) {
-        this(harmonic);
+    public Pattern(int harmonic, List<Astra> astras, ChartObject host) {
+        this(harmonic, host);
         astras.forEach(this::addAstra);
     }
 
@@ -135,11 +139,11 @@ public class Pattern {
         return IntStream.range(0, astras.size() - 1)
                 .anyMatch(i -> IntStream.range(i + 1, astras.size())
                         .anyMatch(j ->
-                                Matrix.resonancePresent(astras.get(i), astras.get(j), harmonic)
+                                heaven.resonancePresent(astras.get(i), astras.get(j), harmonic)
                         )
                 );
     }
-    // TODO: в паттерне тоже будет ссылка на карту (одиночную или двойную!)
+    // TODO: сделать считалку паттернов для синастрии
 
     static class PatternElement {
         private final Astra element;

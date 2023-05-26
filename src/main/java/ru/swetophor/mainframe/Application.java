@@ -112,7 +112,7 @@ public class Application {
             switch (KEYBOARD.nextLine()) {
                 case "1" -> listCharts();
                 case "2" -> Settings.editSettings();
-                case "3" -> Storage.fullBaseReport();
+                case "3" -> Storage.listsCycle();
                 case "4" -> takeChart();
                 case "5" -> addChart(enterChartData());
                 case "0" -> exit = true;

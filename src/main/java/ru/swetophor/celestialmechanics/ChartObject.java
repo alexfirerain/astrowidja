@@ -81,4 +81,6 @@ abstract public class ChartObject {
     public static ChartObject readFromString(String s) {
         return Chart.readFromString(s);
     }
+
+    public abstract boolean resonancePresent(Astra a, Astra b, int harmonic);
 }
