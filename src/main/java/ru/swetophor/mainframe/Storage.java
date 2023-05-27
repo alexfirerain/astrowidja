@@ -204,6 +204,9 @@ public class Storage {
      */
     public static ChartList readChartsFromFile(String file) {
         ChartList read = new ChartList();
+        if (file == null) {
+            System.out.println("Файл не указан");
+        }
         Path filePath = Path.of(baseDir, file);
         if (!Files.exists(filePath))
             System.out.printf("Не удалось обнаружить файла '%s'%n", file);
