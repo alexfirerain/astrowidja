@@ -326,16 +326,24 @@ public class Storage {
                         }
                     }
                 }
-            } else {
+            } else if (fileToDelete.matches("^[\\p{L}\\-. !()+=_\\[\\]№\\d]+$")) {
+                // TODO: нормальную маску допустимого имени файла
                 if (!fileToDelete.endsWith(".awb") && !fileToDelete.endsWith(".awc")) {
-                    fileToDelete = fileToDelete + ".awb";
+                    if (Files.exists(Path.of(baseDir, fileToDelete + ".awc")))
+                        fileToDelete = fileToDelete + ".awc";
+                    else if (Files.exists(Path.of(baseDir, fileToDelete + ".awb")))
+                        fileToDelete = fileToDelete + ".awb";
                 }
                 if (!Files.deleteIfExists(Path.of(baseDir, fileToDelete))) {
                     print("не найдено файла " + fileToDelete);
                 }
+            } else {
+                print("скорее всего, недопустимое имя файла");
             }
         } catch (IOException e) {
             printInAsterisk("ошибка чтения базы, " + e.getLocalizedMessage());
+        } catch (Exception e) {
+            printInAsterisk("ошибка удаления файла " + fileToDelete + ": " + e.getLocalizedMessage());
         }
     }
 
@@ -384,8 +392,7 @@ public class Storage {
                 deleteFile(order);
 
             } else if (input.endsWith(">>")) {
-                String order = input.substring(0, input.length() - 2).trim();
-                ChartList loadingList = findList(order);
+                ChartList loadingList = findList(extractHeadOrder(input));
                 if (loadingList == null || loadingList.isEmpty()) {     // TODO: write a confirmation general utility
                     System.out.println("список не найден или пуст");
                 } else {
@@ -395,19 +402,22 @@ public class Storage {
                 }
 
             } else if (input.endsWith("->")) {
-                String order = input.substring(0, input.length() - 2).trim();
-                ChartList loadingList = findList(order);
-                DESK.addAll(loadingList);
+                DESK.addAll(findList(extractHeadOrder(input)));
                 listCharts();
 
             } else if (input.startsWith(">>")) {
-                String targetFilename = input.substring(2).trim();
-                dropListToFile(DESK, targetFilename);
+                dropListToFile(DESK, extractTailOrder(input));
 
             } else if (input.startsWith("->")) {
-                saveTableToFile(DESK, input.substring(2).trim());
+                saveTableToFile(DESK, extractTailOrder(input));
             }
         }
 
+    }
+    private static String extractHeadOrder(String input) {
+        return input.substring(0, input.length() - 2).trim();
+    }
+    private static String extractTailOrder(String input) {
+        return input.substring(2).trim();
     }
 }
