@@ -14,6 +14,13 @@ import static ru.swetophor.celestialmechanics.CelestialMechanics.calculateStreng
 import static ru.swetophor.celestialmechanics.CelestialMechanics.getArcForHarmonic;
 import static ru.swetophor.mainframe.Settings.getPrimalOrb;
 
+/**
+ * Олицетворяет группу связанных каким-то резонансом точек
+ * (астр из одной или нескольких карт).
+ * Точки считаются связанными по данной гармонике, если между ними присутствует
+ * соответствующий резонанс; для принадлежности паттерну точка должна иметь
+ * резонанс по крайней мере с одной из входящих в него точек.
+ */
 public class Pattern {
     List<Astra> astras = new ArrayList<>();
     List<PatternElement> entries = new ArrayList<>();

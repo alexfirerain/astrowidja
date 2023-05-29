@@ -63,7 +63,7 @@ public class Resonance {
     Resonance(Astra a, Astra b, double orb, int ultimateHarmonic) {
         type = a == b ?
                 IN_SELF :
-                a.getHeaven() == b.getHeaven() ?
+                Astra.ofSameHeaven(a, b) ?
                         IN_MOMENT :
                         INTER_MOMENTS;
         astra_1 = a;
