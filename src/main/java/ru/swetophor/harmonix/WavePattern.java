@@ -21,7 +21,7 @@ public class WavePattern {
     private static int edgeOfPatternHarmonics = Settings.getEdgeHarmonic();
 
     private static String reportOverlapping() {
-        if (Rose.patterns.size() == 0) return "Расчёт ещё не выполнен!";
+        if (Rose.patterns.isEmpty()) return "Расчёт ещё не выполнен!";
         StringBuilder message = new StringBuilder();
         int a = 0;
         int b = 0;

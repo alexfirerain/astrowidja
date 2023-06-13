@@ -1,10 +1,12 @@
 package ru.swetophor.celestialmechanics;
 
+import lombok.Getter;
 import ru.swetophor.mainframe.Application;
 import ru.swetophor.mainframe.Decorator;
 
 import java.util.List;
 
+@Getter
 abstract public class ChartObject {
     protected int ID;
     protected ChartType type;
@@ -17,18 +19,6 @@ abstract public class ChartObject {
     public ChartObject(String name) {
         this();
         this.name = name;
-    }
-
-    public int getID() {
-        return this.ID;
-    }
-
-    public ChartType getType() {
-        return this.type;
-    }
-
-    public String getName() {
-        return this.name;
     }
 
     /**

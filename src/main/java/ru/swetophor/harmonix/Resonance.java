@@ -1,5 +1,6 @@
 package ru.swetophor.harmonix;
 
+import lombok.Getter;
 import lombok.Setter;
 import ru.swetophor.celestialmechanics.Astra;
 import ru.swetophor.celestialmechanics.CelestialMechanics;
@@ -21,6 +22,7 @@ import static ru.swetophor.mainframe.Interpreter.ResonanceDescription;
  * Содержит ссылки на две точки (астры) и {@link #aspects список} рассчитанных
  * для этой {@link #arc дуги} {@link Aspect Аспектов}.
  */
+@Getter
 @Setter
 public class Resonance {
     /**
@@ -199,18 +201,6 @@ public class Resonance {
     }
 
 
-    public ResonanceType getType() {
-        return this.type;
-    }
-
-    public Astra getAstra_1() {
-        return astra_1;
-    }
-
-    public Astra getAstra_2() {
-        return astra_2;
-    }
-
     /**
      * Возвращает ту астру резонанса, которая не равна указанной.
      *
@@ -226,19 +216,4 @@ public class Resonance {
         return null;
     }
 
-    public double getArc() {
-        return this.arc;
-    }
-
-    public double getOrb() {
-        return this.orb;
-    }
-
-    public int getUltimateHarmonic() {
-        return this.ultimateHarmonic;
-    }
-
-    public List<Aspect> getAspects() {
-        return this.aspects;
-    }
 }

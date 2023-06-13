@@ -1,6 +1,7 @@
 package ru.swetophor.celestialmechanics;
 
 
+import lombok.Getter;
 import lombok.Setter;
 import ru.swetophor.harmonix.Matrix;
 import ru.swetophor.harmonix.Pattern;
@@ -34,6 +35,7 @@ public class Chart extends ChartObject {
     /**
      * Матрица резонансов между астрами карты.
      */
+    @Getter
     protected Matrix aspects;
 
 
@@ -157,10 +159,6 @@ public class Chart extends ChartObject {
         return this.astras;
     }
 
-
-    public Matrix getAspects() {
-        return this.aspects;
-    }
 
     public double getAstraPosition(String name) {
         Astra a = getAstra(name);
@@ -298,32 +296,33 @@ public class Chart extends ChartObject {
                                         .map(Pattern::getString)
                                         .collect(Collectors.joining(" | ")))
                                 .append("\n");
-//
-//                        for (int i = 0; i < list.size(); i++) {
-//                            output.append(list.get(i).getString());
-//                            output.append(i < list.size() - 1 ?
-//                                    " | " : "\n");
-//                        }
                     }
                 });
         return output.toString();
     }
 
+    /**
+     * Выполняет резонансный анализ этой карты для гармоник от первой до указанной
+     * и генерирует подробный вывод, включающий паттерны, отсортированные по средней силе,
+     * а также процентное соотношение паттернов и общее количество паттернов для каждой резонансной группы.
+     * @param upToHarmonic  гармоника, до которой проводится анализ (включительно).
+     * @return  представление результатов анализа в виде строки.
+     */
     @Override
     public String resonanceAnalysisVerbose(int upToHarmonic) {
         StringBuilder output = new StringBuilder(
                 "Резонансные группы для %s до гармоники %d с исходным орбисом 1/%d%n"
                         .formatted(name, upToHarmonic, Settings.getOrbDivisor()));
-        for (Map.Entry<Integer, List<Pattern>> entry :
-                buildPatternAnalysis(upToHarmonic).entrySet()) {
-            Integer key = entry.getKey();
-            List<Pattern> list = entry.getValue();
+        Map<Integer, List<Pattern>> analysis = buildPatternAnalysis(upToHarmonic);
 
+        for (Map.Entry<Integer, List<Pattern>> entry : analysis.entrySet()) {
+            output.append("%d".formatted(entry.getKey()));
+
+            List<Pattern> list = entry.getValue();
             list.sort(Comparator
                     .comparingDouble(Pattern::getAverageStrength)
                     .reversed());
 
-            output.append("%d".formatted(key));
             output.append(list.isEmpty() ?
                     ":\n" :
                     " %.0f%% (%d):%n"
@@ -343,6 +342,12 @@ public class Chart extends ChartObject {
         return output.toString();
     }
 
+    /**
+     * Простраивает и возвращает для данной карты список всех найденных паттернов
+     * по гармоникам от первой до указанной.
+     * @param edgeHarmonic до какой гармоники включительно проводить анализ.
+     * @return мапу, где ключами номер гармоники, а значениями списки найденных по ней паттернов.
+     */
     public Map<Integer, List<Pattern>> buildPatternAnalysis(int edgeHarmonic) {
 
         return rangeClosed(1, edgeHarmonic)
