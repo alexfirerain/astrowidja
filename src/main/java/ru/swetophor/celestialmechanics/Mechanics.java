@@ -137,7 +137,9 @@ public class Mechanics {
     /**
      * Выдаёт список множителей данного числа (не считая единицы, естественно).
      * @param number неотрицательное число, разлагаемое на множители.
-     * @return  список множителей, дающих исходное число, от большего к меньшему.
+     * @return  список неравных единице множителей, дающих исходное число,
+     * от большего к меньшему. Для ноля {0}, для единицы {1}.
+     * @throws IllegalArgumentException при отрицательном аргументе.
      */
     public static List<Integer> multipliersExplicate(int number) {
         if (number < 0) throw new IllegalArgumentException("функция работает с положительными числами");
@@ -192,16 +194,13 @@ public class Mechanics {
     public static void displayMultipliers(int upto) {
         StringBuilder output = new StringBuilder();
         for (int i = 0; i <= upto; i++) {
-            output.append("%3d → ".formatted(i));
+            output.append(i > 999 ?
+                    "%d → ".formatted(i) :
+                    "%3d → ".formatted(i));
             var multi = multipliersExplicate(i);
             output.append(multi.stream()
                     .map(String::valueOf)
                     .collect(Collectors.joining(" + ")));
-//            for (int m = 0; m < multi.size(); m++) {
-//                output.append(multi.get(m));
-//                if (m < multi.size() - 1)
-//                    output.append(" + ");
-//            }
             if (multi.size() > 1)
                 output.append(" = ").append(multiSum(i));
             output.append("\n");
@@ -224,31 +223,9 @@ public class Mechanics {
      * @return форматированное представление множителей числа, переданных в аргумент как список.
      */
     public static String formatMultipliers(List<Integer> multipliers) {
-        StringBuilder answer = new StringBuilder("<");
-        if (!multipliers.isEmpty())
-            answer.append(multipliers.get(0));
-        for (int i = 1; i < multipliers.size(); i++)
-            answer.append("x")
-                    .append(multipliers.get(i));
-        answer.append(">");
-        return answer.toString();
-    }
-
-    /**
-     * Возвращает форматированную строку с переданными числами через "х",
-     * вся группа заключена в <>.
-     *
-     * @param multipliers числа (множители, которые хотим форматировать).
-     * @return форматированное представление множителей числа, переданных в аргумент как массив.
-     */
-    public static String formatMultipliers(Integer[] multipliers) {
-        StringBuilder answer = new StringBuilder("<");
-        if (multipliers.length > 0)
-            answer.append(multipliers[0]);
-        IntStream.range(1, multipliers.length)
-                .forEach(i -> answer.append("x").append(multipliers[i]));
-        answer.append(">");
-        return answer.toString();
+        return "<%s>"
+                .formatted(multipliers.stream().map(String::valueOf)
+                        .collect(Collectors.joining("x")));
     }
 
 

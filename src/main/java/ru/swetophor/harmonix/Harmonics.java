@@ -99,8 +99,8 @@ public class Harmonics extends Number implements Comparable<Harmonics> {
      * и не являющихся единицей. Они сортированы от большего к меньшему.
      * Если номинал гармоники является простым числом, результат содержит только само это число.
      */
-    public Integer[] getMultipliers() {
-        return multipliers;
+    public List<Integer> getMultipliers() {
+        return Arrays.stream(multipliers).toList();
     }
 
     /**

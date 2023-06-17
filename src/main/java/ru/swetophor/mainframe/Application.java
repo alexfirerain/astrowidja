@@ -83,8 +83,8 @@ public class Application {
 //        printChartStat(SCTVComposite);
 
 //        addChart(SCChart, TVChart, doubleChart, SCTVComposite);
-
-        loadFromFile("сохранение вс 15 января .23 15-03.awb");
+        if (autoloadEnabled)
+            loadFromFile("сохранение вс 15 января .23 15-03.awb");
 //        loadFromFile("autosave.awb");
 
         mainCycle();

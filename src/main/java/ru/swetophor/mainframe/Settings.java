@@ -19,10 +19,10 @@ public class Settings {
     private static boolean halfOrbsForDoubles = true;
     public static boolean autosave = false;
 
-    public static String autoloadFile = null;
+    public static String autoloadFile = "сохранение вс 15 января .23 15-03.awb";
     public static boolean autoloadEnabled = true;
 
-    private static File settingsSourceFile = null;
+    private static File settingsSourceFile = new File("settings.ini");
 
     public static boolean isHalfOrbsForDoubles() {
         return halfOrbsForDoubles;
