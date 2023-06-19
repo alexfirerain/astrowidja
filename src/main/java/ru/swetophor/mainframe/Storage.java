@@ -141,9 +141,15 @@ public class Storage {
                 .toArray(String[]::new);
     }
 
+    /**
+     * Добавляет карты из указанного картосписка в файл с указанным именем.
+     * Если список пуст или
+     * @param table
+     * @param target
+     */
     public static void saveTableToFile(ChartList table, String target) {
         ChartList fileContent = readChartsFromFile(target);
-        if (!fileContent.addAll(table)) {
+        if (table.isEmpty() || !fileContent.addAll(table)) {
             System.out.println("Никаких новых карт в файл не добавлено.");
             return;
         }
@@ -229,20 +235,25 @@ public class Storage {
      * Существующий файл заменяется, несуществующий создаётся.
      *
      * @param content список карт, чьё содержимое записывается.
-     * @param file    имя файла в рабочей папке.
+     * @param fileName    имя файла в рабочей папке.
      */
-    private static void dropListToFile(ChartList content, String file) {
-        if (!file.endsWith(".awb") && !file.endsWith(".awc"))
-            file += content.size() == 1 ? ".awc" : ".awb";
+    private static void dropListToFile(ChartList content, String fileName) {
+        fileName = extendFileName(content, fileName);
 
-        try (PrintWriter out = new PrintWriter(Path.of(baseDir, file).toFile())) {
+        try (PrintWriter out = new PrintWriter(Path.of(baseDir, fileName).toFile())) {
             out.println(content.getString());
             System.out.printf("Карты {%s} записаны в файл %s.%n",
                     String.join(", ", content.getNames()),
-                    file);
+                    fileName);
         } catch (FileNotFoundException e) {
-            System.out.printf("Запись в файл %s обломалась: %s%n", file, e.getLocalizedMessage());
+            System.out.printf("Запись в файл %s обломалась: %s%n", fileName, e.getLocalizedMessage());
         }
+    }
+
+    private static String extendFileName(ChartList content, String file) {
+        if (!file.endsWith(".awb") && !file.endsWith(".awc"))
+            file += content.size() == 1 ? ".awc" : ".awb";
+        return file;
     }
 
     /**
