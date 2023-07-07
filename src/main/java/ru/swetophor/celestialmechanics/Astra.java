@@ -1,15 +1,13 @@
 package ru.swetophor.celestialmechanics;
 
-import ru.swetophor.harmonix.Aspect;
 import ru.swetophor.harmonix.Matrix;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static ru.swetophor.celestialmechanics.CelestialMechanics.*;
-import static ru.swetophor.mainframe.Settings.getPrimalOrb;
-import static ru.swetophor.mainframe.Settings.isHalfOrbsForDoubles;
+import static ru.swetophor.celestialmechanics.CelestialMechanics.getArcForHarmonic;
+import static ru.swetophor.celestialmechanics.CelestialMechanics.normalizeCoordinate;
 
 /**
  * Прототип небесного те́ла — объект, имеющий:
@@ -36,29 +34,32 @@ public class Astra {
 
     /**
      * Конструктор на основе координаты в виде градусов, минут и секунд.
-     * @param name  имя астры.
-     * @param degree    градусы координаты.
-     * @param minute    минуты координаты.
-     * @param second    секунды координаты
+     *
+     * @param name   имя астры.
+     * @param degree градусы координаты.
+     * @param minute минуты координаты.
+     * @param second секунды координаты
      */
     public Astra(String name, double degree, double minute, double second) {
-        this(name, degree + minute/60 + second/3600);
+        this(name, degree + minute / 60 + second / 3600);
     }
 
     /**
      * Конструктор на основе координаты в виде градусов и минут.
-     * @param name  имя астры.
-     * @param degree    градусы координаты.
-     * @param minute    минуты координаты.
+     *
+     * @param name   имя астры.
+     * @param degree градусы координаты.
+     * @param minute минуты координаты.
      */
     public Astra(String name, double degree, double minute) {
-        this(name, degree + minute/60);
+        this(name, degree + minute / 60);
     }
 
     /**
      * Конструктор на основе координаты в виде вещественного числа.
-     * @param name  имя астры.
-     * @param degree    координата астры в double.
+     *
+     * @param name   имя астры.
+     * @param degree координата астры в double.
      */
     public Astra(String name, double degree) {
         this.name = name;
@@ -70,11 +71,12 @@ public class Astra {
      * В зависимости от количества аргументов, они трактуются как (1) градусы,
      * (2) градусы и минуты, (3) градусы, минуты и секунды или (4) номер знака
      * (1-12), градусы, минуты и секунды.
-     * @param name астра, которая будет построена.
-     * @param coordinate    одна, две, три или четыре величины, задающие координату.
+     *
+     * @param name       астра, которая будет построена.
+     * @param coordinate одна, две, три или четыре величины, задающие координату.
      * @return созданную на основе аргументов астру.
-     * @throws  IllegalArgumentException если количество аргументов, задающих
-     * координату, не равно одному, двум, трём или четырём.
+     * @throws IllegalArgumentException если количество аргументов, задающих
+     *                                  координату, не равно одному, двум, трём или четырём.
      */
     public static Astra fromData(String name, Double... coordinate) {
         switch (coordinate.length) {
@@ -100,10 +102,11 @@ public class Astra {
     /**
      * Создаёт астру из строки специального формата.
      * Если чтение не удаётся, сообщает об этом.
+     *
      * @param input строка вида "астра координаты", где 'координаты' может быть
      *              градусами, градусами и минутами или градусами,
      *              минутами и секундами - через пробел.
-     * @return  заполненный объект Астра.
+     * @return заполненный объект Астра.
      */
     public static Astra readFromString(String input) {
         var elements = input.split(" ");
@@ -139,6 +142,7 @@ public class Astra {
 
     /**
      * Сообщает название астры.
+     *
      * @return название астры.
      */
     public String getName() {
@@ -147,6 +151,7 @@ public class Astra {
 
     /**
      * Возвращает ссылку на карту, в которой находится астра.
+     *
      * @return карту неба, в котором находится астра.
      */
     public Chart getHeaven() {
@@ -155,6 +160,7 @@ public class Astra {
 
     /**
      * Сообщает зодиакальную позицию в виде вещественного числа.
+     *
      * @return зодиакальное положение астры в небе от начала отсчёта.
      */
     public double getZodiacPosition() {
@@ -212,6 +218,7 @@ public class Astra {
 
     /**
      * Выдаёт строку, представляющую символ астры и её зодиакально положение.
+     *
      * @return строку вида "символ (положение)",
      * где 'положение' представлено как градус знака.
      */
@@ -221,7 +228,8 @@ public class Astra {
 
     /**
      * Выдаёт строку, представляющую символ астры и обладателя неба с нею.
-     * @return  строку вида "символ (обладатель)", где 'обладатель' -
+     *
+     * @return строку вида "символ (обладатель)", где 'обладатель' -
      * название карты, в которой расположена астра.
      */
     public String getSymbolWithOwner() {

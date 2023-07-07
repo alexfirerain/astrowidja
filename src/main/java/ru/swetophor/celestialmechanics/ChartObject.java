@@ -1,12 +1,10 @@
 package ru.swetophor.celestialmechanics;
 
-import lombok.Getter;
 import ru.swetophor.mainframe.Application;
 import ru.swetophor.mainframe.Decorator;
 
 import java.util.List;
 
-@Getter
 abstract public class ChartObject {
     protected int ID;
     protected ChartType type;
@@ -33,14 +31,6 @@ abstract public class ChartObject {
         return name.length() <= limit ?
                 name :
                 name.substring(0, limit - 1) + "…";
-    }
-
-    public void setID(int ID) {
-        this.ID = ID;
-    }
-
-    public void setType(ChartType type) {
-        this.type = type;
     }
 
     public void setName(String name) {
@@ -73,4 +63,16 @@ abstract public class ChartObject {
     }
 
     public abstract boolean resonancePresent(Astra a, Astra b, int harmonic);
+
+    public int getID() {
+        return this.ID;
+    }
+
+    public ChartType getType() {
+        return this.type;
+    }
+
+    public String getName() {
+        return this.name;
+    }
 }

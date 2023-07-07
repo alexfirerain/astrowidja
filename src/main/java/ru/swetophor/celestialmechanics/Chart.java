@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import ru.swetophor.harmonix.Matrix;
 import ru.swetophor.harmonix.Pattern;
+import ru.swetophor.harmonix.PatternAnalysis;
 import ru.swetophor.mainframe.Settings;
 
 import java.util.*;
@@ -187,7 +188,8 @@ public class Chart extends ChartObject {
      * данной карты по указанной гармонике.
      * @param harmonic гармоника, по которой выделяются паттерны.
      * @return список паттернов из астр этой карты, резонирующих
-     * по указанной гармонике.
+     * по указанной гармонике. Если ни одного паттерна не обнаруживается,
+     * то пустой список.
      */
     public List<Pattern> findPatterns(int harmonic) {
         List<Pattern> patterns = new ArrayList<>();
@@ -235,7 +237,7 @@ public class Chart extends ChartObject {
             if (!pattern.getAstras().isEmpty()) {
                 System.out.printf("Резонансные группы по числу %d для %s:%n", harmonic, name);
                 groups.stream()
-                        .filter(group -> !group.getAstras().isEmpty())
+                        .filter(group -> !group.isEmpty())
                         .forEach(group -> {
                             group.getAstrasByConnectivity().stream()
                                     .map(Astra::getSymbol)
@@ -342,6 +344,27 @@ public class Chart extends ChartObject {
         return output.toString();
     }
 
+    public String reportAnalysis(PatternAnalysis analysis) {
+        StringBuilder output = new StringBuilder(
+                "Резонансные группы для %s до гармоники %d с исходным орбисом 1/%d%n"
+                        .formatted(name, analysis.size(), Settings.getOrbDivisor()));
+        for (int i = 0; i < analysis.size(); i++) {
+            output.append("%d".formatted(i));
+            List<Pattern> list = analysis.getPatternsForHarmonic(i);
+            list.sort(Comparator.comparingDouble(Pattern::getAverageStrength).reversed());
+            if (list.isEmpty())
+                output.append("\n\t-\n");
+            else {
+                output.append(" %.0f%% (%d):%n".formatted());
+            }
+
+
+        }
+
+
+        return output.toString();
+    }
+
     /**
      * Простраивает и возвращает для данной карты список всех найденных паттернов
      * по гармоникам от первой до указанной.
@@ -356,6 +379,17 @@ public class Chart extends ChartObject {
                         .toMap(h -> h,
                                 this::findPatterns,
                                 (a, b) -> b));
+    }
+
+    public PatternAnalysis buildAnalysis(int edgeHarmonic) {
+
+        Map<Integer, List<Pattern>> listMap = rangeClosed(1, edgeHarmonic)
+                .boxed()
+                .collect(Collectors
+                        .toMap(h -> h,
+                                this::findPatterns,
+                                (a, b) -> b));
+        return new PatternAnalysis(listMap);
     }
 
     /**

@@ -1,5 +1,6 @@
 package ru.swetophor.harmonix;
 
+import lombok.Getter;
 import ru.swetophor.celestialmechanics.Astra;
 import ru.swetophor.celestialmechanics.AstraEntity;
 import ru.swetophor.celestialmechanics.ChartObject;
@@ -22,6 +23,7 @@ import static ru.swetophor.mainframe.Settings.getPrimalOrb;
  * резонанс по крайней мере с одной из входящих в него точек.
  */
 public class Pattern {
+    @Getter
     List<Astra> astras = new ArrayList<>();
     List<PatternElement> entries = new ArrayList<>();
     int harmonic;
@@ -95,15 +97,15 @@ public class Pattern {
                         .collect(Collectors.joining());
     }
 
-    public List<Astra> getAstras() {
-        return astras;
-    }
-
     /**
      * @return количество астр в паттерне.
      */
     public int size() {
         return astras.size();
+    }
+
+    public boolean isEmpty() {
+        return astras.isEmpty();
     }
 
     public void addAllAstras(Pattern pattern) {
