@@ -1,5 +1,7 @@
 package ru.swetophor.celestialmechanics;
 
+import ru.swetophor.mainframe.Settings;
+
 import static java.lang.Math.abs;
 import static java.lang.Math.round;
 import static ru.swetophor.celestialmechanics.ZodiacSign.zodiumIcon;
@@ -158,7 +160,9 @@ public final class CelestialMechanics {
 
     /**
      * Рассчитывает условную силу в процентах: насколько точность аспекта близка к экзакту,
-     * а именно: насколько разность дуги с чистым аспектом близка к нулю.
+     * а именно: насколько разность дуги с чистым аспектом (зазор) близка к нулю.
+     * Если даётся зазор в гармонике, предполагается, что максимальный орбис равен
+     * {@link Settings#getPrimalOrb()}} или его половине, если
      *
      * @param orb       максимальный орбис, при котором аспект срабатывает действующим в карте гармоники.
      * @param clearance зазор между дугой и аспектом, т.е. эффективный орбис.

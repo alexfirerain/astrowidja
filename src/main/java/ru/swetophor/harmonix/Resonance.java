@@ -1,6 +1,5 @@
 package ru.swetophor.harmonix;
 
-import lombok.Getter;
 import lombok.Setter;
 import ru.swetophor.celestialmechanics.Astra;
 import ru.swetophor.celestialmechanics.CelestialMechanics;
@@ -22,7 +21,6 @@ import static ru.swetophor.mainframe.Interpreter.ResonanceDescription;
  * Содержит ссылки на две точки (астры) и {@link #aspects список} рассчитанных
  * для этой {@link #arc дуги} {@link Aspect Аспектов}.
  */
-@Getter
 @Setter
 public class Resonance {
     /**
@@ -57,10 +55,11 @@ public class Resonance {
 
     /**
      * Получение массива аспектов для дуги между двумя астрами (конструктор)
-     * @param a первая астра резонанса.
-     * @param b вторая астра резонанса.
-     * @param orb первичный орбис резонанса.
-     * @param ultimateHarmonic  до какой гармоники продолжать анализ.
+     *
+     * @param a                первая астра резонанса.
+     * @param b                вторая астра резонанса.
+     * @param orb              первичный орбис резонанса.
+     * @param ultimateHarmonic до какой гармоники продолжать анализ.
      */
     Resonance(Astra a, Astra b, double orb, int ultimateHarmonic) {
         type = a == b ?
@@ -80,12 +79,13 @@ public class Resonance {
         IntStream.rangeClosed(1, ultimateHarmonic).forEach(h -> {
             double arcInHarmonic = getArcForHarmonic(a, b, h);
             if (arcInHarmonic < orb && isNewSimple(h))
-                    aspects.add(new Aspect(h, arcInHarmonic, arc, orb));
+                aspects.add(new Aspect(h, arcInHarmonic, arc, orb));
         });
     }
 
     /**
      * Вспомогательный метод отсечения кратных гармоник при заполнении списка аспектов.
+     *
      * @param aNewNumber число, которое проверяется на кратность уже найденным аспектам.
      * @return {@code истинно}, если проверяемое число не кратно никакому из {@link #aspects уже найденных} (кроме 1),
      * а также не является точным соединением, проходящим до данной гармоники. Следовательно,
@@ -216,4 +216,31 @@ public class Resonance {
         return null;
     }
 
+    public ResonanceType getType() {
+        return this.type;
+    }
+
+    public Astra getAstra_1() {
+        return this.astra_1;
+    }
+
+    public Astra getAstra_2() {
+        return this.astra_2;
+    }
+
+    public double getArc() {
+        return this.arc;
+    }
+
+    public double getOrb() {
+        return this.orb;
+    }
+
+    public int getUltimateHarmonic() {
+        return this.ultimateHarmonic;
+    }
+
+    public List<Aspect> getAspects() {
+        return this.aspects;
+    }
 }

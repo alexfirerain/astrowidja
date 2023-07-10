@@ -1,6 +1,5 @@
 package ru.swetophor.harmonix;
 
-import lombok.Getter;
 import ru.swetophor.celestialmechanics.Astra;
 import ru.swetophor.celestialmechanics.AstraEntity;
 import ru.swetophor.celestialmechanics.ChartObject;
@@ -23,7 +22,6 @@ import static ru.swetophor.mainframe.Settings.getPrimalOrb;
  * резонанс по крайней мере с одной из входящих в него точек.
  */
 public class Pattern {
-    @Getter
     List<Astra> astras = new ArrayList<>();
     List<PatternElement> entries = new ArrayList<>();
     int harmonic;
@@ -86,7 +84,7 @@ public class Pattern {
         return
                 "\t%.0f%% (%d):%n"
                         .formatted(getAverageStrength(), size())
-                    +
+                        +
                         entries.stream()
                                 .map(pe -> "\t\t%s (%.0f%%)%n"
                                         .formatted(
@@ -94,7 +92,7 @@ public class Pattern {
                                                 calculateStrength(
                                                         getPrimalOrb() * size(),
                                                         pe.getClearanceSum() / (size() - 1))))
-                        .collect(Collectors.joining());
+                                .collect(Collectors.joining());
     }
 
     /**
@@ -151,6 +149,10 @@ public class Pattern {
                                 heaven.resonancePresent(astras.get(i), astras.get(j), harmonic)
                         )
                 );
+    }
+
+    public List<Astra> getAstras() {
+        return this.astras;
     }
     // TODO: сделать считалку паттернов для синастрии
 

@@ -1,7 +1,6 @@
 package ru.swetophor.celestialmechanics;
 
 
-import lombok.Getter;
 import lombok.Setter;
 import ru.swetophor.harmonix.Matrix;
 import ru.swetophor.harmonix.Pattern;
@@ -18,12 +17,12 @@ import static ru.swetophor.celestialmechanics.Mechanics.zodiacFormat;
 /**
  * Астрологическое описание момента времени,
  * включающее:<br/>
- *  ♦ уникальный в программе ИД<br/>
- *  ♦ астрологический момент, описанный через:<br/>
-     *   • имя, название момента<br/>
-     *   • массив астр<br/>
-     *   • матрицу резонансов
-*/
+ * ♦ уникальный в программе ИД<br/>
+ * ♦ астрологический момент, описанный через:<br/>
+ * • имя, название момента<br/>
+ * • массив астр<br/>
+ * • матрицу резонансов
+ */
 @Setter
 public class Chart extends ChartObject {
 
@@ -36,7 +35,6 @@ public class Chart extends ChartObject {
     /**
      * Матрица резонансов между астрами карты.
      */
-    @Getter
     protected Matrix aspects;
 
 
@@ -44,6 +42,7 @@ public class Chart extends ChartObject {
 
     /**
      * Конструктор пустой карты.
+     *
      * @param name имя карты.
      */
     public Chart(String name) {
@@ -54,8 +53,9 @@ public class Chart extends ChartObject {
      * Конструктор карты на основе строки ввода,
      * содержащей имя карты и, в следующих строках,
      * описание каждой астры в подобающем формате.
+     *
      * @param input входная строка.
-     * @return  сформированную карту.
+     * @return сформированную карту.
      */
     public static Chart readFromString(String input) {
         String[] lines = input.lines().toArray(String[]::new);
@@ -91,6 +91,7 @@ public class Chart extends ChartObject {
      * Добавляет в карту астру. При этом если с таким именем астра
      * уже присутствует, она обновляется, заменяется.
      * Матрица резонансов при этом не пересчитывается!
+     *
      * @param astra добавляемая астра.
      */
     public void addAstra(Astra astra) {
@@ -186,6 +187,7 @@ public class Chart extends ChartObject {
     /**
      * Находит и возвращает список всех паттернов, образованных астрами
      * данной карты по указанной гармонике.
+     *
      * @param harmonic гармоника, по которой выделяются паттерны.
      * @return список паттернов из астр этой карты, резонирующих
      * по указанной гармонике. Если ни одного паттерна не обнаруживается,
@@ -211,12 +213,12 @@ public class Chart extends ChartObject {
      * резонанс с исходной, результат каждого вызова добавляется к паттерну.
      *
      * @param astraIndex индекс исходной астры в списке астр этой Карты.
-     * @param harmonic номер гармоники, по которому надо проверить узор.
+     * @param harmonic   номер гармоники, по которому надо проверить узор.
      * @param analyzed   вспомогательный массив, отмечающий, какие астры
      *                   из списка астр этой Карты уже проверены на этот резонанс.
-     * @return  паттерн, содержащий исходную астру и все связанные с ней
-     *      по указанной гармонике астры из списка астр этой карты; паттерн,
-     *      содержащий одну исходную астру, если резонансов по этой гармонике нет.
+     * @return паттерн, содержащий исходную астру и все связанные с ней
+     * по указанной гармонике астры из списка астр этой карты; паттерн,
+     * содержащий одну исходную астру, если резонансов по этой гармонике нет.
      */
     private Pattern gatherResonants(int astraIndex, int harmonic, boolean[] analyzed) {
         Astra startingAstra = astras.get(astraIndex);
@@ -307,8 +309,9 @@ public class Chart extends ChartObject {
      * Выполняет резонансный анализ этой карты для гармоник от первой до указанной
      * и генерирует подробный вывод, включающий паттерны, отсортированные по средней силе,
      * а также процентное соотношение паттернов и общее количество паттернов для каждой резонансной группы.
-     * @param upToHarmonic  гармоника, до которой проводится анализ (включительно).
-     * @return  представление результатов анализа в виде строки.
+     *
+     * @param upToHarmonic гармоника, до которой проводится анализ (включительно).
+     * @return представление результатов анализа в виде строки.
      */
     @Override
     public String resonanceAnalysisVerbose(int upToHarmonic) {
@@ -368,6 +371,7 @@ public class Chart extends ChartObject {
     /**
      * Простраивает и возвращает для данной карты список всех найденных паттернов
      * по гармоникам от первой до указанной.
+     *
      * @param edgeHarmonic до какой гармоники включительно проводить анализ.
      * @return мапу, где ключами номер гармоники, а значениями списки найденных по ней паттернов.
      */
@@ -413,6 +417,9 @@ public class Chart extends ChartObject {
         return content.toString();
     }
 
+    public Matrix getAspects() {
+        return this.aspects;
+    }
 }
 
 
