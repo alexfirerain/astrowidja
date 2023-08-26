@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static ru.swetophor.mainframe.Application.KEYBOARD;
+import static ru.swetophor.mainframe.CommandLineMainGUI.KEYBOARD;
 
 /**
  * Список карт-объектов, воспроизводящий многие функции обычного списка.

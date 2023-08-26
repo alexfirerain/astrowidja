@@ -137,15 +137,16 @@ public class Storage {
         return Files.readString(Path.of(baseDir, filename))
                 .lines()
                 .filter(line -> line.startsWith("#") && line.length() > 1)
-                .map(line -> line.substring(1))
+                .map(line -> line.substring(1).strip())
                 .toArray(String[]::new);
     }
 
     /**
      * Добавляет карты из указанного картосписка в файл с указанным именем.
-     * Если список пуст или
-     * @param table
-     * @param target
+     * Если список пуст, или в ходе интерактивного слияния ни одна карта не добавлена
+     * (или вливаемый список пуст сам), сообщает об этом.
+     * @param table список карт, добавляемый к списку в файле.
+     * @param target    имя файла, в который добавляются карты.
      */
     public static void saveTableToFile(ChartList table, String target) {
         ChartList fileContent = readChartsFromFile(target);
@@ -198,36 +199,6 @@ public class Storage {
         return changed;
     }
 
-
-
-    /**
-     * Прочитывает список карт из формата *.awb
-     *  Если файл не существует или чтение обламывается,
-     *  выводит об этом сообщение
-     * @param file имя файла в папке данных.
-     * @return список карт, прочитанных из файла.
-     * Если файл не существует или не читается, то пустой список.
-     */
-    public static ChartList readChartsFromFile(String file) {
-        ChartList read = new ChartList();
-        if (file == null) {
-            System.out.println("Файл не указан");
-        }
-        Path filePath = Path.of(baseDir, file);
-        if (!Files.exists(filePath))
-            System.out.printf("Не удалось обнаружить файла '%s'%n", file);
-        else
-            try {
-                Arrays.stream(Files.readString(filePath)
-                                .split("#"))
-                        .filter(s -> !s.isBlank())
-                        .map(ChartObject::readFromString)
-                        .forEach(chart -> read.addResolving(chart, file));
-            } catch (IOException e) {
-                System.out.printf("Не удалось прочесть файл '%s': %s%n", file, e.getLocalizedMessage());
-            }
-        return read;
-    }
 
     /**
      * Записывает содержимое картосписка (как возвращается {@link ChartList#getString()})
@@ -363,7 +334,7 @@ public class Storage {
 
     private static boolean confirmDeletion(String fileToDelete) {
         printInFrame("Точно удалить " + fileToDelete + "?");
-        return Settings.yesValues.contains(KEYBOARD.nextLine().toLowerCase());
+        return Settings.yesValues.contains(CommandLineMainGUI.KEYBOARD.nextLine().toLowerCase());
     }
 
     public static String autosaveName() {
@@ -392,7 +363,7 @@ public class Storage {
         printInSemiDouble(LIST_MENU);
         String input;
         while (true) {
-            input = KEYBOARD.nextLine();
+            input = CommandLineMainGUI.KEYBOARD.nextLine();
             if (input == null || input.isBlank()) return;
 
             if (input.equals("=")) {
@@ -433,5 +404,34 @@ public class Storage {
     }
     private static String extractTailOrder(String input) {
         return input.substring(2).trim();
+    }
+
+    /**
+     * Прочитывает список карт из формата *.awb
+     *  Если файл не существует или чтение обламывается,
+     *  выводит об этом сообщение
+     * @param file имя файла в папке данных.
+     * @return список карт, прочитанных из файла.
+     * Если файл не существует или не читается, то пустой список.
+     */
+    public static ChartList readChartsFromFile(String file) {
+        ChartList read = new ChartList();
+        if (file == null) {
+            System.out.println("Файл не указан");
+        }
+        Path filePath = Path.of(baseDir, file);
+        if (!Files.exists(filePath))
+            System.out.printf("Не удалось обнаружить файла '%s'%n", file);
+        else
+            try {
+                Arrays.stream(Files.readString(filePath)
+                                .split("#"))
+                        .filter(s -> !s.isBlank())
+                        .map(ChartObject::readFromString)
+                        .forEach(chart -> read.addResolving(chart, file));
+            } catch (IOException e) {
+                System.out.printf("Не удалось прочесть файл '%s': %s%n", file, e.getLocalizedMessage());
+            }
+        return read;
     }
 }

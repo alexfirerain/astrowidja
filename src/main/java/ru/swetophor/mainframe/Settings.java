@@ -60,7 +60,7 @@ public class Settings {
         showSettingsMenu();
 
         while (true) {
-            String command = Application.KEYBOARD.nextLine();
+            String command = CommandLineMainGUI.KEYBOARD.nextLine();
             if (command.isBlank())
                 break;
             int delimiter = command.indexOf("=");

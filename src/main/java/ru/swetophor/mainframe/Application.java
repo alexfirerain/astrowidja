@@ -3,8 +3,6 @@ package ru.swetophor.mainframe;
 
 import ru.swetophor.celestialmechanics.*;
 
-import java.util.Scanner;
-
 import static ru.swetophor.mainframe.Decorator.*;
 import static ru.swetophor.mainframe.Settings.*;
 
@@ -14,11 +12,26 @@ import static ru.swetophor.mainframe.Settings.*;
  * программы как таковой
  */
 public class Application {
-    static final Scanner KEYBOARD = new Scanner(System.in);
     /**
      * Счётчик для нумерации объектов типа КартОбъект.
      */
+    @Deprecated
     static public int id = 0;
+
+    /**
+     * Главное меню, с которого начинается работа с программой.
+     */
+    static private final MainGUI mainShield;
+    private static AstroSource astroSource;
+
+
+    /*
+        Инициализация имплементации
+     */
+    static {
+        mainShield = new CommandLineMainGUI();
+        astroSource = new CommandLineAstroSource();
+    }
 
     static String SW = """
                 Сева
@@ -58,67 +71,18 @@ public class Application {
         print(chart.resonanceAnalysisVerbose(Settings.getEdgeHarmonic()));
     }
 
-    /**
-     * Выводит сообщение при старте Астровидьи.
-     */
-    private static void welcome() {
-        System.out.printf("%sСчитаем резонансы с приближением в %.0f° (1/%d часть круга) до числа %d%n%n",
-                asteriskFrame("Начато исполнение АстроВидьи!"),
-                getPrimalOrb(), getOrbDivisor(), getEdgeHarmonic());
-    }
 
     public static void main(String[] args) {
-        welcome();
 
-//        Chart SCChart = Chart.readFromString(SC);
-//        printChartStat(SCChart);
+        mainShield.welcome();
 
-//        Chart TVChart = Chart.readFromString(TV);
-//        printChartStat(TVChart);
-
-//        Synastry doubleChart = new Synastry(SCChart, TVChart);
-//        doubleChart.plotAspectTable();
-
-//        Chart SCTVComposite = Chart.composite(SCChart, TVChart);
-//        printChartStat(SCTVComposite);
-
-//        addChart(SCChart, TVChart, doubleChart, SCTVComposite);
         if (autoloadEnabled)
-            loadFromFile("autosave.awb");
-//        loadFromFile("autosave.awb");
+            astroSource.loadFromFile("autosave.awb");
 
-        mainCycle();
+        mainShield.mainCycle();
 
         if (autosave)
             Storage.saveTableToFile(DESK, Storage.autosaveName());
-    }
-
-    /**
-     * Основное меню и основной рабочий цикл АстроВидьи.
-     */
-    private static void mainCycle() {
-        listCharts();
-        String MENU = """
-                1. карты на столе
-                2. настройки
-                3. списки карт
-                4. работа с картой
-                5. добавить карту с клавиатуры
-                0. выход
-                """;
-        boolean exit = false;
-        while (!exit) {
-            printInDoubleFrame(MENU);
-            switch (KEYBOARD.nextLine()) {
-                case "1" -> listCharts();
-                case "2" -> Settings.editSettings();
-                case "3" -> Storage.listsCycle();
-                case "4" -> takeChart();
-                case "5" -> addChart(enterChartData());
-                case "0" -> exit = true;
-            }
-        }
-        print("Спасибо за ведание резонансов!");
     }
 
     /**
@@ -127,7 +91,7 @@ public class Application {
      */
     private static void showChart() {
         System.out.print("Укажите карту по номеру на столе или по имени: ");
-        String order = KEYBOARD.nextLine();
+        String order = CommandLineMainGUI.KEYBOARD.nextLine();
         if (order.isBlank())
             return;
         if (order.matches("^\\d+"))
@@ -165,7 +129,7 @@ public class Application {
      */
     public static void takeChart() {
         System.out.print("Укажите карту по имени или номеру на столе: ");
-        String order = KEYBOARD.nextLine();
+        String order = CommandLineMainGUI.KEYBOARD.nextLine();
         ChartObject taken = DESK.findChart(order, "на столе");
         if (taken == null) return;
         workCycle(taken);
@@ -195,7 +159,7 @@ public class Application {
         printInFrame(CHART_MENU);
         String input;
         while (true) {
-            input = KEYBOARD.nextLine();
+            input = CommandLineMainGUI.KEYBOARD.nextLine();
             if (input == null || input.isBlank()) return;
 
             if (input.startsWith("->")) {
@@ -228,22 +192,22 @@ public class Application {
      *
      * @return {@link Chart одиночную карту}, созданную на основе ввода.
      */
-    private static Chart enterChartData() {
+    static Chart enterChartData() {
         System.out.print("Название новой карты: ");
-        Chart x = new Chart(KEYBOARD.nextLine());
+        Chart x = new Chart(CommandLineMainGUI.KEYBOARD.nextLine());
         for (AstraEntity a : AstraEntity.values()) {
             System.out.print(a.name + ": ");
-            String input = KEYBOARD.nextLine();
+            String input = CommandLineMainGUI.KEYBOARD.nextLine();
             if (input.isBlank())
                 continue;
             x.addAstraFromString(a.name + " " + input);
             print();
         }
         print("Ввод дополнительных астр в формате 'название градусы минуты секунды'");
-        String input = KEYBOARD.nextLine();
+        String input = CommandLineMainGUI.KEYBOARD.nextLine();
         while (!input.isBlank()) {
             x.addAstraFromString(input);
-            input = KEYBOARD.nextLine();
+            input = CommandLineMainGUI.KEYBOARD.nextLine();
         }
         return x;
     }
@@ -254,7 +218,7 @@ public class Application {
      *
      * @param chart добавляемая карта.
      */
-    private static void addChart(ChartObject chart) {
+    static void addChart(ChartObject chart) {
         if (DESK.addResolving(chart, "на столе"))
             print("Карта загружена на стол: " + chart);
     }
@@ -268,17 +232,6 @@ public class Application {
     private static void addChart(ChartObject... charts) {
         for (ChartObject chart : charts)
             addChart(chart);
-    }
-
-    /**
-     * Прочитывает карты из файла в папке базы данных на {@link #DESK стол} {@link Application АстроВидьи}.
-     *
-     * @param fileName имя файла в папке базы данных.
-     */
-    public static void loadFromFile(String fileName) {
-        Storage.readChartsFromFile(fileName)
-                .forEach(c -> DESK.addResolving(c, "на столе"));
-        print("Загружены карты из " + fileName);
     }
 
 
