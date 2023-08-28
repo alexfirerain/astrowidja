@@ -12,4 +12,7 @@ public interface MainGUI {
      */
     void welcome();
 
+    String getUserInput();
+
+    void listCharts();
 }

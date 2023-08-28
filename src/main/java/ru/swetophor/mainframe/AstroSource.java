@@ -3,6 +3,7 @@ package ru.swetophor.mainframe;
 public interface AstroSource {
 
 
+    void listsCycle();
 
     /**
      * Прочитывает карты из файла в папке базы данных на {@link Application#DESK стол} {@link Application АстроВидьи}.

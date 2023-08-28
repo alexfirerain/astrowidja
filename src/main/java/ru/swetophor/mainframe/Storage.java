@@ -16,7 +16,6 @@ import java.util.stream.IntStream;
 import static ru.swetophor.mainframe.Application.*;
 import static ru.swetophor.mainframe.Decorator.*;
 import static ru.swetophor.mainframe.Decorator.printInAsterisk;
-import static ru.swetophor.mainframe.Decorator.printInSemiDouble;
 
 /**
  * Предоставляет модель хранения данных в файлах попки базы данных.
@@ -24,6 +23,7 @@ import static ru.swetophor.mainframe.Decorator.printInSemiDouble;
  */
 public class Storage {
     static final String baseDir = "base";
+
 
     static {
         Path basePath = Path.of(Storage.baseDir);
@@ -143,10 +143,12 @@ public class Storage {
 
     /**
      * Добавляет карты из указанного картосписка в файл с указанным именем.
-     * Если список пуст, или в ходе интерактивного слияния ни одна карта не добавлена
-     * (или вливаемый список пуст сам), сообщает об этом.
-     * @param table список карт, добавляемый к списку в файле.
-     * @param target    имя файла, в который добавляются карты.
+     * Если список пуст или в ходе выполнения ни одной карты из списка не добавляется,
+     * сообщает об этом и выходит. Если хотя бы одна карта добавляется,
+     * переписывает указанный файл его новой версией после слияния и сообщает,
+     * какое содержание было записано. Если запись обламывается, сообщает и об этом.
+     * @param table список карт, который надо добавить к списку в файле.
+     * @param target    имя файла в папке базы данных, в который нужно дописать карты.
      */
     public static void saveTableToFile(ChartList table, String target) {
         ChartList fileContent = readChartsFromFile(target);
@@ -200,6 +202,36 @@ public class Storage {
     }
 
 
+
+    /**
+     * Прочитывает список карт из формата *.awb
+     *  Если файл не существует или чтение обламывается,
+     *  выводит об этом сообщение
+     * @param file имя файла в папке данных.
+     * @return список карт, прочитанных из файла.
+     * Если файл не существует или не читается, то пустой список.
+     */
+    public static ChartList readChartsFromFile(String file) {
+        ChartList read = new ChartList();
+        if (file == null) {
+            System.out.println("Файл не указан");
+        }
+        Path filePath = Path.of(baseDir, file);
+        if (!Files.exists(filePath))
+            System.out.printf("Не удалось обнаружить файла '%s'%n", file);
+        else
+            try {
+                Arrays.stream(Files.readString(filePath)
+                                .split("#"))
+                        .filter(s -> !s.isBlank())
+                        .map(ChartObject::readFromString)
+                        .forEach(chart -> read.addResolving(chart, file));
+            } catch (IOException e) {
+                System.out.printf("Не удалось прочесть файл '%s': %s%n", file, e.getLocalizedMessage());
+            }
+        return read;
+    }
+
     /**
      * Записывает содержимое картосписка (как возвращается {@link ChartList#getString()})
      * в файл по указанному адресу (относительно рабочей папки).
@@ -208,7 +240,7 @@ public class Storage {
      * @param content список карт, чьё содержимое записывается.
      * @param fileName    имя файла в рабочей папке.
      */
-    private static void dropListToFile(ChartList content, String fileName) {
+    static void dropListToFile(ChartList content, String fileName) {
         fileName = extendFileName(content, fileName);
 
         try (PrintWriter out = new PrintWriter(Path.of(baseDir, fileName).toFile())) {
@@ -256,13 +288,12 @@ public class Storage {
                 System.out.println("Число не распознано.");
             }
         else {
-            int index = -1;
+            int index;
             List<String> tableOfContents = tableOfContents();
-            for (int i = 0; i < tableOfContents.size(); i++)
-                if (tableOfContents.get(i).startsWith(order)) {
-                    index = i;
-                    break;
-                }
+            index = IntStream.range(0, tableOfContents.size())
+                    .filter(i -> tableOfContents.get(i).startsWith(order))
+                    .findFirst()
+                    .orElse(-1);
             if (index == -1)
                 System.out.println("Нет файла с именем на " + order);
             else
@@ -334,7 +365,7 @@ public class Storage {
 
     private static boolean confirmDeletion(String fileToDelete) {
         printInFrame("Точно удалить " + fileToDelete + "?");
-        return Settings.yesValues.contains(CommandLineMainGUI.KEYBOARD.nextLine().toLowerCase());
+        return Settings.yesValues.contains(mainShield.getUserInput().toLowerCase());
     }
 
     public static String autosaveName() {
@@ -343,95 +374,10 @@ public class Storage {
                         .format(new Date()));
     }
 
-    protected static void listsCycle() {
-        String LIST_MENU = """
-                ("список" — список по номеру или имени,
-                 "карты" — карты по номеру или имени через пробел)
-                    =               = список файлов в базе
-                    ==              = полный список файлов и карт
-                    ххх список      = удалить файл
-                    
-                    список >>       = заменить стол на список
-                    список ->       = добавить список ко столу
-                    >> список       = заменить файл столом
-                    -> список       = добавить стол к списку
-                    
-                    карты -> список         = добавить карты со стола к списку
-                    список:карты -> список  = переместить карты из списка в список
-                    список:карты +> список  = копировать карты из списка в список
-                """;
-        printInSemiDouble(LIST_MENU);
-        String input;
-        while (true) {
-            input = CommandLineMainGUI.KEYBOARD.nextLine();
-            if (input == null || input.isBlank()) return;
-
-            if (input.equals("=")) {
-                printInAsterisk(listLibrary());
-
-            } else if (input.equals("==")) {
-                printInAsterisk(reportBaseContentExpanded());
-
-            } else if (input.toLowerCase().startsWith("xxx") || input.toLowerCase().startsWith("ххх")) {
-                String order = input.substring(3).trim();
-                deleteFile(order);
-
-            } else if (input.endsWith(">>")) {
-                ChartList loadingList = findList(extractHeadOrder(input));
-                if (loadingList == null || loadingList.isEmpty()) {     // TODO: write a confirmation general utility
-                    System.out.println("список не найден или пуст");
-                } else {
-                    DESK.clear();
-                    DESK.addAll(loadingList);
-                    listCharts();
-                }
-
-            } else if (input.endsWith("->")) {
-                DESK.addAll(findList(extractHeadOrder(input)));
-                listCharts();
-
-            } else if (input.startsWith(">>")) {
-                dropListToFile(DESK, extractTailOrder(input));
-
-            } else if (input.startsWith("->")) {
-                saveTableToFile(DESK, extractTailOrder(input));
-            }
-        }
-
-    }
-    private static String extractHeadOrder(String input) {
+    static String extractHeadOrder(String input) {
         return input.substring(0, input.length() - 2).trim();
     }
-    private static String extractTailOrder(String input) {
+    static String extractTailOrder(String input) {
         return input.substring(2).trim();
-    }
-
-    /**
-     * Прочитывает список карт из формата *.awb
-     *  Если файл не существует или чтение обламывается,
-     *  выводит об этом сообщение
-     * @param file имя файла в папке данных.
-     * @return список карт, прочитанных из файла.
-     * Если файл не существует или не читается, то пустой список.
-     */
-    public static ChartList readChartsFromFile(String file) {
-        ChartList read = new ChartList();
-        if (file == null) {
-            System.out.println("Файл не указан");
-        }
-        Path filePath = Path.of(baseDir, file);
-        if (!Files.exists(filePath))
-            System.out.printf("Не удалось обнаружить файла '%s'%n", file);
-        else
-            try {
-                Arrays.stream(Files.readString(filePath)
-                                .split("#"))
-                        .filter(s -> !s.isBlank())
-                        .map(ChartObject::readFromString)
-                        .forEach(chart -> read.addResolving(chart, file));
-            } catch (IOException e) {
-                System.out.printf("Не удалось прочесть файл '%s': %s%n", file, e.getLocalizedMessage());
-            }
-        return read;
     }
 }
