@@ -12,7 +12,7 @@ import static ru.swetophor.mainframe.Application.astroSource;
 import static ru.swetophor.mainframe.Decorator.*;
 import static ru.swetophor.mainframe.Settings.*;
 
-public class CommandLineMainGUI implements MainGUI {
+public class CommandLineMainUI implements MainUI {
 
     static final Scanner KEYBOARD = new Scanner(System.in);
 
@@ -20,10 +20,11 @@ public class CommandLineMainGUI implements MainGUI {
      * Цикл работы с картой.
      * Предоставляет действия, которые можно выполнить с картой: просмотр статистики,
      * сохранение в список (файл), построение средней и синастрической карт.
+     * Пустой ввод означает выход из цикла и метода.
      *
-     * @param chart карта, являющаяся предметом работы.
+     * @param chartObject карта, являющаяся предметом работы.
      */
-    static void workCycle(ChartObject chart) {
+    public void workCycle(ChartObject chartObject) {
         String CHART_MENU = """
                     действия с картой:
                 "-> имя_файла"   = сохранить в файл
@@ -35,30 +36,45 @@ public class CommandLineMainGUI implements MainGUI {
                 "3" = о паттернах кратко
                 "4" = о паттернах со статистикой
                 """;
-        print(chart.getCaption());
-        print(chart.getAstrasList());
+        print(chartObject.getCaption());
+        print(chartObject.getAstrasList());
         printInFrame(CHART_MENU);
         String input;
         while (true) {
-            input = Application.mainShield.getUserInput();
-            if (input == null || input.isBlank()) return;
+            input = getUserInput();
+            if (input == null || input.isBlank())
+                return;
 
             if (input.startsWith("->")) {
-                Storage.putChartToBase(chart, input.substring(2).trim());
-            } else if (input.startsWith("+") && chart instanceof Chart) {
-                ChartObject counterpart = DESK.findChart(input.substring(1).trim(), "на столе");
+                Storage.putChartToBase(chartObject, input.substring(2).trim());
+
+            } else if (input.startsWith("+") && chartObject instanceof Chart) {
+                ChartObject counterpart = null;
+                String order = input.substring(1).trim();
+                try {
+                    counterpart = DESK.findChart(order, "на столе");
+                } catch (ChartNotFoundException e) {
+                    print("Карта '%s' не найдена: %s".formatted(order, e.getLocalizedMessage()));
+                }
                 if (counterpart instanceof Chart)
-                    Application.addChart(new Synastry((Chart) chart, (Chart) counterpart));
-            } else if (input.startsWith("*") && chart instanceof Chart) {
-                ChartObject counterpart = DESK.findChart(input.substring(1).trim(), "на столе");
+                    Application.addChart(new Synastry((Chart) chartObject, (Chart) counterpart));
+
+            } else if (input.startsWith("*") && chartObject instanceof Chart) {
+                ChartObject counterpart = null;
+                String order = input.substring(1).trim();
+                try {
+                    counterpart = DESK.findChart(order, "на столе");
+                } catch (ChartNotFoundException e) {
+                    print("Карта '%s' не найдена: %s".formatted(order, e.getLocalizedMessage()));
+                }
                 if (counterpart instanceof Chart)
-                    Application.addChart(Mechanics.composite((Chart) chart, (Chart) counterpart));
+                    Application.addChart(Mechanics.composite((Chart) chartObject, (Chart) counterpart));
             }
             else switch (input) {
-                    case "1" -> print(chart.getAstrasList());
-                    case "2" -> print(chart.getAspectTable());
-                    case "3" -> print(chart.resonanceAnalysis(getEdgeHarmonic()));
-                    case "4" -> print(chart.resonanceAnalysisVerbose(getEdgeHarmonic()));
+                    case "1" -> print(chartObject.getAstrasList());
+                    case "2" -> print(chartObject.getAspectTable());
+                    case "3" -> print(chartObject.resonanceAnalysis(getEdgeHarmonic()));
+                    case "4" -> print(chartObject.resonanceAnalysisVerbose(getEdgeHarmonic()));
                     default -> printInFrame(CHART_MENU);
                 }
         }
@@ -178,7 +194,8 @@ public class CommandLineMainGUI implements MainGUI {
     }
 
     /**
-     * @return 
+     * Получает ввод пользователя.
+     * @return строку, введённую юзером с клавиатуры.
      */
     @Override
     public String getUserInput() {

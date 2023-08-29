@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static ru.swetophor.mainframe.CommandLineMainGUI.KEYBOARD;
+import static ru.swetophor.mainframe.CommandLineMainUI.KEYBOARD;
 
 /**
  * Список карт-объектов, воспроизводящий многие функции обычного списка.
@@ -600,11 +600,11 @@ public class ChartList {
     }
 
     /**
-     * Даёт карту по её номеру в списке.
+     * Даёт карту по её индексу в списке.
      *
-     * @param i номер карты в списке.
-     * @return карту из списка с соответствующим номером,
-     * или {@code пусто}, если указан номер за пределами списка.
+     * @param i индекс карты в списке.
+     * @return карту из списка с соответствующим индексом,
+     * или {@code НУЛЬ}, если указан индекс за пределами списка.
      */
     public ChartObject get(int i) {
         return i >= 0 && i < charts.size() ?
@@ -616,7 +616,7 @@ public class ChartList {
      * Даёт карту по её имени.
      *
      * @param name имя карты, которую хотим получить.
-     * @return карту с соответствующим именем, или {@code пусто},
+     * @return карту с соответствующим именем, или {@code НУЛЬ},
      * если карты с таким именем здесь нет.
      */
     public ChartObject get(String name) {
@@ -691,9 +691,18 @@ public class ChartList {
         return addAll(adding.getCharts());
     }
 
-    public ChartObject findChart(String order, String inList) {
+    /**
+     * Находит в этом списке карту, заданную по имени или номеру в списке (начинающемуся с 1).
+     * Если запрос состоит только из цифр, рассматривает его как запрос по номеру,
+     * иначе как запрос по имени.
+     * @param order запрос, какую карту ищем в списке: по имени или номеру (с 1).
+     * @param inList    строка, описывающая этот список в местном падеже.
+     * @return  найденный в списке объект, соответствующий запросу.
+     * @throws ChartNotFoundException   если в списке не найдено соответствующих запросу объектов.
+     */
+    public ChartObject findChart(String order, String inList) throws ChartNotFoundException {
         if (order == null || order.isBlank())
-            return null;
+            throw new ChartNotFoundException("Пустой запрос.");
         if (!inList.startsWith("на "))
             inList = "в " + inList;
 
@@ -702,17 +711,17 @@ public class ChartList {
                 int i = Integer.parseInt(order) - 1;
                 if (i >= 0 && i < size())
                     return get(i);
-                else {
-                    System.out.printf("Всего %d карт %s%n", size(), inList);
-                }
+                else
+                    throw new ChartNotFoundException("Всего %d карт %s%n"
+                        .formatted(size(), inList));
             } catch (NumberFormatException e) {
-                System.out.println("Число не распознано.");
+                throw new ChartNotFoundException("Число не распознано.");
             }
         else if (contains(order))
             return get(order);
         else
-            System.out.printf("Карты '%s' нет %s%n", order, inList);
-        return null;
+            throw new ChartNotFoundException("Карты '%s' нет %s%n"
+                    .formatted(order, inList));
     }
 
     @Override

@@ -1,6 +1,8 @@
 package ru.swetophor.mainframe;
 
-public interface MainGUI {
+import ru.swetophor.celestialmechanics.ChartObject;
+
+public interface MainUI {
 
     /**
      * Основное меню и основной рабочий цикл АстроВидьи.
@@ -15,4 +17,6 @@ public interface MainGUI {
     String getUserInput();
 
     void listCharts();
+
+    void workCycle(ChartObject chartObject);
 }

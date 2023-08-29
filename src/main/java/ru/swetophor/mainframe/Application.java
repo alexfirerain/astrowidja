@@ -21,16 +21,18 @@ public class Application {
     /**
      * Главное меню, с которого начинается работа с программой.
      */
-    static final MainGUI mainShield;
+    static final MainUI mainShield;
     static final AstroSource astroSource;
+    static final ChartRepository chartRepository;
 
 
     /*
         Инициализация имплементации
      */
     static {
-        mainShield = new CommandLineMainGUI();
+        mainShield = new CommandLineMainUI();
         astroSource = new CommandLineAstroSource();
+        chartRepository = new FileChartRepository();
     }
 
     /**
@@ -66,7 +68,7 @@ public class Application {
      * если она найдена, выводит её статистику на экран.
      */
     private static void showChart() {
-        System.out.print("Укажите карту по номеру на столе или по имени: ");
+        print("Укажите карту по номеру на столе или по имени: ");
         String order = mainShield.getUserInput();
         if (order.isBlank())
             return;
@@ -77,28 +79,32 @@ public class Application {
                 if (result != null)
                     printChartStat(result);
                 else
-                    System.out.println("Карты под номером " + order + " не найдено.");
+                    print("Карты под номером " + order + " не найдено.");
             } catch (NumberFormatException e) {
-                System.out.println("Число не распознано.");
+                print("Число не распознано.");
             }
         else if (DESK.contains(order))
             printChartStat(DESK.get(order));
         else
-            System.out.println("Карты с именем " + order + " не найдено.");
+            print("Карты с именем " + order + " не найдено.");
     }
 
     /**
      * Запрашивает, какую карту со {@link #DESK стола} взять в работу,
-     * т.е. запустить в {@link CommandLineMainGUI#workCycle(ChartObject) цикле процедур для карты}.
-     * Если карта не опознана по номеру на столе или имени, не делает ничего.
-     * Но функция поиска сама выводит сообщения, если не нашла.
+     * т.е. запустить в {@link MainUI#workCycle(ChartObject) цикле процедур для карты}.
+     * Если карта не опознана по номеру на столе или имени, сообщает об этом.
      */
     public static void takeChart() {
-        System.out.print("Укажите карту по имени или номеру на столе: ");
+        print("Укажите карту по имени или номеру на столе: ");
         String order = mainShield.getUserInput();
-        ChartObject taken = DESK.findChart(order, "на столе");
-        if (taken == null) return;
-        CommandLineMainGUI.workCycle(taken);
+        ChartObject taken = null;
+        try {
+            taken = DESK.findChart(order, "на столе");
+        } catch (ChartNotFoundException e) {
+            print("Карты '%s' не найдено: %s".formatted(order, e.getLocalizedMessage()));
+        }
+        if (taken != null)
+            mainShield.workCycle(taken);
     }
 
     /**
