@@ -19,4 +19,6 @@ public interface MainUI {
     void listCharts();
 
     void workCycle(ChartObject chartObject);
+
+    boolean confirmationAnswer(String s);
 }

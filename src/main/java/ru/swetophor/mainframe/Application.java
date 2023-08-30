@@ -60,7 +60,8 @@ public class Application {
         mainShield.mainCycle();
 
         if (autosave)
-            Storage.saveTableToFile(DESK, Storage.newAutosaveName());
+            chartRepository.autosave();
+            chartRepository.saveTableToFile(DESK, FileChartRepository.newAutosaveName());
     }
 
     /**

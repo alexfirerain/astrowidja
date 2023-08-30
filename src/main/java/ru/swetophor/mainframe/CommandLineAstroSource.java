@@ -4,8 +4,7 @@ import ru.swetophor.celestialmechanics.Astra;
 import ru.swetophor.celestialmechanics.AstraEntity;
 import ru.swetophor.celestialmechanics.Chart;
 
-import static ru.swetophor.mainframe.Application.DESK;
-import static ru.swetophor.mainframe.Application.mainShield;
+import static ru.swetophor.mainframe.Application.*;
 import static ru.swetophor.mainframe.Decorator.*;
 
 public class CommandLineAstroSource implements AstroSource {
@@ -73,10 +72,10 @@ public class CommandLineAstroSource implements AstroSource {
 
             } else if (input.toLowerCase().startsWith("xxx") || input.toLowerCase().startsWith("ххх")) {
                 String order = input.substring(3).trim();
-                Storage.deleteFile(order);
+                FileChartRepository.deleteFile(order);
 
             } else if (input.endsWith(">>")) {
-                ChartList loadingList = Storage.findList(Storage.extractHeadOrder(input));
+                ChartList loadingList = chartRepository.findList(Storage.extractHeadOrder(input));
                 if (loadingList == null || loadingList.isEmpty()) {     // TODO: write a confirmation general utility
                     System.out.println("список не найден или пуст");
                 } else {
@@ -86,14 +85,14 @@ public class CommandLineAstroSource implements AstroSource {
                 }
 
             } else if (input.endsWith("->")) {
-                DESK.addAll(Storage.findList(Storage.extractHeadOrder(input)));
+                DESK.addAll(chartRepository.findList(Storage.extractHeadOrder(input)));
                 mainShield.listCharts();
 
             } else if (input.startsWith(">>")) {
-                Storage.dropListToFile(DESK, Storage.extractTailOrder(input));
+                chartRepository.dropListToFile(DESK, Storage.extractTailOrder(input));
 
             } else if (input.startsWith("->")) {
-                Storage.saveTableToFile(DESK, Storage.extractTailOrder(input));
+                chartRepository.saveTableToFile(DESK, Storage.extractTailOrder(input));
             }
         }
 
@@ -101,7 +100,7 @@ public class CommandLineAstroSource implements AstroSource {
 
     @Override
     public void loadFromFile(String filename) {
-        Storage.readChartsFromFile(filename)
+        FileChartRepository.readChartsFromFile(filename)
                 .forEach(c -> Application.DESK.addResolving(c, "на столе"));
         print("Загружены карты из " + filename);
     }

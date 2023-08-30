@@ -8,8 +8,7 @@ import ru.swetophor.celestialmechanics.Synastry;
 import java.util.Scanner;
 import java.util.Set;
 
-import static ru.swetophor.mainframe.Application.DESK;
-import static ru.swetophor.mainframe.Application.astroSource;
+import static ru.swetophor.mainframe.Application.*;
 import static ru.swetophor.mainframe.Decorator.*;
 import static ru.swetophor.mainframe.Settings.*;
 
@@ -49,29 +48,31 @@ public class CommandLineMainUI implements MainUI {
                 return;
 
             if (input.startsWith("->")) {
-                Storage.putChartToBase(chartObject, input.substring(2).trim());
+                chartRepository.putChartToBase(chartObject, input.substring(2).trim());
 
             } else if (input.startsWith("+") && chartObject instanceof Chart) {
-                ChartObject counterpart = null;
+                ChartObject counterpart;
                 String order = input.substring(1).trim();
                 try {
                     counterpart = DESK.findChart(order, "на столе");
+                    if (counterpart instanceof Chart)
+                        Application.addChart(new Synastry((Chart) chartObject, (Chart) counterpart));
                 } catch (ChartNotFoundException e) {
                     print("Карта '%s' не найдена: %s".formatted(order, e.getLocalizedMessage()));
                 }
-                if (counterpart instanceof Chart)
-                    Application.addChart(new Synastry((Chart) chartObject, (Chart) counterpart));
+
 
             } else if (input.startsWith("*") && chartObject instanceof Chart) {
-                ChartObject counterpart = null;
+                ChartObject counterpart;
                 String order = input.substring(1).trim();
                 try {
                     counterpart = DESK.findChart(order, "на столе");
+                    if (counterpart instanceof Chart)
+                        Application.addChart(Mechanics.composite((Chart) chartObject, (Chart) counterpart));
                 } catch (ChartNotFoundException e) {
                     print("Карта '%s' не найдена: %s".formatted(order, e.getLocalizedMessage()));
                 }
-                if (counterpart instanceof Chart)
-                    Application.addChart(Mechanics.composite((Chart) chartObject, (Chart) counterpart));
+
             }
             else switch (input) {
                     case "1" -> print(chartObject.getAstrasList());
