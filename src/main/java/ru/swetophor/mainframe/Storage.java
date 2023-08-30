@@ -364,11 +364,11 @@ public class Storage {
     }
 
     private static boolean confirmDeletion(String fileToDelete) {
-        printInFrame("Точно удалить " + fileToDelete + "?");
-        return Settings.yesValues.contains(mainShield.getUserInput().toLowerCase());
+        return mainShield
+                .confirmationAnswer("Точно удалить " + fileToDelete + "?");
     }
 
-    public static String autosaveName() {
+    public static String newAutosaveName() {
         return "сохранение %s.awb"
                 .formatted(new SimpleDateFormat("E d MMMM .yy HH-mm")
                         .format(new Date()));

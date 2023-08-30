@@ -20,11 +20,12 @@ public class CommandLineAstroSource implements AstroSource {
      *
      * @return {@link Chart одиночную карту}, созданную на основе ввода.
      */
-    static Chart enterChartData() {
-        System.out.print("Название новой карты: ");
+    @Override
+    public Chart enterChartData() {
+        print("Название новой карты: ");
         Chart x = new Chart(mainShield.getUserInput());
         for (AstraEntity a : AstraEntity.values()) {
-            System.out.print(a.name + ": ");
+            print(a.name + ": ");
             String input = mainShield.getUserInput();
             if (input.isBlank())
                 continue;

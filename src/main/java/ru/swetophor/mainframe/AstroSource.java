@@ -1,5 +1,7 @@
 package ru.swetophor.mainframe;
 
+import ru.swetophor.celestialmechanics.ChartObject;
+
 public interface AstroSource {
 
 
@@ -11,4 +13,6 @@ public interface AstroSource {
      * @param filename имя файла в папке базы данных.
      */
     void loadFromFile(String filename);
+
+    ChartObject enterChartData();
 }

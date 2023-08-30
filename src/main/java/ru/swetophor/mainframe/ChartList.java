@@ -456,10 +456,10 @@ public class ChartList {
      *
      * @param i           в какую позицию ставим элемент.
      * @param chartObject что за элемент.
-     * @return объект, надвшийся по этому адресу прежде.
+     * @return объект, находившийся по этому адресу прежде.
      * @throws IndexOutOfBoundsException если указана неадекватная позиция i.
      */
-    private ChartObject setItem(int i, ChartObject chartObject) {
+    ChartObject setItem(int i, ChartObject chartObject) {
         names.set(i, chartObject.getName());
         ++this.modCount;
         return charts.set(i, chartObject);
@@ -556,8 +556,12 @@ public class ChartList {
         return changed;
     }
 
-    private List<String> chartsToNames(Collection<ChartObject> collection) {
+    private static List<String> chartsToNames(Collection<ChartObject> collection) {
         return collection.stream().map(ChartObject::getName).toList();
+    }
+
+    public List<String> chartsToNames() {
+        return charts.stream().map(ChartObject::getName).toList();
     }
 
     /**
@@ -590,7 +594,7 @@ public class ChartList {
      *
      * @param chart добавляемая карта.
      */
-    private boolean addItem(ChartObject chart) {
+    boolean addItem(ChartObject chart) {
         boolean add = charts.add(chart);
         if (add) {
             ++this.modCount;

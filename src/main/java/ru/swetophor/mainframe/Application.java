@@ -55,12 +55,12 @@ public class Application {
         mainShield.welcome();
 
         if (autoloadEnabled)
-            astroSource.loadFromFile("autosave.awb");
+            chartRepository.loadBase("autosave.awb");
 
         mainShield.mainCycle();
 
         if (autosave)
-            Storage.saveTableToFile(DESK, Storage.autosaveName());
+            Storage.saveTableToFile(DESK, Storage.newAutosaveName());
     }
 
     /**

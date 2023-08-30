@@ -1,7 +1,6 @@
 package ru.swetophor.mainframe;
 
 import java.io.File;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import static ru.swetophor.celestialmechanics.CelestialMechanics.CIRCLE;
@@ -10,8 +9,6 @@ import static ru.swetophor.celestialmechanics.CelestialMechanics.CIRCLE;
  * Класс-хранилище статических глобальных переменных АстроВидьи.
  */
 public class Settings {
-    static final Set<String> yesValues = Set.of("да", "+", "yes", "true", "д", "y", "t", "1");
-    static final Set<String> noValues = Set.of("нет", "-", "no", "false", "н", "n", "f", "0");
     static int edgeHarmonic = 108;
     static int orbsDivisor = 30;
     static boolean halfOrbsForDoubles = true;
@@ -20,7 +17,7 @@ public class Settings {
     public static String autoloadFile = "сохранение вс 15 января .23 15-03.awb";
     public static boolean autoloadEnabled = true;
 
-    private static File settingsSourceFile = new File("settings.ini");
+    private static final File settingsSourceFile = new File("settings.ini");
 
     public static boolean isHalfOrbsForDoubles() {
         return halfOrbsForDoubles;

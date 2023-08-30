@@ -6,6 +6,7 @@ import ru.swetophor.celestialmechanics.Mechanics;
 import ru.swetophor.celestialmechanics.Synastry;
 
 import java.util.Scanner;
+import java.util.Set;
 
 import static ru.swetophor.mainframe.Application.DESK;
 import static ru.swetophor.mainframe.Application.astroSource;
@@ -15,6 +16,8 @@ import static ru.swetophor.mainframe.Settings.*;
 public class CommandLineMainUI implements MainUI {
 
     static final Scanner KEYBOARD = new Scanner(System.in);
+    static final Set<String> yesValues = Set.of("да", "+", "yes", "true", "д", "y", "t", "1");
+    static final Set<String> noValues = Set.of("нет", "-", "no", "false", "н", "n", "f", "0");
 
     /**
      * Цикл работы с картой.
@@ -114,6 +117,17 @@ public class CommandLineMainUI implements MainUI {
         return yesValues.contains(value.toLowerCase());
     }
 
+    @Override
+    public boolean confirmationAnswer(String prompt) {
+        printInFrame(prompt);
+        while (true) {
+            String answer = getUserInput();
+            if (positiveAnswer(answer)) return true;
+            if (negativeAnswer(answer)) return false;
+            print("Введи да или нет, надо определить, третьего не дано.");
+        }
+    }
+
     public void editSettings() {
         showSettingsMenu();
 
@@ -123,7 +137,7 @@ public class CommandLineMainUI implements MainUI {
                 break;
             int delimiter = command.indexOf("=");
             if (delimiter == -1) {
-                System.out.println("Команда должна содержать оператор '='");
+                print("Команда должна содержать оператор '='\n");
                 continue;
             }
             String parameter = command.substring(0, delimiter).trim();
@@ -140,10 +154,10 @@ public class CommandLineMainUI implements MainUI {
                         if (positiveAnswer(value)) autosave = true;
                         if (negativeAnswer(value)) autosave = false;
                     }
-                    default -> System.out.println("Введи номер существующего параметра, а не " + parameter);
+                    default -> print("Введи номер существующего параметра, а не '" + parameter + "'\n");
                 }
             } catch (NumberFormatException e) {
-                System.out.println("Не удалось прочитать значение.");
+                print("Не удалось прочитать значение.\n");
             }
         }
     }
@@ -179,7 +193,7 @@ public class CommandLineMainUI implements MainUI {
                 case "2" -> editSettings();
                 case "3" -> astroSource.listsCycle();
                 case "4" -> Application.takeChart();
-                case "5" -> Application.addChart(CommandLineAstroSource.enterChartData());
+                case "5" -> Application.addChart(astroSource.enterChartData());
                 case "0" -> exit = true;
             }
         }
@@ -200,5 +214,60 @@ public class CommandLineMainUI implements MainUI {
     @Override
     public String getUserInput() {
         return KEYBOARD.nextLine();
+    }
+
+    /**
+     * Разрешает коллизию, возникающую, если имя добавляемой карты уже содержится
+     * в списке. Запрашивает решение у астролога, требуя выбора одного из трёх вариантов:
+     * <li>переименовать – запрашивает новое имя для добавляемой карты и добавляет обновлённую;</li>
+     * <li>обновить – ставит новую карту на место старой карты с этим именем;</li>
+     * <li>заменить – удаляет из списка карту с конфликтным именем, добавляет новую;</li>
+     * <li>отмена – карта не добавляется.</li>
+     *
+     * @param controversial добавляемая карта, имя которой, как предварительно уже определено,
+     *                      уже присутствует в этом списке.
+     * @param listName      название файла или иного списка, в который добавляется карта, в предложном падеже.
+     * @return {@code да}, если добавление карты (с переименованием либо с заменой) состоялось,
+     *          {@code нет}, если была выбрана отмена.
+     */
+    public boolean mergeResolving(ChartList list, ChartObject controversial, String listName) {
+        if (!list.contains(controversial.getName())) {
+            return list.addItem(controversial);
+        }
+        while (true) {
+            print("""
+                                                    
+                            Карта с именем '%s' уже есть %s:
+                            1. добавить под новым именем
+                            2. заменить присутствующую в списке
+                            3. удалить старую, добавить новую в конец списка
+                            0. отмена
+                            """.formatted(controversial.getName(),
+                                            listName.startsWith("на ") ? listName : "в " + listName));
+            switch (getUserInput()) {
+                case "1" -> {
+                    String rename;
+                    do {
+                        print("Новое имя: ");
+                        rename = getUserInput();         // TODO: допустимое имя
+                        print("\n");
+                    } while (list.contains(rename));
+                    controversial.setName(rename);
+                    return list.addItem(controversial);
+                }
+                case "2" -> {
+                    list.setItem(list.indexOf(controversial.getName()), controversial);
+                    return true;
+                }
+                case "3" -> {
+                    list.remove(controversial.getName());
+                    return list.addItem(controversial);
+                }
+                case "0" -> {
+                    print("Отмена добавления карты: " + controversial.getName());
+                    return false;
+                }
+            }
+        }
     }
 }
