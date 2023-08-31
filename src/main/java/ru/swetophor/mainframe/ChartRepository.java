@@ -14,7 +14,7 @@ public interface ChartRepository {
 
     ChartList findList(String order);
 
-    void dropListToFile(ChartList desk, String s);
+    void dropListToFile(ChartList list, String s);
 
     void putChartToBase(ChartObject chartObject, String baseName);
 
@@ -25,4 +25,6 @@ public interface ChartRepository {
     List<String> tableOfContents();
 
     void deleteFile(String order);
+
+    ChartObject findChart(ChartList list, String order, String location) throws ChartNotFoundException;
 }

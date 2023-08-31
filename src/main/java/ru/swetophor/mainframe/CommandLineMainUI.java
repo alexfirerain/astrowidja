@@ -5,6 +5,7 @@ import ru.swetophor.celestialmechanics.ChartObject;
 import ru.swetophor.celestialmechanics.Mechanics;
 import ru.swetophor.celestialmechanics.Synastry;
 
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -19,6 +20,46 @@ public class CommandLineMainUI implements MainUI {
     static final Set<String> noValues = Set.of("нет", "-", "no", "false", "н", "n", "f", "0");
 
     /**
+     * Запрашивает, какую карту со {@link #DESK стола} взять в работу,
+     * т.е. запустить в {@link MainUI#workCycle(ChartObject) цикле процедур для карты}.
+     * Если карта не опознана по номеру на столе или имени, сообщает об этом.
+     */
+    public void takeChart() {
+        print("Укажите карту по имени или номеру на столе: ");
+        String order = getUserInput();
+        ChartObject taken = null;
+        try {
+            taken = chartRepository.findChart(DESK, order, "на столе");
+        } catch (ChartNotFoundException e) {
+            print("Карты '%s' не найдено: %s".formatted(order, e.getLocalizedMessage()));
+        }
+        workCycle(taken);
+    }
+
+    /**
+     * Добавляет карту на {@link Application#DESK стол}.
+     * Если карта с таким именем уже
+     * присутствует, запрашивает решение у юзера.
+     *
+     * @param chart добавляемая карта.
+     */
+    public void addChart(ChartObject chart) {
+//        if (DESK.addResolving(chart, "на столе"))
+        if (mergeResolving(DESK, chart, "на столе"))
+            print("Карта загружена на стол: " + chart);
+    }
+
+    /**
+     * Добавляет {@link #DESK в реестр} произвольное количество карт из аргументов.
+     * Если какая-то карта совпадает с уже записанной, у юзера
+     * запрашивается решение.
+     * @param charts добавляемые карты.
+     */
+    public void addChart(ChartObject... charts) {
+        Arrays.stream(charts).forEach(this::addChart);
+    }
+
+    /**
      * Цикл работы с картой.
      * Предоставляет действия, которые можно выполнить с картой: просмотр статистики,
      * сохранение в список (файл), построение средней и синастрической карт.
@@ -27,6 +68,8 @@ public class CommandLineMainUI implements MainUI {
      * @param chartObject карта, являющаяся предметом работы.
      */
     public void workCycle(ChartObject chartObject) {
+        if (chartObject == null) return;
+
         String CHART_MENU = """
                     действия с картой:
                 "-> имя_файла"   = сохранить в файл
@@ -56,7 +99,7 @@ public class CommandLineMainUI implements MainUI {
                 try {
                     counterpart = DESK.findChart(order, "на столе");
                     if (counterpart instanceof Chart)
-                        Application.addChart(new Synastry((Chart) chartObject, (Chart) counterpart));
+                        addChart(new Synastry((Chart) chartObject, (Chart) counterpart));
                 } catch (ChartNotFoundException e) {
                     print("Карта '%s' не найдена: %s".formatted(order, e.getLocalizedMessage()));
                 }
@@ -68,7 +111,7 @@ public class CommandLineMainUI implements MainUI {
                 try {
                     counterpart = DESK.findChart(order, "на столе");
                     if (counterpart instanceof Chart)
-                        Application.addChart(Mechanics.composite((Chart) chartObject, (Chart) counterpart));
+                        addChart(Mechanics.composite((Chart) chartObject, (Chart) counterpart));
                 } catch (ChartNotFoundException e) {
                     print("Карта '%s' не найдена: %s".formatted(order, e.getLocalizedMessage()));
                 }
@@ -193,8 +236,8 @@ public class CommandLineMainUI implements MainUI {
                 case "1" -> listCharts();
                 case "2" -> editSettings();
                 case "3" -> astroSource.listsCycle();
-                case "4" -> Application.takeChart();
-                case "5" -> Application.addChart(astroSource.enterChartData());
+                case "4" -> takeChart();
+                case "5" -> addChart(astroSource.enterChartData());
                 case "0" -> exit = true;
             }
         }
@@ -225,15 +268,15 @@ public class CommandLineMainUI implements MainUI {
      * <li>заменить – удаляет из списка карту с конфликтным именем, добавляет новую;</li>
      * <li>отмена – карта не добавляется.</li>
      *
-     * @param controversial добавляемая карта, имя которой, как предварительно уже определено,
+     * @param nextChart добавляемая карта, имя которой, как предварительно уже определено,
      *                      уже присутствует в этом списке.
      * @param listName      название файла или иного списка, в который добавляется карта, в предложном падеже.
      * @return {@code да}, если добавление карты (с переименованием либо с заменой) состоялось,
      *          {@code нет}, если была выбрана отмена.
      */
-    public boolean mergeResolving(ChartList list, ChartObject controversial, String listName) {
-        if (!list.contains(controversial.getName())) {
-            return list.addItem(controversial);
+    public boolean mergeResolving(ChartList list, ChartObject nextChart, String listName) {
+        if (!list.contains(nextChart.getName())) {
+            return list.addItem(nextChart);
         }
         while (true) {
             print("""
@@ -243,7 +286,7 @@ public class CommandLineMainUI implements MainUI {
                             2. заменить присутствующую в списке
                             3. удалить старую, добавить новую в конец списка
                             0. отмена
-                            """.formatted(controversial.getName(),
+                            """.formatted(nextChart.getName(),
                                             listName.startsWith("на ") ? listName : "в " + listName));
             switch (getUserInput()) {
                 case "1" -> {
@@ -253,19 +296,19 @@ public class CommandLineMainUI implements MainUI {
                         rename = getUserInput();         // TODO: допустимое имя
                         print("\n");
                     } while (list.contains(rename));
-                    controversial.setName(rename);
-                    return list.addItem(controversial);
+                    nextChart.setName(rename);
+                    return list.addItem(nextChart);
                 }
                 case "2" -> {
-                    list.setItem(list.indexOf(controversial.getName()), controversial);
+                    list.setItem(list.indexOf(nextChart.getName()), nextChart);
                     return true;
                 }
                 case "3" -> {
-                    list.remove(controversial.getName());
-                    return list.addItem(controversial);
+                    list.remove(nextChart.getName());
+                    return list.addItem(nextChart);
                 }
                 case "0" -> {
-                    print("Отмена добавления карты: " + controversial.getName());
+                    print("Отмена добавления карты: " + nextChart.getName());
                     return false;
                 }
             }

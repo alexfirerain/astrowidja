@@ -309,4 +309,43 @@ public class FileChartRepository implements ChartRepository {
     public void autosave() {
         saveTableToFile(DESK, newAutosaveName());
     }
+
+    /**
+     * Находит в этом списке карту, заданную по имени или номеру в списке (начинающемуся с 1).
+     * Если запрос состоит только из цифр, рассматривает его как запрос по номеру,
+     * иначе как запрос по имени.
+     * @param order запрос, какую карту ищем в списке: по имени или номеру (с 1).
+     * @param inList    строка, описывающая этот список в местном падеже.
+     * @return  найденный в списке объект, соответствующий запросу.
+     * @throws ChartNotFoundException   если в списке не найдено соответствующих запросу объектов.
+     */
+    public ChartObject findChart(ChartList list, String order, String inList) throws ChartNotFoundException {
+        if (order == null || order.isBlank())
+            throw new ChartNotFoundException("Пустой запрос.");
+        if (!inList.startsWith("на "))
+            inList = "в " + inList;
+
+        if (order.matches("^\\d+"))
+            try {
+                int i = Integer.parseInt(order) - 1;
+                if (i >= 0 && i < list.size())
+                    return list.get(i);
+                else
+                    throw new ChartNotFoundException("Всего %d карт %s%n"
+                            .formatted(list.size(), inList));
+            } catch (NumberFormatException e) {
+                throw new ChartNotFoundException("Число не распознано.");
+            }
+        else if (list.contains(order)) {
+            return list.get(order);
+        } else {
+            for (String name : list.getNames())
+                if (name.startsWith(order))
+                    return list.get(name);
+
+            throw new ChartNotFoundException("Карты '%s' нет %s%n"
+                    .formatted(order, inList));
+        }
+    }
+
 }

@@ -90,45 +90,5 @@ public class Application {
             print("Карты с именем " + order + " не найдено.");
     }
 
-    /**
-     * Запрашивает, какую карту со {@link #DESK стола} взять в работу,
-     * т.е. запустить в {@link MainUI#workCycle(ChartObject) цикле процедур для карты}.
-     * Если карта не опознана по номеру на столе или имени, сообщает об этом.
-     */
-    public static void takeChart() {
-        print("Укажите карту по имени или номеру на столе: ");
-        String order = mainShield.getUserInput();
-        ChartObject taken = null;
-        try {
-            taken = DESK.findChart(order, "на столе");
-        } catch (ChartNotFoundException e) {
-            print("Карты '%s' не найдено: %s".formatted(order, e.getLocalizedMessage()));
-        }
-        if (taken != null)
-            mainShield.workCycle(taken);
-    }
-
-    /**
-     * Добавляет карту на {@link #DESK стол}. Если карта с таким именем уже
-     * присутствует, запрашивает решение у юзера.
-     *
-     * @param chart добавляемая карта.
-     */
-    static void addChart(ChartObject chart) {
-        if (DESK.addResolving(chart, "на столе"))
-            print("Карта загружена на стол: " + chart);
-    }
-
-    /**
-     * Добавляет {@link #DESK в реестр} произвольное количество карт из аргументов.
-     * Если какая-то карта совпадает с уже записанной, у юзера
-     * запрашивается решение.
-     * @param charts добавляемые карты.
-     */
-    private static void addChart(ChartObject... charts) {
-        for (ChartObject chart : charts)
-            addChart(chart);
-    }
-
 
 }
