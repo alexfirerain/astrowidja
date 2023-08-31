@@ -20,5 +20,5 @@ public interface MainUI {
 
     void workCycle(ChartObject chartObject);
 
-    boolean confirmationAnswer(String s);
+    boolean confirmationAnswer(String prompt);
 }

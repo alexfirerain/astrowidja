@@ -2,6 +2,8 @@ package ru.swetophor.mainframe;
 
 import ru.swetophor.celestialmechanics.ChartObject;
 
+import java.util.List;
+
 public interface ChartRepository {
 
     void saveTableToFile(ChartList table, String target);
@@ -16,4 +18,11 @@ public interface ChartRepository {
 
     void putChartToBase(ChartObject chartObject, String baseName);
 
+    ChartList readChartsFromBase(String baseName);
+
+    List<ChartList> scanLibrary();
+
+    List<String> tableOfContents();
+
+    void deleteFile(String order);
 }

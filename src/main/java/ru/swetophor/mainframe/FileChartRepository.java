@@ -2,6 +2,7 @@ package ru.swetophor.mainframe;
 
 import ru.swetophor.celestialmechanics.ChartObject;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,21 +14,49 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static ru.swetophor.mainframe.Application.DESK;
-import static ru.swetophor.mainframe.Application.mainShield;
+import static ru.swetophor.mainframe.Application.*;
 import static ru.swetophor.mainframe.Decorator.print;
 import static ru.swetophor.mainframe.Decorator.printInAsterisk;
 
 public class FileChartRepository implements ChartRepository {
+    static final String baseDir = "base";
+
+    static {
+        Path basePath = Path.of(baseDir);
+        if (!Files.exists(basePath)) {
+            String msg;
+            try {
+                Files.createDirectory(basePath);
+                msg = "Создали папку '%s'%n".formatted(baseDir);
+            } catch (IOException e) {
+                msg = "Не удалось создать папку %s: %s%n".formatted(baseDir, e.getLocalizedMessage());
+            }
+            print(msg);
+        }
+    }
+
+    /**
+     * Прочитывает список файлов из рабочей папки.
+     *
+     * @return список имён файлов АстроВидьи, присутствующих в рабочей папке
+     * в момент вызова, сортированный по дате последнего изменения.
+     */
+    @Override
+    public List<String> tableOfContents() {
+        return Storage.getBaseContent().stream()
+                .map(File::getName)
+                .toList();
+    }
+
     /**
      * Прочитывает содержание всех файлов с картами.
      * Если по какой-то причине таковых не найдено, то пустой список.
      *
      * @return список списков карт, соответствующих файлам в рабочей папке.
      */
-    static List<ChartList> scanLibrary() {
-        return Storage.tableOfContents().stream()
-                .map(FileChartRepository::readChartsFromFile)
+    public List<ChartList> scanLibrary() {
+        return tableOfContents().stream()
+                .map(chartRepository::readChartsFromBase)
                 .toList();
     }
 
@@ -35,6 +64,10 @@ public class FileChartRepository implements ChartRepository {
         return "сохранение %s.awb"
                 .formatted(new SimpleDateFormat("E d MMMM .yy HH-mm")
                         .format(new Date()));
+    }
+
+    public static String showList(String order) {
+        return chartRepository.findList(order).toString();
     }
 
     /**
@@ -49,13 +82,13 @@ public class FileChartRepository implements ChartRepository {
     @Override
     public void saveTableToFile(ChartList table, String target) {
         String result;
-        ChartList fileContent = readChartsFromFile(target);
+        ChartList fileContent = readChartsFromBase(target);
         if (table.isEmpty() || !fileContent.addAll(table)) {
             result = "Никаких новых карт в файл не добавлено.";
         } else {
             String drop = fileContent.getString();
 
-            try (PrintWriter out = new PrintWriter(Path.of(Storage.baseDir, target).toFile())) {
+            try (PrintWriter out = new PrintWriter(Path.of(baseDir, target).toFile())) {
                 out.println(drop);
                 result = "Строка%n%s%n записана в %s%n".formatted(drop, target);
             } catch (FileNotFoundException e) {
@@ -67,8 +100,8 @@ public class FileChartRepository implements ChartRepository {
 
     public void moveChartsToFile(String source, String target, int... charts) {
         Storage.chartLibrary = scanLibrary();
-        ChartList sourceList = Storage.chartLibrary.get(Storage.tableOfContents().indexOf(source));
-        ChartList targetList = Storage.chartLibrary.get(Storage.tableOfContents().indexOf(target));
+        ChartList sourceList = Storage.chartLibrary.get(tableOfContents().indexOf(source));
+        ChartList targetList = Storage.chartLibrary.get(tableOfContents().indexOf(target));
 
         Arrays.stream(charts)
                 .mapToObj(sourceList::get)
@@ -78,21 +111,21 @@ public class FileChartRepository implements ChartRepository {
                 .map(ChartObject::getName)
                 .forEach(sourceList::remove);
 
-        if (!sourceList.equals(readChartsFromFile(source)))
+        if (!sourceList.equals(readChartsFromBase(source)))
             dropListToFile(sourceList, source);
-        if (!targetList.equals(readChartsFromFile(target)))
+        if (!targetList.equals(readChartsFromBase(target)))
             dropListToFile(targetList, target);
     }
 
     @Override
     public void putChartToBase(ChartObject chart, String file) {
-        ChartList fileContent = readChartsFromFile(file);
+        ChartList fileContent = readChartsFromBase(file);
         if (fileContent.addResolving(chart, file))
             dropListToFile(fileContent, file);
     }
 
     public boolean  putChartsToBase(String file, ChartObject... charts) {
-        ChartList fileContent = readChartsFromFile(file);
+        ChartList fileContent = readChartsFromBase(file);
         boolean changed = false;
         for (ChartObject c : charts)
             if (fileContent.addResolving(c, file))
@@ -106,27 +139,28 @@ public class FileChartRepository implements ChartRepository {
      * Прочитывает список карт из формата *.awb
      *  Если файл не существует или чтение обламывается,
      *  выводит об этом сообщение
-     * @param file имя файла в папке данных.
+     * @param fileName имя файла в папке данных.
      * @return список карт, прочитанных из файла.
      * Если файл не существует или не читается, то пустой список.
      */
-    public static ChartList readChartsFromFile(String file) {
+    @Override
+    public ChartList readChartsFromBase(String fileName) {
         ChartList read = new ChartList();
-        if (file == null) {
+        if (fileName == null) {
             System.out.println("Файл не указан");
         }
-        Path filePath = Path.of(Storage.baseDir, file);
+        Path filePath = Path.of(baseDir, fileName);
         if (!Files.exists(filePath))
-            System.out.printf("Не удалось обнаружить файла '%s'%n", file);
+            System.out.printf("Не удалось обнаружить файла '%s'%n", fileName);
         else
             try {
                 Arrays.stream(Files.readString(filePath)
                                 .split("#"))
                         .filter(s -> !s.isBlank())
                         .map(ChartObject::readFromString)
-                        .forEach(chart -> read.addResolving(chart, file));
+                        .forEach(chart -> read.addResolving(chart, fileName));
             } catch (IOException e) {
-                System.out.printf("Не удалось прочесть файл '%s': %s%n", file, e.getLocalizedMessage());
+                System.out.printf("Не удалось прочесть файл '%s': %s%n", fileName, e.getLocalizedMessage());
             }
         return read;
     }
@@ -143,7 +177,7 @@ public class FileChartRepository implements ChartRepository {
     public void dropListToFile(ChartList content, String fileName) {
         fileName = extendFileName(content, fileName);
 
-        try (PrintWriter out = new PrintWriter(Path.of(Storage.baseDir, fileName).toFile())) {
+        try (PrintWriter out = new PrintWriter(Path.of(baseDir, fileName).toFile())) {
             out.println(content.getString());
             System.out.printf("Карты {%s} записаны в файл %s.%n",
                     String.join(", ", content.getNames()),
@@ -189,7 +223,7 @@ public class FileChartRepository implements ChartRepository {
             }
         else {
             int index;
-            List<String> tableOfContents = Storage.tableOfContents();
+            List<String> tableOfContents = tableOfContents();
             index = IntStream.range(0, tableOfContents.size())
                     .filter(i -> tableOfContents.get(i).startsWith(order))
                     .findFirst()
@@ -202,9 +236,10 @@ public class FileChartRepository implements ChartRepository {
         return list;
     }
 
-    public static void deleteFile(String fileToDelete) {
+    @Override
+    public void deleteFile(String fileToDelete) {
         try {
-            List<String> fileList = Storage.tableOfContents();
+            List<String> fileList = tableOfContents();
             if (fileToDelete.matches("^\\d+")) {
                 int indexToDelete;
                 try {
@@ -214,7 +249,7 @@ public class FileChartRepository implements ChartRepository {
                     } else {
                         String nameToDelete = fileList.get(indexToDelete);
                         if (confirmDeletion(nameToDelete)) {
-                            if (!Files.deleteIfExists(Path.of(Storage.baseDir, nameToDelete)))
+                            if (!Files.deleteIfExists(Path.of(baseDir, nameToDelete)))
                                 print("не найдено файла " + nameToDelete);
                         } else
                             print("отмена удаления " + nameToDelete);
@@ -227,7 +262,7 @@ public class FileChartRepository implements ChartRepository {
                 for (String name : fileList) {
                     if (name.startsWith(prefix)) {
                         if (confirmDeletion(name)) {
-                            if (!Files.deleteIfExists(Path.of(Storage.baseDir, name))) {
+                            if (!Files.deleteIfExists(Path.of(baseDir, name))) {
                                 print("не найдено файла " + name);
                             } else {
                                 print(name + " удалился");
@@ -240,12 +275,12 @@ public class FileChartRepository implements ChartRepository {
             } else if (fileToDelete.matches("^[\\p{L}\\-. !()+=_\\[\\]№\\d]+$")) {
                 // TODO: нормальную маску допустимого имени файла
                 if (!fileToDelete.endsWith(".awb") && !fileToDelete.endsWith(".awc")) {
-                    if (Files.exists(Path.of(Storage.baseDir, fileToDelete + ".awc")))
+                    if (Files.exists(Path.of(baseDir, fileToDelete + ".awc")))
                         fileToDelete = fileToDelete + ".awc";
-                    else if (Files.exists(Path.of(Storage.baseDir, fileToDelete + ".awb")))
+                    else if (Files.exists(Path.of(baseDir, fileToDelete + ".awb")))
                         fileToDelete = fileToDelete + ".awb";
                 }
-                if (!Files.deleteIfExists(Path.of(Storage.baseDir, fileToDelete))) {
+                if (!Files.deleteIfExists(Path.of(baseDir, fileToDelete))) {
                     print("не найдено файла " + fileToDelete);
                 }
             } else {
@@ -265,7 +300,7 @@ public class FileChartRepository implements ChartRepository {
 
     @Override
     public void loadBase(String filename) {
-        readChartsFromFile(filename)
+        readChartsFromBase(filename)
                 .forEach(c -> DESK.addResolving(c, "на столе"));
         print("Загружены карты из " + filename);
     }

@@ -72,7 +72,7 @@ public class CommandLineAstroSource implements AstroSource {
 
             } else if (input.toLowerCase().startsWith("xxx") || input.toLowerCase().startsWith("ххх")) {
                 String order = input.substring(3).trim();
-                FileChartRepository.deleteFile(order);
+                chartRepository.deleteFile(order);
 
             } else if (input.endsWith(">>")) {
                 ChartList loadingList = chartRepository.findList(Storage.extractHeadOrder(input));
@@ -100,7 +100,7 @@ public class CommandLineAstroSource implements AstroSource {
 
     @Override
     public void loadFromFile(String filename) {
-        FileChartRepository.readChartsFromFile(filename)
+        chartRepository.readChartsFromBase(filename)
                 .forEach(c -> Application.DESK.addResolving(c, "на столе"));
         print("Загружены карты из " + filename);
     }

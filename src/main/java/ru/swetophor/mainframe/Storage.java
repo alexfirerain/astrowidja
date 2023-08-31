@@ -16,41 +16,16 @@ import static ru.swetophor.mainframe.Decorator.*;
  * Содержит список всех доступных карт и инструментарий по управлению картами.
  */
 public class Storage {
-    static final String baseDir = "base";
 
-
-    static {
-        Path basePath = Path.of(Storage.baseDir);
-        if (!Files.exists(basePath)) {
-            try {
-                Files.createDirectory(basePath);
-                System.out.printf("Создали папку '%s'%n", Storage.baseDir);
-            } catch (IOException e) {
-                System.out.printf("Не удалось создать папку %s: %s%n", Storage.baseDir, e.getLocalizedMessage());
-            }
-        }
-    }
 
     /**
      * Рабочая папка.
      */
-    protected static File base = new File(baseDir);
+    protected static File base = new File(FileChartRepository.baseDir);
     /**
      * Список списков карт, соответствующих файлам в рабочей папке.
      */
-    protected static List<ChartList> chartLibrary = FileChartRepository.scanLibrary();
-
-    /**
-     * Прочитывает список файлов из рабочей папки.
-     *
-     * @return список имён файлов АстроВидьи, присутствующих в рабочей папке
-     * в момент вызова, сортированный по дате последнего изменения.
-     */
-    protected static List<String> tableOfContents() {
-        return getBaseContent().stream()
-                .map(File::getName)
-                .toList();
-    }
+    protected static List<ChartList> chartLibrary = chartRepository.scanLibrary();
 
     /**
      * Выдаёт строковое представление содержимого рабочей папки.
@@ -59,7 +34,7 @@ public class Storage {
      * файлов *.awb и *.awc в рабочей папке, сортированный по дате изменения.
      */
     public static String listLibrary() {
-        List<String> names = tableOfContents();
+        List<String> names = chartRepository.tableOfContents();
 
         return IntStream.range(0, names.size())
                 .mapToObj(i -> "%d. %s%n"
@@ -79,7 +54,7 @@ public class Storage {
      * или её файл не существует или не является папкой, то пустой список.
      * Файлы в списке сортируются по дате изменения.
      */
-    private static List<File> getBaseContent() {
+    static List<File> getBaseContent() {
         return base == null || !base.exists() || base.listFiles() == null ?
                 new ArrayList<>() :
                 Arrays.stream(Objects.requireNonNull(base.listFiles()))
@@ -91,10 +66,10 @@ public class Storage {
 
 
     public static String reportBaseContentExpanded() {
-        chartLibrary = FileChartRepository.scanLibrary();
+        chartLibrary = chartRepository.scanLibrary();
 
         StringBuilder output = new StringBuilder();
-        List<String> tableOfContents = tableOfContents();
+        List<String> tableOfContents = chartRepository.tableOfContents();
 
         for (int f = 0; f < tableOfContents.size(); f++) {
             String filename = tableOfContents.get(f);
@@ -116,17 +91,13 @@ public class Storage {
     }
 
     private static String[] getNames(String filename) throws IOException {
-        return Files.readString(Path.of(baseDir, filename))
+        return Files.readString(Path.of(FileChartRepository.baseDir, filename))
                 .lines()
                 .filter(line -> line.startsWith("#") && line.length() > 1)
                 .map(line -> line.substring(1).strip())
                 .toArray(String[]::new);
     }
 
-
-    public static String showList(String order) {
-        return chartRepository.findList(order).toString();
-    }
 
     static String extractHeadOrder(String input) {
         return input.substring(0, input.length() - 2).trim();
