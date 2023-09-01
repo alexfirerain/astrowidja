@@ -2,6 +2,9 @@ package ru.swetophor.mainframe;
 
 import ru.swetophor.celestialmechanics.ChartObject;
 
+import static ru.swetophor.mainframe.Application.DESK;
+import static ru.swetophor.mainframe.Decorator.print;
+
 public interface MainUI {
 
     /**
@@ -18,7 +21,24 @@ public interface MainUI {
 
     void listCharts();
 
+    /**
+     * Добавляет карту на {@link Application#DESK стол}.
+     * Если карта с таким именем уже
+     * присутствует, запрашивает решение у юзера.
+     *
+     * @param chart добавляемая карта.
+     * @return  строку, сообщающую состояние операции.
+     */
+    default String addChart(ChartObject chart) {
+        if (mergeResolving(DESK, chart, "на столе"))
+            return "Карта загружена на стол: " + chart;
+        else
+            return "Карта не загружена.";
+    }
+
     void workCycle(ChartObject chartObject);
 
     boolean confirmationAnswer(String prompt);
+
+    boolean mergeResolving(ChartList list, ChartObject nextChart, String listName);
 }

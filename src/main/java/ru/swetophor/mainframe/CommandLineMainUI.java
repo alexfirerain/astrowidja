@@ -20,7 +20,7 @@ public class CommandLineMainUI implements MainUI {
     static final Set<String> noValues = Set.of("нет", "-", "no", "false", "н", "n", "f", "0");
 
     /**
-     * Запрашивает, какую карту со {@link #DESK стола} взять в работу,
+     * Запрашивает, какую карту со {@link Application#DESK стола} взять в работу,
      * т.е. запустить в {@link MainUI#workCycle(ChartObject) цикле процедур для карты}.
      * Если карта не опознана по номеру на столе или имени, сообщает об этом.
      */
@@ -36,27 +36,32 @@ public class CommandLineMainUI implements MainUI {
         workCycle(taken);
     }
 
-    /**
-     * Добавляет карту на {@link Application#DESK стол}.
-     * Если карта с таким именем уже
-     * присутствует, запрашивает решение у юзера.
-     *
-     * @param chart добавляемая карта.
-     */
-    public void addChart(ChartObject chart) {
-//        if (DESK.addResolving(chart, "на столе"))
-        if (mergeResolving(DESK, chart, "на столе"))
-            print("Карта загружена на стол: " + chart);
-    }
+//    /**
+//     * Добавляет карту на {@link Application#DESK стол}.
+//     * Если карта с таким именем уже
+//     * присутствует, запрашивает решение у юзера.
+//     *
+//     * @param chart добавляемая карта.
+//     * @return  строку, сообщающую состояние операции.
+//     */
+//    @Override
+//    public String addChart(ChartObject chart) {
+////        if (DESK.addResolving(chart, "на столе"))
+//        return mergeResolving(DESK, chart, "на столе") ?
+//                "Карта загружена на стол: " + chart :
+//                "Карта не загружена.";
+//    }
 
     /**
-     * Добавляет {@link #DESK в реестр} произвольное количество карт из аргументов.
+     * Добавляет {@link Application#DESK в реестр} произвольное количество карт из аргументов.
      * Если какая-то карта совпадает с уже записанной, у юзера
      * запрашивается решение.
      * @param charts добавляемые карты.
      */
     public void addChart(ChartObject... charts) {
-        Arrays.stream(charts).forEach(this::addChart);
+        Arrays.stream(charts).forEach(chart -> {
+            print(addChart(chart));
+        });
     }
 
     /**
@@ -99,7 +104,7 @@ public class CommandLineMainUI implements MainUI {
                 try {
                     counterpart = DESK.findChart(order, "на столе");
                     if (counterpart instanceof Chart)
-                        addChart(new Synastry((Chart) chartObject, (Chart) counterpart));
+                        print(addChart(new Synastry((Chart) chartObject, (Chart) counterpart)));
                 } catch (ChartNotFoundException e) {
                     print("Карта '%s' не найдена: %s".formatted(order, e.getLocalizedMessage()));
                 }
@@ -111,7 +116,7 @@ public class CommandLineMainUI implements MainUI {
                 try {
                     counterpart = DESK.findChart(order, "на столе");
                     if (counterpart instanceof Chart)
-                        addChart(Mechanics.composite((Chart) chartObject, (Chart) counterpart));
+                        print(addChart(Mechanics.composite((Chart) chartObject, (Chart) counterpart)));
                 } catch (ChartNotFoundException e) {
                     print("Карта '%s' не найдена: %s".formatted(order, e.getLocalizedMessage()));
                 }
@@ -237,7 +242,7 @@ public class CommandLineMainUI implements MainUI {
                 case "2" -> editSettings();
                 case "3" -> astroSource.listsCycle();
                 case "4" -> takeChart();
-                case "5" -> addChart(astroSource.enterChartData());
+                case "5" -> print(addChart(astroSource.enterChartData()));
                 case "0" -> exit = true;
             }
         }
@@ -274,6 +279,7 @@ public class CommandLineMainUI implements MainUI {
      * @return {@code да}, если добавление карты (с переименованием либо с заменой) состоялось,
      *          {@code нет}, если была выбрана отмена.
      */
+    @Override
     public boolean mergeResolving(ChartList list, ChartObject nextChart, String listName) {
         if (!list.contains(nextChart.getName())) {
             return list.addItem(nextChart);
