@@ -9,14 +9,12 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static ru.swetophor.mainframe.Application.*;
 import static ru.swetophor.mainframe.Decorator.print;
-import static ru.swetophor.mainframe.Decorator.printInAsterisk;
 
 public class FileChartRepository implements ChartRepository {
     static final String baseDir = "base";
@@ -36,14 +34,31 @@ public class FileChartRepository implements ChartRepository {
     }
 
     /**
+     * Прочитывает и отдаёт список файлов в рабочей папке.
+     *
+     * @return список файлов *.awb и *.awc в папке базы. Если путь к базе не определён,
+     * или её файл не существует или не является папкой, то пустой список.
+     * Файлы в списке сортируются по дате изменения.
+     */
+    static List<File> getBaseContent() {
+        return Storage.base == null || !Storage.base.exists() || Storage.base.listFiles() == null ?
+                new ArrayList<>() :
+                Arrays.stream(Objects.requireNonNull(Storage.base.listFiles()))
+                        .filter(file -> !file.isDirectory())
+                        .filter(file -> file.getName().endsWith(".awb") || file.getName().endsWith(".awc"))
+                        .sorted(Comparator.comparing(File::lastModified))
+                        .collect(Collectors.toList());
+    }
+
+    /**
      * Прочитывает список файлов из рабочей папки.
      *
      * @return список имён файлов АстроВидьи, присутствующих в рабочей папке
      * в момент вызова, сортированный по дате последнего изменения.
      */
     @Override
-    public List<String> tableOfContents() {
-        return Storage.getBaseContent().stream()
+    public List<String> baseNames() {
+        return getBaseContent().stream()
                 .map(File::getName)
                 .toList();
     }
@@ -55,7 +70,7 @@ public class FileChartRepository implements ChartRepository {
      * @return список списков карт, соответствующих файлам в рабочей папке.
      */
     public List<ChartList> scanLibrary() {
-        return tableOfContents().stream()
+        return baseNames().stream()
                 .map(chartRepository::readChartsFromBase)
                 .toList();
     }
@@ -100,8 +115,8 @@ public class FileChartRepository implements ChartRepository {
 
     public void moveChartsToFile(String source, String target, int... charts) {
         Storage.chartLibrary = scanLibrary();
-        ChartList sourceList = Storage.chartLibrary.get(tableOfContents().indexOf(source));
-        ChartList targetList = Storage.chartLibrary.get(tableOfContents().indexOf(target));
+        ChartList sourceList = Storage.chartLibrary.get(baseNames().indexOf(source));
+        ChartList targetList = Storage.chartLibrary.get(baseNames().indexOf(target));
 
         Arrays.stream(charts)
                 .mapToObj(sourceList::get)
@@ -187,10 +202,10 @@ public class FileChartRepository implements ChartRepository {
         }
     }
 
-    private static String extendFileName(ChartList content, String file) {
-        if (!file.endsWith(".awb") && !file.endsWith(".awc"))
-            file += content.size() == 1 ? ".awc" : ".awb";
-        return file;
+    private static String extendFileName(ChartList content, String filename) {
+        if (!filename.endsWith(".awb") && !filename.endsWith(".awc"))
+            filename += content.size() == 1 ? ".awc" : ".awb";
+        return filename;
     }
 
     /**
@@ -223,7 +238,7 @@ public class FileChartRepository implements ChartRepository {
             }
         else {
             int index;
-            List<String> tableOfContents = tableOfContents();
+            List<String> tableOfContents = baseNames();
             index = IntStream.range(0, tableOfContents.size())
                     .filter(i -> tableOfContents.get(i).startsWith(order))
                     .findFirst()
@@ -238,24 +253,27 @@ public class FileChartRepository implements ChartRepository {
 
     @Override
     public void deleteFile(String fileToDelete) {
+        String report = "Файл %s удалён.".formatted(fileToDelete);
         try {
-            List<String> fileList = tableOfContents();
+            List<String> fileList = baseNames();
             if (fileToDelete.matches("^\\d+")) {
                 int indexToDelete;
                 try {
                     indexToDelete = Integer.parseInt(fileToDelete) - 1;
                     if (indexToDelete < 0 || indexToDelete >= fileList.size()) {
-                        print("в базе всего " + fileList.size() + "файлов");
+                        report = "в базе всего " + fileList.size() + "файлов";
                     } else {
                         String nameToDelete = fileList.get(indexToDelete);
                         if (confirmDeletion(nameToDelete)) {
-                            if (!Files.deleteIfExists(Path.of(baseDir, nameToDelete)))
-                                print("не найдено файла " + nameToDelete);
-                        } else
-                            print("отмена удаления " + nameToDelete);
+                            if (!Files.deleteIfExists(Path.of(baseDir, nameToDelete))) {
+                                report = "не найдено файла " + nameToDelete;
+                            }
+                        } else {
+                            report ="отмена удаления " + nameToDelete;
+                        }
                     }
-                } catch (NumberFormatException e) {
-                    print("не разобрать числа, " + e.getLocalizedMessage());
+                } catch (NumberFormatException e) {         // никогда не выбрасывается
+                    report = "не разобрать числа, " + e.getLocalizedMessage();
                 }
             } else if (fileToDelete.endsWith("***")) {
                 String prefix = fileToDelete.substring(0, fileToDelete.length() - 3);
@@ -263,34 +281,37 @@ public class FileChartRepository implements ChartRepository {
                     if (name.startsWith(prefix)) {
                         if (confirmDeletion(name)) {
                             if (!Files.deleteIfExists(Path.of(baseDir, name))) {
-                                print("не найдено файла " + name);
+                                report = "не найдено файла " + name;
                             } else {
-                                print(name + " удалился");
+                                report = name + " удалился";
                             }
                         } else {
-                            print("отмена удаления " + name);
+                            report = "отмена удаления " + name;
                         }
                     }
                 }
             } else if (fileToDelete.matches("^[\\p{L}\\-. !()+=_\\[\\]№\\d]+$")) {
                 // TODO: нормальную маску допустимого имени файла
                 if (!fileToDelete.endsWith(".awb") && !fileToDelete.endsWith(".awc")) {
-                    if (Files.exists(Path.of(baseDir, fileToDelete + ".awc")))
+                    if (Files.exists(Path.of(baseDir, fileToDelete + ".awc"))) {
                         fileToDelete = fileToDelete + ".awc";
-                    else if (Files.exists(Path.of(baseDir, fileToDelete + ".awb")))
+                    }
+                    else if (Files.exists(Path.of(baseDir, fileToDelete + ".awb"))) {
                         fileToDelete = fileToDelete + ".awb";
+                    }
                 }
                 if (!Files.deleteIfExists(Path.of(baseDir, fileToDelete))) {
-                    print("не найдено файла " + fileToDelete);
+                    report = "не найдено файла " + fileToDelete;
                 }
             } else {
-                print("скорее всего, недопустимое имя файла");
+                report = "скорее всего, недопустимое имя файла";
             }
         } catch (IOException e) {
-            printInAsterisk("ошибка чтения базы, " + e.getLocalizedMessage());
+            report = "ошибка чтения базы, " + e.getLocalizedMessage();
         } catch (Exception e) {
-            printInAsterisk("ошибка удаления файла " + fileToDelete + ": " + e.getLocalizedMessage());
+            report = "ошибка удаления файла " + fileToDelete + ": " + e.getLocalizedMessage();
         }
+        print(report);
     }
 
     private static boolean confirmDeletion(String fileToDelete) {

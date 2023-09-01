@@ -22,7 +22,7 @@ public interface ChartRepository {
 
     List<ChartList> scanLibrary();
 
-    List<String> tableOfContents();
+    List<String> baseNames();
 
     void deleteFile(String order);
 

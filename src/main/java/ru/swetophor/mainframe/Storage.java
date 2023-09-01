@@ -34,7 +34,7 @@ public class Storage {
      * файлов *.awb и *.awc в рабочей папке, сортированный по дате изменения.
      */
     public static String listLibrary() {
-        List<String> names = chartRepository.tableOfContents();
+        List<String> names = chartRepository.baseNames();
 
         return IntStream.range(0, names.size())
                 .mapToObj(i -> "%d. %s%n"
@@ -47,29 +47,12 @@ public class Storage {
         System.out.println(frameText(reportBaseContentExpanded(), 40, '*'));
     }
 
-    /**
-     * Прочитывает и отдаёт список файлов в рабочей папке.
-     *
-     * @return список файлов *.awb и *.awc в папке базы. Если путь к базе не определён,
-     * или её файл не существует или не является папкой, то пустой список.
-     * Файлы в списке сортируются по дате изменения.
-     */
-    static List<File> getBaseContent() {
-        return base == null || !base.exists() || base.listFiles() == null ?
-                new ArrayList<>() :
-                Arrays.stream(Objects.requireNonNull(base.listFiles()))
-                        .filter(file -> !file.isDirectory())
-                        .filter(file -> file.getName().endsWith(".awb") || file.getName().endsWith(".awc"))
-                        .sorted(Comparator.comparing(File::lastModified))
-                        .collect(Collectors.toList());
-    }
-
 
     public static String reportBaseContentExpanded() {
         chartLibrary = chartRepository.scanLibrary();
 
         StringBuilder output = new StringBuilder();
-        List<String> tableOfContents = chartRepository.tableOfContents();
+        List<String> tableOfContents = chartRepository.baseNames();
 
         for (int f = 0; f < tableOfContents.size(); f++) {
             String filename = tableOfContents.get(f);
