@@ -215,7 +215,7 @@ public class CommandLineMainUI implements MainUI {
      * Выводит на экран список карт, лежащих на {@link Application#DESK столе}, то есть загруженных в программу.
      */
     @Override
-    public void listCharts() {
+    public void displayDesk() {
         printInFrame(DESK.isEmpty() ?
                 "Ни одной карты не загружено." :
                 DESK.toString()
@@ -225,7 +225,7 @@ public class CommandLineMainUI implements MainUI {
 
     @Override
     public void mainCycle() {
-        listCharts();
+        displayDesk();
         String MENU = """
                 1. карты на столе
                 2. настройки
@@ -238,7 +238,7 @@ public class CommandLineMainUI implements MainUI {
         while (!exit) {
             printInDoubleFrame(MENU);
             switch (getUserInput()) {
-                case "1" -> listCharts();
+                case "1" -> displayDesk();
                 case "2" -> editSettings();
                 case "3" -> astroSource.listsCycle();
                 case "4" -> takeChart();
@@ -262,7 +262,7 @@ public class CommandLineMainUI implements MainUI {
      */
     @Override
     public String getUserInput() {
-        return KEYBOARD.nextLine();
+        return KEYBOARD.nextLine().trim();
     }
 
     /**

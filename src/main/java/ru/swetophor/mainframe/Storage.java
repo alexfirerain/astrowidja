@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static ru.swetophor.mainframe.Application.chartRepository;
@@ -26,21 +25,6 @@ public class Storage {
      * Список списков карт, соответствующих файлам в рабочей папке.
      */
     protected static List<ChartList> chartLibrary = chartRepository.scanLibrary();
-
-    /**
-     * Выдаёт строковое представление содержимого рабочей папки.
-     *
-     * @return нумерованный (начиная с 1) построчный список
-     * файлов *.awb и *.awc в рабочей папке, сортированный по дате изменения.
-     */
-    public static String listLibrary() {
-        List<String> names = chartRepository.baseNames();
-
-        return IntStream.range(0, names.size())
-                .mapToObj(i -> "%d. %s%n"
-                        .formatted(i + 1, names.get(i)))
-                .collect(Collectors.joining());
-    }
 
     static void fullBaseReport() {
         System.out.println("В базе присутствуют следующие файлы и карты:");
@@ -82,10 +66,4 @@ public class Storage {
     }
 
 
-    static String extractHeadOrder(String input) {
-        return input.substring(0, input.length() - 2).trim();
-    }
-    static String extractTailOrder(String input) {
-        return input.substring(2).trim();
-    }
 }

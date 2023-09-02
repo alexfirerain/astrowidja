@@ -10,6 +10,14 @@ import static ru.swetophor.mainframe.Decorator.*;
 public class CommandLineAstroSource implements AstroSource {
 
 
+    static String extractHeadOrder(String input) {
+        return input.substring(0, input.length() - 2).trim();
+    }
+
+    static String extractTailOrder(String input) {
+        return input.substring(2).trim();
+    }
+
     /**
      * Создаёт карту на основе юзерского ввода.
      * Предлагает ввести координаты в виде "градусы минуты секунды"
@@ -65,7 +73,7 @@ public class CommandLineAstroSource implements AstroSource {
             if (input == null || input.isBlank()) return;
 
             if (input.equals("=")) {
-                printInAsterisk(Storage.listLibrary());
+                printInAsterisk(FileChartRepository.listLibrary());
 
             } else if (input.equals("==")) {
                 printInAsterisk(Storage.reportBaseContentExpanded());
@@ -75,24 +83,24 @@ public class CommandLineAstroSource implements AstroSource {
                 chartRepository.deleteFile(order);
 
             } else if (input.endsWith(">>")) {
-                ChartList loadingList = chartRepository.findList(Storage.extractHeadOrder(input));
+                ChartList loadingList = chartRepository.findList(extractHeadOrder(input));
                 if (loadingList == null || loadingList.isEmpty()) {     // TODO: write a confirmation general utility
                     System.out.println("список не найден или пуст");
                 } else {
                     DESK.clear();
                     DESK.addAll(loadingList);
-                    mainShield.listCharts();
+                    mainShield.displayDesk();
                 }
 
             } else if (input.endsWith("->")) {
-                DESK.addAll(chartRepository.findList(Storage.extractHeadOrder(input)));
-                mainShield.listCharts();
+                DESK.addAll(chartRepository.findList(extractHeadOrder(input)));
+                mainShield.displayDesk();
 
             } else if (input.startsWith(">>")) {
-                chartRepository.dropListToFile(DESK, Storage.extractTailOrder(input));
+                chartRepository.dropListToFile(DESK, extractTailOrder(input));
 
             } else if (input.startsWith("->")) {
-                chartRepository.saveTableToFile(DESK, Storage.extractTailOrder(input));
+                chartRepository.saveTableToFile(DESK, extractTailOrder(input));
             }
         }
 

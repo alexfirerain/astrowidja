@@ -109,7 +109,7 @@ public class Astra {
      * @return заполненный объект Астра.
      */
     public static Astra readFromString(String input) {
-        var elements = input.split(" ");
+        var elements = input.trim().split(" ");
         Double[] coors = new Double[0];
 
         try {

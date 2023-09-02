@@ -19,7 +19,7 @@ public interface MainUI {
 
     String getUserInput();
 
-    void listCharts();
+    void displayDesk();
 
     /**
      * Добавляет карту на {@link Application#DESK стол}.

@@ -51,6 +51,21 @@ public class FileChartRepository implements ChartRepository {
     }
 
     /**
+     * Выдаёт строковое представление содержимого рабочей папки.
+     *
+     * @return нумерованный (начиная с 1) построчный список
+     * файлов *.awb и *.awc в рабочей папке, сортированный по дате изменения.
+     */
+    public static String listLibrary() {
+        List<String> names = chartRepository.baseNames();
+
+        return IntStream.range(0, names.size())
+                .mapToObj(i -> "%d. %s%n"
+                        .formatted(i + 1, names.get(i)))
+                .collect(Collectors.joining());
+    }
+
+    /**
      * Прочитывает список файлов из рабочей папки.
      *
      * @return список имён файлов АстроВидьи, присутствующих в рабочей папке
