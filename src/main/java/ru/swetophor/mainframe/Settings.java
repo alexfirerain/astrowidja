@@ -9,6 +9,7 @@ import static ru.swetophor.celestialmechanics.CelestialMechanics.CIRCLE;
  * Класс-хранилище статических глобальных переменных АстроВидьи.
  */
 public class Settings {
+    // TODO: чтение и сохранение с файлом
     static int edgeHarmonic = 108;
     static int orbsDivisor = 30;
     static boolean halfOrbsForDoubles = true;

@@ -354,6 +354,7 @@ public class Chart extends ChartObject {
         for (int i = 0; i < analysis.size(); i++) {
             output.append("%d".formatted(i));
             List<Pattern> list = analysis.getPatternsForHarmonic(i);
+            if (list == null) continue;
             list.sort(Comparator.comparingDouble(Pattern::getAverageStrength).reversed());
             if (list.isEmpty())
                 output.append("\n\t-\n");
@@ -375,6 +376,7 @@ public class Chart extends ChartObject {
      * @param edgeHarmonic до какой гармоники включительно проводить анализ.
      * @return мапу, где ключами номер гармоники, а значениями списки найденных по ней паттернов.
      */
+    @Override
     public Map<Integer, List<Pattern>> buildPatternAnalysis(int edgeHarmonic) {
 
         return rangeClosed(1, edgeHarmonic)
@@ -387,13 +389,12 @@ public class Chart extends ChartObject {
 
     public PatternAnalysis buildAnalysis(int edgeHarmonic) {
 
-        Map<Integer, List<Pattern>> listMap = rangeClosed(1, edgeHarmonic)
+        return new PatternAnalysis(rangeClosed(1, edgeHarmonic)
                 .boxed()
                 .collect(Collectors
                         .toMap(h -> h,
                                 this::findPatterns,
-                                (a, b) -> b));
-        return new PatternAnalysis(listMap);
+                                (a, b) -> b)));
     }
 
     /**

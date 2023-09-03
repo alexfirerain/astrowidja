@@ -1,9 +1,11 @@
 package ru.swetophor.celestialmechanics;
 
+import ru.swetophor.harmonix.Pattern;
 import ru.swetophor.mainframe.Application;
 import ru.swetophor.mainframe.Decorator;
 
 import java.util.List;
+import java.util.Map;
 
 abstract public class ChartObject {
     protected int ID;
@@ -55,6 +57,8 @@ abstract public class ChartObject {
     public abstract String resonanceAnalysis(int upToHarmonic);
 
     public abstract String resonanceAnalysisVerbose(int upToHarmonic);
+
+    public abstract Map<Integer, List<Pattern>> buildPatternAnalysis(int edgeHarmonic);
 
     public abstract String getString();
 
