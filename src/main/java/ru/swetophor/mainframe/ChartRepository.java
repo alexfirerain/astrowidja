@@ -20,11 +20,13 @@ public interface ChartRepository {
 
     ChartList readChartsFromBase(String baseName);
 
-    List<ChartList> scanLibrary();
+    List<ChartList> getBasesContent();
 
     List<String> baseNames();
 
     void deleteFile(String order);
 
     ChartObject findChart(ChartList list, String order, String location) throws ChartNotFoundException;
+
+    String listLibrary();
 }

@@ -73,10 +73,10 @@ public class CommandLineAstroSource implements AstroSource {
             if (input == null || input.isBlank()) return;
 
             if (input.equals("=")) {
-                printInAsterisk(FileChartRepository.listLibrary());
+                printInAsterisk(chartRepository.listLibrary());
 
             } else if (input.equals("==")) {
-                printInAsterisk(Storage.reportBaseContentExpanded());
+                printInAsterisk(FileChartRepository.reportBaseContentExpanded());
 
             } else if (input.toLowerCase().startsWith("xxx") || input.toLowerCase().startsWith("ххх")) {
                 String order = input.substring(3).trim();

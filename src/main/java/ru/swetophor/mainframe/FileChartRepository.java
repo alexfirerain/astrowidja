@@ -18,6 +18,14 @@ import static ru.swetophor.mainframe.Decorator.print;
 
 public class FileChartRepository implements ChartRepository {
     static final String baseDir = "base";
+    /**
+     * Рабочая папка.
+     */
+    protected static File base = new File(baseDir);
+    /**
+     * Список списков карт, соответствующих файлам в рабочей папке.
+     */
+    protected static List<ChartList> chartLibrary = chartRepository.getBasesContent();
 
     static {
         Path basePath = Path.of(baseDir);
@@ -40,14 +48,39 @@ public class FileChartRepository implements ChartRepository {
      * или её файл не существует или не является папкой, то пустой список.
      * Файлы в списке сортируются по дате изменения.
      */
-    static List<File> getBaseContent() {
-        return Storage.base == null || !Storage.base.exists() || Storage.base.listFiles() == null ?
+    private List<File> getBaseContent() {
+        return base == null || !base.exists() || base.listFiles() == null ?
                 new ArrayList<>() :
-                Arrays.stream(Objects.requireNonNull(Storage.base.listFiles()))
+                Arrays.stream(Objects.requireNonNull(base.listFiles()))
                         .filter(file -> !file.isDirectory())
                         .filter(file -> file.getName().endsWith(".awb") || file.getName().endsWith(".awc"))
                         .sorted(Comparator.comparing(File::lastModified))
                         .collect(Collectors.toList());
+    }
+
+    public static String reportBaseContentExpanded() {
+        chartLibrary = chartRepository.getBasesContent();
+
+        StringBuilder output = new StringBuilder();
+        List<String> tableOfContents = chartRepository.baseNames();
+
+        for (int f = 0; f < tableOfContents.size(); f++) {
+            String filename = tableOfContents.get(f);
+            output.append("%d. ".formatted(f + 1)).append(filename).append(":\n");
+            List<String> chartNames = chartLibrary.get(f).getNames();
+
+            if (filename.endsWith(".awb"))
+                IntStream.range(0, chartNames.size())
+                        .mapToObj(i -> "\t%3d. %s%n"
+                                .formatted(i + 1, chartNames.get(i)))
+                        .forEach(output::append);
+
+            if (filename.endsWith(".awc") && !chartNames.isEmpty())
+                output.append(chartNames.get(0));
+
+        }
+
+        return output.toString();
     }
 
     /**
@@ -56,8 +89,9 @@ public class FileChartRepository implements ChartRepository {
      * @return нумерованный (начиная с 1) построчный список
      * файлов *.awb и *.awc в рабочей папке, сортированный по дате изменения.
      */
-    public static String listLibrary() {
-        List<String> names = chartRepository.baseNames();
+    @Override
+    public String listLibrary() {
+        List<String> names = baseNames();
 
         return IntStream.range(0, names.size())
                 .mapToObj(i -> "%d. %s%n"
@@ -84,9 +118,10 @@ public class FileChartRepository implements ChartRepository {
      *
      * @return список списков карт, соответствующих файлам в рабочей папке.
      */
-    public List<ChartList> scanLibrary() {
+    @Override
+    public List<ChartList> getBasesContent() {
         return baseNames().stream()
-                .map(chartRepository::readChartsFromBase)
+                .map(this::readChartsFromBase)
                 .toList();
     }
 
@@ -96,8 +131,8 @@ public class FileChartRepository implements ChartRepository {
                         .format(new Date()));
     }
 
-    public static String showList(String order) {
-        return chartRepository.findList(order).toString();
+    public String showList(String order) {
+        return findList(order).toString();
     }
 
     /**
@@ -129,9 +164,9 @@ public class FileChartRepository implements ChartRepository {
     }
 
     public void moveChartsToFile(String source, String target, int... charts) {
-        Storage.chartLibrary = scanLibrary();
-        ChartList sourceList = Storage.chartLibrary.get(baseNames().indexOf(source));
-        ChartList targetList = Storage.chartLibrary.get(baseNames().indexOf(target));
+        chartLibrary = getBasesContent();
+        ChartList sourceList = chartLibrary.get(baseNames().indexOf(source));
+        ChartList targetList = chartLibrary.get(baseNames().indexOf(target));
 
         Arrays.stream(charts)
                 .mapToObj(sourceList::get)
@@ -239,7 +274,7 @@ public class FileChartRepository implements ChartRepository {
         ChartList list = new ChartList();
         if (order == null || order.isBlank())
             return list;
-        List<ChartList> base = scanLibrary();
+        List<ChartList> base = getBasesContent();
 
         if (order.matches("^\\d+"))
             try {
