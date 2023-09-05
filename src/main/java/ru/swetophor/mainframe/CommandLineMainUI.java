@@ -29,7 +29,7 @@ public class CommandLineMainUI implements MainUI {
         String order = getUserInput();
         ChartObject taken = null;
         try {
-            taken = chartRepository.findChart(DESK, order, "на столе");
+            taken = findOnDesk(order);
         } catch (ChartNotFoundException e) {
             print("Карты '%s' не найдено: %s".formatted(order, e.getLocalizedMessage()));
         }
@@ -102,7 +102,7 @@ public class CommandLineMainUI implements MainUI {
                 ChartObject counterpart;
                 String order = input.substring(1).trim();
                 try {
-                    counterpart = DESK.findChart(order, "на столе");
+                    counterpart = findOnDesk(order);
                     if (counterpart instanceof Chart)
                         print(addChart(new Synastry((Chart) chartObject, (Chart) counterpart)));
                 } catch (ChartNotFoundException e) {
@@ -114,7 +114,7 @@ public class CommandLineMainUI implements MainUI {
                 ChartObject counterpart;
                 String order = input.substring(1).trim();
                 try {
-                    counterpart = DESK.findChart(order, "на столе");
+                    counterpart = findOnDesk(order);
                     if (counterpart instanceof Chart)
                         print(addChart(Mechanics.composite((Chart) chartObject, (Chart) counterpart)));
                 } catch (ChartNotFoundException e) {
@@ -242,7 +242,7 @@ public class CommandLineMainUI implements MainUI {
                 case "2" -> editSettings();
                 case "3" -> astroSource.listsCycle();
                 case "4" -> takeChart();
-                case "5" -> print(addChart(astroSource.enterChartData()));
+                case "5" -> print(addChart(astroSource.getChartFromUserInput()));
                 case "0" -> exit = true;
             }
         }

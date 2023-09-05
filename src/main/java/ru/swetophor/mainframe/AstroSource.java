@@ -14,5 +14,5 @@ public interface AstroSource {
      */
     void loadFromFile(String filename);
 
-    ChartObject enterChartData();
+    ChartObject getChartFromUserInput();
 }

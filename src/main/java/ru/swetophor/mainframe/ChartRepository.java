@@ -26,7 +26,7 @@ public interface ChartRepository {
 
     void deleteFile(String order);
 
-    ChartObject findChart(ChartList list, String order, String location) throws ChartNotFoundException;
+//    ChartObject findChart(ChartList list, String order, String location) throws ChartNotFoundException;
 
     String listLibrary();
 }

@@ -28,7 +28,7 @@ public class CommandLineAstroSource implements AstroSource {
      * @return {@link Chart одиночную карту}, созданную на основе ввода.
      */
     @Override
-    public Chart enterChartData() {
+    public Chart getChartFromUserInput() {
         print("Название новой карты: ");
         Chart x = new Chart(mainShield.getUserInput());
         for (AstraEntity a : AstraEntity.values()) {
