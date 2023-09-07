@@ -70,200 +70,6 @@ public class ChartList {
     /**
      * Разрешает коллизию, возникающую, если имя добавляемой карты уже содержится
      * в списке. Запрашивает решение у астролога, требуя выбора одного из трёх вариантов:
-     * <li>заменить – удаляет из списка карту с конфликтным именем, возвращает добавляемую;</li>
-     * <li>переименовать – запрашивает новое имя для добавляемой карты, обновляет её и возвращает;</li>
-     * <li>отмена – возвращает {@code null}</li>
-     * <p>
-     * Таким образом, возращаемое функцией значение соответствует той карте, которую
-     * следует слудующим шагом добавить в целевой список.
-     *
-     * @param controversial добавляемая карта, имя которой, как предварительно уже определено,
-     *                      уже присутствует в целевом списке.
-     * @param list          список, куда должны добавляться карты с уникальными именами.
-     * @param listName      название файла или иного списка, в который добавляется карта, в предложном падеже.
-     * @return ту же карту, если выбрано "заменить старую карту",
-     * ту же карту с новым именем, если выбрано "переименовать новую карту",
-     * или {@code пусто}, если выбрано "отменить операцию".
-     */
-    public static ChartObject resolveCollision(ChartObject controversial, List<ChartObject> list, String listName) {
-        ChartObject result = controversial;
-        boolean fixed = false;
-        while (!fixed) {
-            System.out.printf("""
-                                            
-                    Карта с именем %s уже есть:
-                    1. заменить присутствующую в %s
-                    2. добавить под новым именем
-                    0. отмена
-                    """, controversial.getName(), listName);
-            switch (KEYBOARD.nextLine()) {
-                case "1" -> {
-                    list.stream()
-                            .filter(c -> c.getName()
-                                    .equals(controversial.getName()))
-                            .findFirst()
-                            .ifPresent(list::remove);
-                    fixed = true;
-                }
-                case "2" -> {
-                    String name;
-                    do {
-                        System.out.print("Новое имя: ");
-                        name = KEYBOARD.nextLine();         // TODO: допустимое имя
-                        System.out.println();
-                    } while (containsName(list, name));
-                    result.setName(name);
-                    fixed = true;
-                }
-                case "0" -> {
-                    System.out.println("Отмена добавления карты: " + controversial.getName());
-                    result = null;
-                    fixed = true;
-                }
-            }
-        }
-        return controversial;
-    }
-
-    /**
-     * Разрешает коллизию, возникающую, если имя добавляемой карты уже содержится
-     * в списке. Запрашивает решение у астролога, требуя выбора одного из трёх вариантов:
-     * <li>заменить – удаляет из списка карту с конфликтным именем, добавляет новую;</li>
-     * <li>переименовать – запрашивает новое имя для добавляемой карты и добавляет обновлённую;</li>
-     * <li>отмена – карта не добавляется.</li>
-     *
-     * @param controversial добавляемая карта, имя которой, как предварительно уже определено,
-     *                      уже присутствует в целевом списке.
-     * @param list          список, куда должны добавляться карты с уникальными именами.
-     * @param listName      название файла или иного списка, в который добавляется карта, в предложном падеже.
-     * @return {@code true}, если карта (с оригинальным либо обновлённым именем) добавлена в список.
-     */
-    public static boolean mergeResolving(ChartObject controversial, List<ChartObject> list, String listName) {
-        while (true) {
-            System.out.printf("""
-                                                    
-                            Карта с именем '%s' уже есть:
-                            1. заменить присутствующую %s
-                            2. добавить под новым именем
-                            0. отмена
-                            """, controversial.getName(),
-                    listName.startsWith("на ") ?
-                            listName :
-                            "в " + listName);
-            switch (KEYBOARD.nextLine()) {
-                case "1" -> {
-                    list.stream()
-                            .filter(c -> c.getName()
-                                    .equals(controversial.getName()))
-                            .findFirst()
-                            .ifPresent(list::remove);
-                    return list.add(controversial);
-                }
-                case "2" -> {
-                    String name;
-                    do {
-                        System.out.print("Новое имя: ");
-                        name = KEYBOARD.nextLine();         // TODO: допустимое имя
-                        System.out.println();
-                    } while (containsName(list, name));
-                    controversial.setName(name);
-                    return list.add(controversial);
-                }
-                case "0" -> {
-                    System.out.println("Отмена добавления карты: " + controversial.getName());
-                    return false;
-                }
-            }
-        }
-    }
-
-    /**
-     * Разрешает коллизию, возникающую, если имя добавляемой карты уже содержится
-     * в списке. Запрашивает решение у астролога, требуя выбора одного из трёх вариантов:
-     * <li>заменить – удаляет из списка карту с конфликтным именем, добавляет новую;</li>
-     * <li>переименовать – запрашивает новое имя для добавляемой карты и добавляет обновлённую;</li>
-     * <li>отмена – карта не добавляется.</li>
-     *
-     * @param controversial добавляемая карта, имя которой, как предварительно уже определено,
-     *                      уже присутствует в целевом списке.
-     * @param list          список, куда должны добавляться карты с уникальными именами.
-     * @param listName      название файла или иного списка, в который добавляется карта, в предложном падеже.
-     */
-    public static void mergeResolving(ChartObject controversial, ChartList list, String listName) {
-        while (true) {
-            System.out.printf("""
-                                                    
-                            Карта с именем '%s' уже есть:
-                            1. заменить присутствующую %s
-                            2. добавить под новым именем
-                            0. отмена
-                            """, controversial.getName(),
-                    listName.startsWith("на ") ?
-                            listName :
-                            "в " + listName);
-            switch (KEYBOARD.nextLine()) {
-                case "1" -> {
-                    list.remove(controversial.getName());
-                    list.addItem(controversial);
-                    return;
-                }
-                case "2" -> {
-                    String rename;
-                    do {
-                        System.out.print("Новое имя: ");
-                        rename = KEYBOARD.nextLine();         // TODO: допустимое имя
-                        System.out.println();
-                    } while (list.contains(rename));
-                    controversial.setName(rename);
-                    list.addItem(controversial);
-                    return;
-                }
-                case "0" -> {
-                    System.out.println("Отмена добавления карты: " + controversial.getName());
-                    return;
-                }
-            }
-        }
-    }
-
-    public static List<ChartObject> mergeList(List<ChartObject> addingCharts, List<ChartObject> mergingList, String listName) {
-        if (addingCharts == null || addingCharts.isEmpty())
-            return mergingList;
-        if (mergingList == null || mergingList.isEmpty())
-            return addingCharts;
-        for (ChartObject adding : addingCharts)
-            if (containsName(mergingList, adding.getName()))
-                mergeResolving(adding, mergingList, listName);
-            else
-                mergingList.add(adding);
-        return mergingList;
-    }
-
-    /**
-     * Вливает в старый список содержимое нового списка.
-     * Если какая-то из добавляемых карт имеет имя, которое уже содержится в списке,
-     * запускается интерактивная процедура разрешения коллизии.
-     *
-     * @param addingCharts список добавляемых карт.
-     * @param mergingList  список карт, в который добавляется.
-     * @param listName     имя списка, в который добавляется, в предложном падеже
-     *                     (с предлогом "на", если он предпочтительнее предлога "в").
-     * @return старый список, в который добавлены карты из нового списка и из которого,
-     * если пользователем выбирался такой вариант, удалены старые карты с совпавшими именами.
-     */
-    public static ChartList mergeList(ChartList addingCharts, ChartList mergingList, String listName) {
-        if (addingCharts == null || addingCharts.isEmpty())
-            return mergingList;
-        if (mergingList == null || mergingList.isEmpty())
-            return addingCharts;
-        for (ChartObject adding : addingCharts.getCharts())
-                mergingList.addResolving(adding, listName);
-        return mergingList;
-    }
-
-    /**
-     * Разрешает коллизию, возникающую, если имя добавляемой карты уже содержится
-     * в списке. Запрашивает решение у астролога, требуя выбора одного из трёх вариантов:
      * <li>переименовать – запрашивает новое имя для добавляемой карты и добавляет обновлённую;</li>
      * <li>обновить – ставит новую карту на место старой карты с этим именем;</li>
      * <li>заменить – удаляет из списка карту с конфликтным именем, добавляет новую;</li>
@@ -546,7 +352,7 @@ public class ChartList {
     /**
      * Удаляет из списка карт все элементы, которые не присутствуют в указанном собрании.
      *
-     * @param collection любой собрание карт-элементов.
+     * @param collection любое собрание карт-элементов.
      * @return {@code истинно}, если этот список изменился в результате вызова.
      */
     public boolean retainAll(Collection<ChartObject> collection) {
@@ -585,7 +391,7 @@ public class ChartList {
      * @return да, если все суть, нет, если хотя бы какой-то нет.
      */
     public boolean containsAll(Collection<ChartObject> collection) {
-        return charts.containsAll(collection);
+        return new HashSet<>(charts).containsAll(collection);
     }
 
     /**

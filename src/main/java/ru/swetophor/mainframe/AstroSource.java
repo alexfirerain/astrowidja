@@ -15,4 +15,6 @@ public interface AstroSource {
     void loadFromFile(String filename);
 
     ChartObject getChartFromUserInput();
+
+    ChartObject findChart(ChartList list, String order, String listDesc) throws ChartNotFoundException;
 }

@@ -23,8 +23,10 @@ public class CommandLineMainUI implements MainUI {
      * Запрашивает, какую карту со {@link Application#DESK стола} взять в работу,
      * т.е. запустить в {@link MainUI#workCycle(ChartObject) цикле процедур для карты}.
      * Если карта не опознана по номеру на столе или имени, сообщает об этом.
+     *
+     * @return  найденную по номеру или имени карту со стола, или {@code ПУСТО}, если не найдено.
      */
-    public void takeChart() {
+    public ChartObject selectChartOnDesk() {
         print("Укажите карту по имени или номеру на столе: ");
         String order = getUserInput();
         ChartObject taken = null;
@@ -33,7 +35,7 @@ public class CommandLineMainUI implements MainUI {
         } catch (ChartNotFoundException e) {
             print("Карты '%s' не найдено: %s".formatted(order, e.getLocalizedMessage()));
         }
-        workCycle(taken);
+        return taken;
     }
 
 //    /**
@@ -59,9 +61,7 @@ public class CommandLineMainUI implements MainUI {
      * @param charts добавляемые карты.
      */
     public void addChart(ChartObject... charts) {
-        Arrays.stream(charts).forEach(chart -> {
-            print(addChart(chart));
-        });
+        Arrays.stream(charts).forEach(chart -> print(addChart(chart)));
     }
 
     /**
@@ -241,7 +241,7 @@ public class CommandLineMainUI implements MainUI {
                 case "1" -> displayDesk();
                 case "2" -> editSettings();
                 case "3" -> astroSource.listsCycle();
-                case "4" -> takeChart();
+                case "4" -> workCycle(selectChartOnDesk());
                 case "5" -> print(addChart(astroSource.getChartFromUserInput()));
                 case "0" -> exit = true;
             }
