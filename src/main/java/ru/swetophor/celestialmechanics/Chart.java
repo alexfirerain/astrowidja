@@ -351,14 +351,18 @@ public class Chart extends ChartObject {
         StringBuilder output = new StringBuilder(
                 "Резонансные группы для %s до гармоники %d с исходным орбисом 1/%d%n"
                         .formatted(name, analysis.size(), Settings.getOrbDivisor()));
-        for (int i = 0; i < analysis.size(); i++) {
-            output.append("%d".formatted(i));
+        int holeCount = 0;
+        for (int i = 1; i <= analysis.size() + holeCount; i++) {
             List<Pattern> list = analysis.getPatternsForHarmonic(i);
-            if (list == null) continue;
-            list.sort(Comparator.comparingDouble(Pattern::getAverageStrength).reversed());
-            if (list.isEmpty())
+            if (list == null) {
+                holeCount++;
+                continue;
+            }
+            output.append("%d".formatted(i));
+            if (list.isEmpty()) {
                 output.append("\n\t-\n");
-            else {
+            } else {
+                list.sort(Comparator.comparingDouble(Pattern::getAverageStrength).reversed());
                 output.append(" %.0f%% (%d):%n".formatted());
             }
 

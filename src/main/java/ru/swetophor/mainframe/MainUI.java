@@ -2,8 +2,8 @@ package ru.swetophor.mainframe;
 
 import ru.swetophor.celestialmechanics.ChartObject;
 
-import static ru.swetophor.mainframe.Application.DESK;
-import static ru.swetophor.mainframe.Decorator.print;
+import static ru.swetophor.mainframe.Application.*;
+import static ru.swetophor.mainframe.CommandLineAstroSource.mergeResolving;
 
 public interface MainUI {
 
@@ -30,7 +30,7 @@ public interface MainUI {
      * @return  строку, сообщающую состояние операции.
      */
     default String addChart(ChartObject chart) {
-        if (mergeResolving(DESK, chart, "на столе"))
+        if (astroSource.mergeChartIntoList(DESK, chart, "на столе"))
             return "Карта загружена на стол: " + chart;
         else
             return "Карта не загружена.";
@@ -40,5 +40,5 @@ public interface MainUI {
 
     boolean confirmationAnswer(String prompt);
 
-    boolean mergeResolving(ChartList list, ChartObject nextChart, String listName);
+
 }

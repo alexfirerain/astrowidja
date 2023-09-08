@@ -3,6 +3,7 @@ package ru.swetophor.harmonix;
 import ru.swetophor.celestialmechanics.ChartObject;
 
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -10,7 +11,7 @@ import java.util.stream.Collectors;
 /**
  * Удобная обёртка для представления результатов гармонического анализа карты.
  */
-public class PatternAnalysis {
+public class PatternAnalysis implements Iterable<Map.Entry<Integer, List<Pattern>>> {
     private final Map<Integer, List<Pattern>> listMap;
 
     public PatternAnalysis(Map<Integer, List<Pattern>> listMap) {
@@ -56,5 +57,16 @@ public class PatternAnalysis {
                     .collect(Collectors.joining());
     }
 
+    /**
+     * Returns an iterator over elements of type {@code T}.
+     *
+     * @return an Iterator.
+     */
+    @Override
+    public Iterator<Map.Entry<Integer, List<Pattern>>> iterator() {
+        return listMap.entrySet().iterator();
+    }
+
+//    public Map.Entry<Integer, List<Pattern>> get
 
 }

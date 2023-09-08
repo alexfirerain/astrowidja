@@ -17,4 +17,6 @@ public interface AstroSource {
     ChartObject getChartFromUserInput();
 
     ChartObject findChart(ChartList list, String order, String listDesc) throws ChartNotFoundException;
+
+    boolean mergeChartIntoList(ChartList list, ChartObject nextChart, String listName);
 }

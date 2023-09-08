@@ -47,7 +47,7 @@ public class CommandLineAstroSource implements AstroSource {
                     listName.startsWith("на ") ?
                             listName :
                             "в " + listName);
-            switch (KEYBOARD.nextLine()) {
+            switch (mainShield.getUserInput()) {
                 case "1" -> {
                     list.stream()
                             .filter(c -> c.getName()
@@ -60,7 +60,7 @@ public class CommandLineAstroSource implements AstroSource {
                     String name;
                     do {
                         System.out.print("Новое имя: ");
-                        name = KEYBOARD.nextLine();         // TODO: допустимое имя
+                        name = mainShield.getUserInput();         // TODO: допустимое имя
                         System.out.println();
                     } while (ChartList.containsName(list, name));
                     controversial.setName(name);
@@ -98,7 +98,7 @@ public class CommandLineAstroSource implements AstroSource {
                     listName.startsWith("на ") ?
                             listName :
                             "в " + listName);
-            switch (KEYBOARD.nextLine()) {
+            switch (mainShield.getUserInput()) {
                 case "1" -> {
                     list.remove(controversial.getName());
                     list.addItem(controversial);
@@ -108,7 +108,7 @@ public class CommandLineAstroSource implements AstroSource {
                     String rename;
                     do {
                         System.out.print("Новое имя: ");
-                        rename = KEYBOARD.nextLine();         // TODO: допустимое имя
+                        rename = mainShield.getUserInput();         // TODO: допустимое имя
                         System.out.println();
                     } while (list.contains(rename));
                     controversial.setName(rename);
@@ -130,8 +130,8 @@ public class CommandLineAstroSource implements AstroSource {
      * <li>переименовать – запрашивает новое имя для добавляемой карты, обновляет её и возвращает;</li>
      * <li>отмена – возвращает {@code null}</li>
      * <p>
-     * Таким образом, возращаемое функцией значение соответствует той карте, которую
-     * следует слудующим шагом добавить в целевой список.
+     * Таким образом, возвращаемое функцией значение соответствует той карте, которую
+     * следует следующим шагом добавить в целевой список.
      *
      * @param controversial добавляемая карта, имя которой, как предварительно уже определено,
      *                      уже присутствует в целевом списке.
@@ -152,7 +152,7 @@ public class CommandLineAstroSource implements AstroSource {
                     2. добавить под новым именем
                     0. отмена
                     """, controversial.getName(), listName);
-            switch (KEYBOARD.nextLine()) {
+            switch (mainShield.getUserInput()) {
                 case "1" -> {
                     list.stream()
                             .filter(c -> c.getName()
@@ -165,7 +165,7 @@ public class CommandLineAstroSource implements AstroSource {
                     String name;
                     do {
                         System.out.print("Новое имя: ");
-                        name = KEYBOARD.nextLine();         // TODO: допустимое имя
+                        name = mainShield.getUserInput();         // TODO: допустимое имя
                         System.out.println();
                     } while (ChartList.containsName(list, name));
                     result.setName(name);
@@ -349,4 +349,60 @@ public class CommandLineAstroSource implements AstroSource {
                 .forEach(c -> Application.DESK.addResolving(c, "на столе"));
         print("Загружены карты из " + filename);
     }
+
+    /**
+     * Добавляет карту к списку. Если имя добавляемой карты в нём уже содержится,
+     * запрашивает решение у астролога, требуя выбора одного из трёх вариантов:
+     * <li>переименовать – запрашивает новое имя для добавляемой карты и добавляет обновлённую;</li>
+     * <li>обновить – ставит новую карту на место старой карты с этим именем;</li>
+     * <li>заменить – удаляет из списка карту с конфликтным именем, добавляет новую;</li>
+     * <li>отмена – карта не добавляется.</li>
+     *
+     * @param nextChart добавляемая карта.
+     * @param listName      название файла или иного списка, в который добавляется карта, в предложном падеже.
+     * @return {@code ДА}, если добавление карты (с переименованием либо с заменой) состоялось,
+     *          или {@code НЕТ}, если была выбрана отмена.
+     */
+    @Override
+    public boolean mergeChartIntoList(ChartList list, ChartObject nextChart, String listName) {
+        if (!list.contains(nextChart.getName())) {
+            return list.addItem(nextChart);
+        }
+        while (true) {
+            print("""
+                                                    
+                            Карта с именем '%s' уже есть %s:
+                            1. добавить под новым именем
+                            2. заменить присутствующую в списке
+                            3. удалить старую, добавить новую в конец списка
+                            0. отмена
+                            """.formatted(nextChart.getName(),
+                    listName.startsWith("на ") ? listName : "в " + listName));
+            switch (mainShield.getUserInput()) {
+                case "1" -> {
+                    String rename;
+                    do {
+                        print("Новое имя: ");
+                        rename = mainShield.getUserInput();         // TODO: допустимое имя
+                        print("\n");
+                    } while (list.contains(rename));
+                    nextChart.setName(rename);
+                    return list.addItem(nextChart);
+                }
+                case "2" -> {
+                    list.setItem(list.indexOf(nextChart.getName()), nextChart);
+                    return true;
+                }
+                case "3" -> {
+                    list.remove(nextChart.getName());
+                    return list.addItem(nextChart);
+                }
+                case "0" -> {
+                    print("Отмена добавления карты: " + nextChart.getName());
+                    return false;
+                }
+            }
+        }
+    }
+
 }
