@@ -27,10 +27,7 @@ public class PatternAnalysis implements Iterable<Map.Entry<Integer, List<Pattern
     }
 
     public List<Pattern> getPatternsForHarmonic(int id) {
-        List<Pattern> patterns = listMap.get(id);
-        if (patterns != null)
-            patterns.sort(Comparator.comparingDouble(Pattern::getAverageStrength).reversed()); // ? надо ли здесь
-        return patterns;
+        return listMap.get(id);
     }
 
     public Double getAverageStrengthForHarmonic(int id) {
@@ -67,6 +64,11 @@ public class PatternAnalysis implements Iterable<Map.Entry<Integer, List<Pattern
         return listMap.entrySet().iterator();
     }
 
-//    public Map.Entry<Integer, List<Pattern>> get
+    public String[] getReportFor(int i) {
+        String[] data = new String[5];
+        data[0] = String.valueOf(i);
+
+        return data;
+    }
 
 }

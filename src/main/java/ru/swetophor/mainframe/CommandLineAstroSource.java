@@ -8,19 +8,10 @@ import ru.swetophor.celestialmechanics.ChartObject;
 import java.util.List;
 
 import static ru.swetophor.mainframe.Application.*;
-import static ru.swetophor.mainframe.CommandLineMainUI.KEYBOARD;
 import static ru.swetophor.mainframe.Decorator.*;
 
 public class CommandLineAstroSource implements AstroSource {
 
-
-    static String extractHeadOrder(String input) {
-        return input.substring(0, input.length() - 2).trim();
-    }
-
-    static String extractTailOrder(String input) {
-        return input.substring(2).trim();
-    }
 
     /**
      * Разрешает коллизию, возникающую, если имя добавляемой карты уже содержится
@@ -116,7 +107,7 @@ public class CommandLineAstroSource implements AstroSource {
                     return;
                 }
                 case "0" -> {
-                    System.out.println("Отмена добавления карты: " + controversial.getName());
+                    print("Отмена добавления карты: " + controversial.getName());
                     return;
                 }
             }
@@ -203,8 +194,8 @@ public class CommandLineAstroSource implements AstroSource {
      * @param mergingList  список карт, в который добавляется.
      * @param listName     имя списка, в который добавляется, в предложном падеже
      *                     (с предлогом "на", если он предпочтительнее предлога "в").
-     * @return старый список, в который добавлены карты из нового списка, и из которого,
-     * если пользователем выбирался такой вариант, удалены старые карты с совпавшими именами.
+     * @return старый список, в который добавлены карты из нового списка, и из которого
+     * удалены карты с совпавшими именами, если пользователем выбирался такой вариант.
      */
     public static ChartList mergeList(ChartList addingCharts, ChartList mergingList, String listName) {
         if (addingCharts == null || addingCharts.isEmpty())
@@ -268,12 +259,13 @@ public class CommandLineAstroSource implements AstroSource {
     public Chart getChartFromUserInput() {
         print("Название новой карты: ");
         Chart x = new Chart(mainShield.getUserInput());
-        for (AstraEntity a : AstraEntity.values()) {
-            print(a.name + ": ");
+        for (AstraEntity a : DEFAULT_ASTRO_SET) {
+            print("%s: ".formatted(a.name));
             String input = mainShield.getUserInput();
             if (input.isBlank())
                 continue;
-            x.addAstraFromString(a.name + " " + input);
+            x.addAstraFromString("%s %s"
+                    .formatted(a.name, input));
             print();
         }
         print("Ввод дополнительных астр в формате 'название градусы минуты секунды'");
@@ -285,63 +277,7 @@ public class CommandLineAstroSource implements AstroSource {
         return x;
     }
 
-    @Override
-    public void listsCycle() {
-        String LIST_MENU = """
-                ("список" — список по номеру или имени,
-                 "карты" — карты по номеру или имени через пробел)
-                    =               = список файлов в базе
-                    ==              = полный список файлов и карт
-                    ххх список      = удалить файл
-                    
-                    список >>       = заменить стол на список
-                    список ->       = добавить список ко столу
-                    >> список       = заменить файл столом
-                    -> список       = добавить стол к списку
-                    
-                    карты -> список         = добавить карты со стола к списку
-                    список:карты -> список  = переместить карты из списка в список
-                    список:карты +> список  = копировать карты из списка в список
-                """;
-        printInSemiDouble(LIST_MENU);
-        String input;
-        while (true) {
-            input = mainShield.getUserInput();
-            if (input == null || input.isBlank()) return;
 
-            if (input.equals("=")) {
-                printInAsterisk(chartRepository.listLibrary());
-
-            } else if (input.equals("==")) {
-                printInAsterisk(FileChartRepository.reportBaseContentExpanded());
-
-            } else if (input.toLowerCase().startsWith("xxx") || input.toLowerCase().startsWith("ххх")) {
-                String order = input.substring(3).trim();
-                chartRepository.deleteFile(order);
-
-            } else if (input.endsWith(">>")) {
-                ChartList loadingList = chartRepository.findList(extractHeadOrder(input));
-                if (loadingList == null || loadingList.isEmpty()) {     // TODO: write a confirmation general utility
-                    System.out.println("список не найден или пуст");
-                } else {
-                    DESK.clear();
-                    DESK.addAll(loadingList);
-                    mainShield.displayDesk();
-                }
-
-            } else if (input.endsWith("->")) {
-                DESK.addAll(chartRepository.findList(extractHeadOrder(input)));
-                mainShield.displayDesk();
-
-            } else if (input.startsWith(">>")) {
-                chartRepository.dropListToFile(DESK, extractTailOrder(input));
-
-            } else if (input.startsWith("->")) {
-                chartRepository.saveTableToFile(DESK, extractTailOrder(input));
-            }
-        }
-
-    }
 
     @Override
     public void loadFromFile(String filename) {
@@ -377,7 +313,8 @@ public class CommandLineAstroSource implements AstroSource {
                             3. удалить старую, добавить новую в конец списка
                             0. отмена
                             """.formatted(nextChart.getName(),
-                    listName.startsWith("на ") ? listName : "в " + listName));
+                               listName.startsWith("на ") ?
+                                       listName : "в " + listName));
             switch (mainShield.getUserInput()) {
                 case "1" -> {
                     String rename;

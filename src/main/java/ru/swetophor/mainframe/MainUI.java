@@ -2,8 +2,8 @@ package ru.swetophor.mainframe;
 
 import ru.swetophor.celestialmechanics.ChartObject;
 
-import static ru.swetophor.mainframe.Application.*;
-import static ru.swetophor.mainframe.CommandLineAstroSource.mergeResolving;
+import static ru.swetophor.mainframe.Application.DESK;
+import static ru.swetophor.mainframe.Application.astroSource;
 
 public interface MainUI {
 
@@ -11,6 +11,9 @@ public interface MainUI {
      * Основное меню и основной рабочий цикл АстроВидьи.
      */
     void mainCycle();
+
+
+    void listsCycle();
 
     /**
      * Выводит сообщение при старте Астровидьи.

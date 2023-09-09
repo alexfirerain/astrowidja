@@ -5,7 +5,7 @@ import ru.swetophor.celestialmechanics.ChartObject;
 public interface AstroSource {
 
 
-    void listsCycle();
+
 
     /**
      * Прочитывает карты из файла в папке базы данных на {@link Application#DESK стол} {@link Application АстроВидьи}.

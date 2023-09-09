@@ -39,7 +39,7 @@ public class Application {
      */
     protected static final ChartList DESK = new ChartList();
 
-    public final AstroSet DEFAULT_ASTRO_SET = new AstroSet(AstraEntity.values());
+    public static final AstroSet DEFAULT_ASTRO_SET = new AstroSet(AstraEntity.values());
 
 
     private static String getChartStat(ChartObject chart) {

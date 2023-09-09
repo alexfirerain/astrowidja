@@ -19,6 +19,12 @@ public class CommandLineMainUI implements MainUI {
     static final Set<String> yesValues = Set.of("да", "+", "yes", "true", "д", "y", "t", "1");
     static final Set<String> noValues = Set.of("нет", "-", "no", "false", "н", "n", "f", "0");
 
+    private static String extractOrder(String input, int offset) {
+       return offset >= 0 ?
+               input.trim().substring(offset).trim() :
+               input.trim().substring(0, input.length() + offset).trim();
+   }
+
     /**
      * Запрашивает, какую карту со {@link Application#DESK стола} взять в работу,
      * т.е. запустить в {@link MainUI#workCycle(ChartObject) цикле процедур для карты}.
@@ -224,7 +230,7 @@ public class CommandLineMainUI implements MainUI {
             switch (getUserInput()) {
                 case "1" -> displayDesk();
                 case "2" -> editSettings();
-                case "3" -> astroSource.listsCycle();
+                case "3" -> listsCycle();
                 case "4" -> workCycle(selectChartOnDesk());
                 case "5" -> print(addChart(astroSource.getChartFromUserInput()));
                 case "0" -> exit = true;
@@ -301,5 +307,62 @@ public class CommandLineMainUI implements MainUI {
                 }
             }
         }
+    }
+
+    @Override
+    public void listsCycle() {
+        String LIST_MENU = """
+                ("список" — список по номеру или имени,
+                 "карты" — карты по номеру или имени через пробел)
+                    =               = список файлов в базе
+                    ==              = полный список файлов и карт
+                    ххх список      = удалить файл
+                    
+                    список >>       = заменить стол на список
+                    список ->       = добавить список ко столу
+                    >> список       = заменить файл столом
+                    -> список       = добавить стол к списку
+                    
+                    карты -> список         = добавить карты со стола к списку
+                    список:карты -> список  = переместить карты из списка в список
+                    список:карты +> список  = копировать карты из списка в список
+                """;
+        printInSemiDouble(LIST_MENU);
+        while (true) {
+            String input = getUserInput();
+
+            if (input == null || input.isBlank()) return;
+
+            if (input.equals("=")) {
+                printInAsterisk(chartRepository.listLibrary());
+
+            } else if (input.equals("==")) {
+                printInAsterisk(FileChartRepository.reportBaseContentExpanded());
+
+            } else if (input.toLowerCase().startsWith("xxx") || input.toLowerCase().startsWith("ххх")) {
+                chartRepository.deleteFile(extractOrder(input, 3));
+
+            } else if (input.endsWith(">>")) {
+                ChartList loadingList = chartRepository.findList(extractOrder(input, -2));
+                if (loadingList == null || loadingList.isEmpty()) {     // TODO: write a confirmation general utility
+                    print("список не найден или пуст");
+                } else {
+                    DESK.clear();
+                    DESK.addAll(loadingList);
+                    displayDesk();
+                }
+
+            } else if (input.endsWith("->")) {
+                DESK.addAll(chartRepository.findList(extractOrder(input, -2)));
+                displayDesk();
+
+            } else if (input.startsWith(">>")) {
+                chartRepository.dropListToFile(DESK, extractOrder(input, 2));
+
+            } else if (input.startsWith("->")) {
+                chartRepository.saveTableToFile(DESK, extractOrder(input, 2));
+            }
+        }
+
     }
 }

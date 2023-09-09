@@ -190,8 +190,8 @@ public class Chart extends ChartObject {
      *
      * @param harmonic гармоника, по которой выделяются паттерны.
      * @return список паттернов из астр этой карты, резонирующих
-     * по указанной гармонике. Если ни одного паттерна не обнаруживается,
-     * то пустой список.
+     * по указанной гармонике, сортированный по средней силе.
+     * Если ни одного паттерна не обнаруживается, то пустой список.
      */
     public List<Pattern> findPatterns(int harmonic) {
         List<Pattern> patterns = new ArrayList<>();
@@ -201,6 +201,7 @@ public class Chart extends ChartObject {
                 .mapToObj(i -> gatherResonants(i, harmonic, analyzed))
                 .filter(Pattern::isValid)
                 .forEach(patterns::add);
+        patterns.sort(Comparator.comparingDouble(Pattern::getAverageStrength).reversed());
         return patterns;
     }
 
@@ -354,16 +355,18 @@ public class Chart extends ChartObject {
         int holeCount = 0;
         for (int i = 1; i <= analysis.size() + holeCount; i++) {
             List<Pattern> list = analysis.getPatternsForHarmonic(i);
+            String[] data = analysis.getReportFor(i);
             if (list == null) {
                 holeCount++;
                 continue;
             }
-            output.append("%d".formatted(i));
+            output.append("%s".formatted(data[0]));
             if (list.isEmpty()) {
                 output.append("\n\t-\n");
             } else {
-                list.sort(Comparator.comparingDouble(Pattern::getAverageStrength).reversed());
-                output.append(" %.0f%% (%d):%n".formatted());
+                output.append(" %.0f%% (%d):%n"
+                        .formatted(analysis.getAverageStrengthForPattern(list),
+                                ));
             }
 
 
@@ -374,8 +377,9 @@ public class Chart extends ChartObject {
     }
 
     /**
-     * Простраивает и возвращает для данной карты список всех найденных паттернов
-     * по гармоникам от первой до указанной.
+     * Простраивает и возвращает для данной карты списки всех найденных паттернов
+     * по гармоникам от первой до указанной. Представляется в виде мапы, где ключом
+     * номер гармоники, а значениями списки паттернов по ней, сортированные по убыванию средней силы.
      *
      * @param edgeHarmonic до какой гармоники включительно проводить анализ.
      * @return мапу, где ключами номер гармоники, а значениями списки найденных по ней паттернов.
