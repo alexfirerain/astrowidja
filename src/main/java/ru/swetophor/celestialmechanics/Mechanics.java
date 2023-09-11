@@ -271,15 +271,12 @@ public class Mechanics {
 
         if (sun != null) {
             if (mercury != null &&
-                    getArc(sun, mercury) > 30.0) {
-                mercury.advanceCoordinateBy(HALF_CIRCLE);
-                composite.addAstra(mercury);
-            }
+                    getArc(sun, mercury) > 30.0)
+                composite.addAstra(mercury.advanceCoordinateBy(HALF_CIRCLE));
+
             if (venus != null &&
-                    getArc(sun, venus) > 60.0) {
-                venus.advanceCoordinateBy(HALF_CIRCLE);
-                composite.addAstra(venus);
-            }
+                    getArc(sun, venus) > 60.0)
+                composite.addAstra(venus.advanceCoordinateBy(HALF_CIRCLE));
         }
 
         return composite;

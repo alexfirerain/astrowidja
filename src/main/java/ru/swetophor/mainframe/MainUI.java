@@ -13,7 +13,7 @@ public interface MainUI {
     void mainCycle();
 
 
-    void listsCycle();
+    void libraryCycle();
 
     /**
      * Выводит сообщение при старте Астровидьи.
@@ -44,4 +44,5 @@ public interface MainUI {
     boolean confirmationAnswer(String prompt);
 
 
+    void addChartFromUserInput();
 }

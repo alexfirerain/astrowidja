@@ -1,5 +1,6 @@
 package ru.swetophor.mainframe;
 
+import ru.swetophor.celestialmechanics.Chart;
 import ru.swetophor.celestialmechanics.ChartObject;
 
 public interface AstroSource {
@@ -14,7 +15,7 @@ public interface AstroSource {
      */
     void loadFromFile(String filename);
 
-    ChartObject getChartFromUserInput();
+    Chart getChartFromUserInput(String data);
 
     ChartObject findChart(ChartList list, String order, String listDesc) throws ChartNotFoundException;
 

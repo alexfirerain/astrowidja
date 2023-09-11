@@ -476,7 +476,7 @@ public class ChartList {
      *
      * @param name имя карты, которую нужно удалить.
      * @throws IndexOutOfBoundsException если карта
-     *                                   с указанным номером отсутствует.
+     *                                   с указанным именем отсутствует.
      */
     public void remove(String name) {
         int index = names.indexOf(name);

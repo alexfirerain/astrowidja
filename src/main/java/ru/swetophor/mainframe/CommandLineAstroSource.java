@@ -256,25 +256,8 @@ public class CommandLineAstroSource implements AstroSource {
      * @return {@link Chart одиночную карту}, созданную на основе ввода.
      */
     @Override
-    public Chart getChartFromUserInput() {
-        print("Название новой карты: ");
-        Chart x = new Chart(mainShield.getUserInput());
-        for (AstraEntity a : DEFAULT_ASTRO_SET) {
-            print("%s: ".formatted(a.name));
-            String input = mainShield.getUserInput();
-            if (input.isBlank())
-                continue;
-            x.addAstraFromString("%s %s"
-                    .formatted(a.name, input));
-            print();
-        }
-        print("Ввод дополнительных астр в формате 'название градусы минуты секунды'");
-        String input = mainShield.getUserInput();
-        while (!input.isBlank()) {
-            x.addAstraFromString(input);
-            input = mainShield.getUserInput();
-        }
-        return x;
+    public Chart getChartFromUserInput(String data) {
+        return Chart.readFromString(data);
     }
 
 

@@ -14,12 +14,8 @@ public class AstroSet implements Iterable<AstraEntity> {
         astras = values;
     }
 
-    public AstraEntity[] getAstras() {
+    public AstraEntity[] values() {
         return astras;
-    }
-
-    public void setAstras(AstraEntity[] astras) {
-        this.astras = astras;
     }
 
     /**

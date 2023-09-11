@@ -325,9 +325,9 @@ public class Chart extends ChartObject {
             output.append("%d".formatted(entry.getKey()));
 
             List<Pattern> list = entry.getValue();
-            list.sort(Comparator
-                    .comparingDouble(Pattern::getAverageStrength)
-                    .reversed());
+//            list.sort(Comparator
+//                    .comparingDouble(Pattern::getAverageStrength)
+//                    .reversed());
 
             output.append(list.isEmpty() ?
                     ":\n" :
@@ -364,9 +364,8 @@ public class Chart extends ChartObject {
             if (list.isEmpty()) {
                 output.append("\n\t-\n");
             } else {
-                output.append(" %.0f%% (%d):%n"
-                        .formatted(analysis.getAverageStrengthForPattern(list),
-                                ));
+                output.append(" %s (%s):%n"
+                        .formatted(data[1], data[2]));
             }
 
 

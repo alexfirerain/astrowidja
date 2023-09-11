@@ -67,6 +67,10 @@ public class PatternAnalysis implements Iterable<Map.Entry<Integer, List<Pattern
     public String[] getReportFor(int i) {
         String[] data = new String[5];
         data[0] = String.valueOf(i);
+//        data[1] = ;
+//        data[2] = ;
+//        data[3] = ;
+//        data[4] = ;
 
         return data;
     }

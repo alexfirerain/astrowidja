@@ -1,13 +1,8 @@
 package ru.swetophor.mainframe;
 
-import ru.swetophor.celestialmechanics.Chart;
-import ru.swetophor.celestialmechanics.ChartObject;
-import ru.swetophor.celestialmechanics.Mechanics;
-import ru.swetophor.celestialmechanics.Synastry;
+import ru.swetophor.celestialmechanics.*;
 
-import java.util.Arrays;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 import static ru.swetophor.mainframe.Application.*;
 import static ru.swetophor.mainframe.Decorator.*;
@@ -19,7 +14,7 @@ public class CommandLineMainUI implements MainUI {
     static final Set<String> yesValues = Set.of("да", "+", "yes", "true", "д", "y", "t", "1");
     static final Set<String> noValues = Set.of("нет", "-", "no", "false", "н", "n", "f", "0");
 
-    private static String extractOrder(String input, int offset) {
+    private String extractOrder(String input, int offset) {
        return offset >= 0 ?
                input.trim().substring(offset).trim() :
                input.trim().substring(0, input.length() + offset).trim();
@@ -35,13 +30,12 @@ public class CommandLineMainUI implements MainUI {
     public ChartObject selectChartOnDesk() {
         print("Укажите карту по имени или номеру на столе: ");
         String order = getUserInput();
-        ChartObject taken = null;
         try {
-            taken = findOnDesk(order);
+            return findOnDesk(order);
         } catch (ChartNotFoundException e) {
             print("Карты '%s' не найдено: %s".formatted(order, e.getLocalizedMessage()));
+            return null;
         }
-        return taken;
     }
 
     /**
@@ -230,9 +224,9 @@ public class CommandLineMainUI implements MainUI {
             switch (getUserInput()) {
                 case "1" -> displayDesk();
                 case "2" -> editSettings();
-                case "3" -> listsCycle();
+                case "3" -> libraryCycle();
                 case "4" -> workCycle(selectChartOnDesk());
-                case "5" -> print(addChart(astroSource.getChartFromUserInput()));
+                case "5" -> addChartFromUserInput();
                 case "0" -> exit = true;
             }
         }
@@ -310,7 +304,7 @@ public class CommandLineMainUI implements MainUI {
     }
 
     @Override
-    public void listsCycle() {
+    public void libraryCycle() {
         String LIST_MENU = """
                 ("список" — список по номеру или имени,
                  "карты" — карты по номеру или имени через пробел)
@@ -364,5 +358,33 @@ public class CommandLineMainUI implements MainUI {
             }
         }
 
+    }
+
+    /**
+     * Создаёт карту на основе юзерского ввода.
+     * Предлагает ввести координаты в виде "градусы минуты секунды"
+     * для каждой стандартной {@link AstraEntity АстроСущности}. Затем предлагает вводить
+     * дополнительные {@link Astra астры} в виде "название градусы минуты секунды".
+     * Пустой ввод означает пропуск астры или отказ от дополнительного ввода.
+     */
+    @Override
+    public void addChartFromUserInput() {
+        StringBuilder order = new StringBuilder();
+        print("Название новой карты: ");
+        order.append(getUserInput()).append("%n");
+        for (AstraEntity a : DEFAULT_ASTRO_SET) {
+            print("%s: ".formatted(a.name));
+            String input = getUserInput();
+            if (input.isBlank()) continue;
+            order.append("%s %s%n".formatted(a.name, input));
+            print();
+        }
+        print("Ввод дополнительных астр в формате 'название градусы минуты секунды'");
+        String input = getUserInput();
+        while (!input.isBlank()) {
+            order.append(input);
+            input = getUserInput();
+        }
+        print(addChart(astroSource.getChartFromUserInput(order.toString())));
     }
 }
