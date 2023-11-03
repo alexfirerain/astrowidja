@@ -6,11 +6,11 @@ import java.util.List;
 
 public interface ChartRepository {
 
-    void saveTableToFile(ChartList table, String target);
+    String saveTableToFile(ChartList table, String target);
 
-    void loadBase(String filename);
+    String loadBase(String filename);
 
-    void autosave();
+    String autosave();
 
     ChartList findList(String order);
 
@@ -20,11 +20,11 @@ public interface ChartRepository {
 
     ChartList readChartsFromBase(String baseName);
 
-    List<ChartList> getBasesContent();
+    List<ChartList> getWholeLibrary();
 
     List<String> baseNames();
 
-    void deleteFile(String order);
+    String deleteFile(String order);
 
 //    ChartObject findChart(ChartList list, String order, String location) throws ChartNotFoundException;
 

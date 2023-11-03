@@ -328,13 +328,13 @@ public class CommandLineMainUI implements MainUI {
             if (input == null || input.isBlank()) return;
 
             if (input.equals("=")) {
-                printInAsterisk(chartRepository.listLibrary());
+                printInAsterisk(chartRepository.listLibrary()); // TODO: выделить прослойку сервиса карт
 
             } else if (input.equals("==")) {
                 printInAsterisk(FileChartRepository.reportBaseContentExpanded());
 
             } else if (input.toLowerCase().startsWith("xxx") || input.toLowerCase().startsWith("ххх")) {
-                chartRepository.deleteFile(extractOrder(input, 3));
+                print(chartRepository.deleteFile(extractOrder(input, 3)));
 
             } else if (input.endsWith(">>")) {
                 ChartList loadingList = chartRepository.findList(extractOrder(input, -2));
@@ -354,7 +354,7 @@ public class CommandLineMainUI implements MainUI {
                 chartRepository.dropListToFile(DESK, extractOrder(input, 2));
 
             } else if (input.startsWith("->")) {
-                chartRepository.saveTableToFile(DESK, extractOrder(input, 2));
+                print(chartRepository.saveTableToFile(DESK, extractOrder(input, 2)));
             }
         }
 

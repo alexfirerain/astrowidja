@@ -25,7 +25,7 @@ public class FileChartRepository implements ChartRepository {
     /**
      * Список списков карт, соответствующих файлам в рабочей папке.
      */
-    protected static List<ChartList> chartLibrary = chartRepository.getBasesContent();
+    protected static List<ChartList> chartLibrary = chartRepository.getWholeLibrary();
 
     static {
         Path basePath = Path.of(baseDir);
@@ -42,12 +42,12 @@ public class FileChartRepository implements ChartRepository {
     }
 
     /**
-     * Возвращает список баз в библиотеке. Файловая реализация
-     * прочитывает и отдаёт список файлов в рабочей папке.
+     * Прочитывает и отдаёт список файлов в рабочей папке.
+     * Вспомогательный метод при файловой реализации картохранилища.
      *
-     * @return список файлов *.awb и *.awc в папке базы. Если путь к базе не определён,
-     * или её файл не существует или не является папкой, то пустой список.
-     * Файлы в списке сортируются по дате изменения.
+     * @return список имён файлов АстроВидьи *.awb и *.awc, присутствующих в рабочей папке
+     * в момент вызова, сортированный по дате последнего изменения, где последними самые свежеизменённые.
+     * Если путь к базе не определён, или её файл не существует или не является папкой, то пустой список.
      */
     private List<File> getBaseContent() {
         return base == null || !base.exists() || base.listFiles() == null ?
@@ -59,8 +59,8 @@ public class FileChartRepository implements ChartRepository {
                         .collect(Collectors.toList());
     }
 
-    public static String reportBaseContentExpanded() {
-        chartLibrary = chartRepository.getBasesContent();
+    public static String reportBaseContentExpanded() {  // TODO: превратить в декоратор, принимающий список картосписков
+        chartLibrary = chartRepository.getWholeLibrary();
 
         StringBuilder output = new StringBuilder();
         List<String> tableOfContents = chartRepository.baseNames();
@@ -73,7 +73,8 @@ public class FileChartRepository implements ChartRepository {
             if (filename.endsWith(".awb"))
                 IntStream.range(0, chartNames.size())
                         .mapToObj(i -> "\t%3d. %s%n"
-                                .formatted(i + 1, chartNames.get(i)))
+                                .formatted(i + 1,
+                                        chartNames.get(i)))
                         .forEach(output::append);
 
             if (filename.endsWith(".awc") && !chartNames.isEmpty())
@@ -91,7 +92,7 @@ public class FileChartRepository implements ChartRepository {
      * файлов *.awb и *.awc в рабочей папке, сортированный по дате изменения.
      */
     @Override
-    public String listLibrary() {
+    public String listLibrary() {   // TODO: превратить в декоратор, принимающий вывод baseNames()
         List<String> names = baseNames();
 
         return IntStream.range(0, names.size())
@@ -101,7 +102,7 @@ public class FileChartRepository implements ChartRepository {
     }
 
     /**
-     * Прочитывает список файлов из рабочей папки.
+     * Выдаёт список баз (списков карт), присутствующих в картохранилище.
      *
      * @return список имён файлов АстроВидьи, присутствующих в рабочей папке
      * в момент вызова, сортированный по дате последнего изменения.
@@ -120,7 +121,7 @@ public class FileChartRepository implements ChartRepository {
      * @return список списков карт, соответствующих файлам в рабочей папке.
      */
     @Override
-    public List<ChartList> getBasesContent() {
+    public List<ChartList> getWholeLibrary() {
         return baseNames().stream()
                 .map(this::readChartsFromBase)
                 .toList();
@@ -142,11 +143,13 @@ public class FileChartRepository implements ChartRepository {
      * сообщает об этом и выходит. Если хотя бы одна карта добавляется,
      * переписывает указанный файл его новой версией после слияния и сообщает,
      * какое содержание было записано. Если запись обламывается, сообщает и об этом.
-     * @param table список карт, который надо добавить к списку в файле.
-     * @param target    имя файла в папке базы данных, в который нужно дописать карты.
+     *
+     * @param table  список карт, который надо добавить к списку в файле.
+     * @param target имя файла в папке базы данных, в который нужно дописать карты.
+     * @return
      */
     @Override
-    public void saveTableToFile(ChartList table, String target) {
+    public String saveTableToFile(ChartList table, String target) {
         String result;
         ChartList fileContent = readChartsFromBase(target);
         if (table.isEmpty() || !fileContent.addAll(table)) {
@@ -161,11 +164,11 @@ public class FileChartRepository implements ChartRepository {
                 result = "Запись в файл %s обломалась: %s%n".formatted(target, e.getLocalizedMessage());
             }
         }
-        print(result);
+        return result;
     }
 
     public void moveChartsToFile(String source, String target, int... charts) {
-        chartLibrary = getBasesContent();
+        chartLibrary = getWholeLibrary();
         ChartList sourceList = chartLibrary.get(baseNames().indexOf(source));
         ChartList targetList = chartLibrary.get(baseNames().indexOf(target));
 
@@ -275,7 +278,7 @@ public class FileChartRepository implements ChartRepository {
         ChartList list = new ChartList();
         if (order == null || order.isBlank())
             return list;
-        List<ChartList> base = getBasesContent();
+        List<ChartList> base = getWholeLibrary();
 
         if (order.matches("^\\d+"))
             try {
@@ -303,7 +306,8 @@ public class FileChartRepository implements ChartRepository {
     }
 
     @Override
-    public void deleteFile(String fileToDelete) {
+    public String deleteFile(String fileToDelete) {
+        // TODO: выделить функции идентификации файла/карты по номеру/имени
         String report = "Файл %s удалён.".formatted(fileToDelete);
         try {
             List<String> fileList = baseNames();
@@ -358,11 +362,11 @@ public class FileChartRepository implements ChartRepository {
                 report = "скорее всего, недопустимое имя файла";
             }
         } catch (IOException e) {
-            report = "ошибка чтения базы, " + e.getLocalizedMessage();
+            report = "ошибка чтения базы, %s".formatted(e.getLocalizedMessage());
         } catch (Exception e) {
-            report = "ошибка удаления файла " + fileToDelete + ": " + e.getLocalizedMessage();
+            report = "ошибка удаления файла %s: %s".formatted(fileToDelete, e.getLocalizedMessage());
         }
-        print(report);
+        return report;
     }
 
     private static boolean confirmDeletion(String fileToDelete) {
@@ -371,15 +375,15 @@ public class FileChartRepository implements ChartRepository {
     }
 
     @Override
-    public void loadBase(String filename) {
+    public String loadBase(String filename) {
         readChartsFromBase(filename)
                 .forEach(c -> DESK.addResolving(c, "на столе"));
-        print("Загружены карты из " + filename);
+        return "Загружены карты из " + filename;
     }
 
     @Override
-    public void autosave() {
-        saveTableToFile(DESK, newAutosaveName());
+    public String autosave() {
+        return saveTableToFile(DESK, newAutosaveName());
     }
 
 //    /**

@@ -257,6 +257,7 @@ public class CommandLineAstroSource implements AstroSource {
      */
     @Override
     public Chart getChartFromUserInput(String data) {
+        // TODO: вообще-то это должен быть построитель карты на основе заданного момента времени
         return Chart.readFromString(data);
     }
 

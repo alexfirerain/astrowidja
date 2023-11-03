@@ -118,7 +118,7 @@ public class Astra {
 
             coors = IntStream.range(1, elements.length)
                     .mapToObj(i -> Double.parseDouble(elements[i]))
-                    .collect(Collectors.toCollection(() -> new ArrayList<>(3)))
+                    .collect(Collectors.toCollection(() -> new ArrayList<>(4)))
                     .toArray(Double[]::new);
         } catch (RuntimeException e) {
             System.out.println("Не удалось прочитать строку '" + input + "': " + e.getMessage());

@@ -3,6 +3,7 @@ package ru.swetophor.mainframe;
 
 import ru.swetophor.celestialmechanics.*;
 
+import static ru.swetophor.mainframe.Decorator.print;
 import static ru.swetophor.mainframe.Settings.*;
 
 
@@ -54,12 +55,12 @@ public class Application {
         mainShield.welcome();
 
         if (autoloadEnabled)
-            chartRepository.loadBase("autosave.awb");
+            print(chartRepository.loadBase("autosave.awb"));
 
         mainShield.mainCycle();
 
         if (autosave)
-            chartRepository.autosave();
+            print(chartRepository.autosave());
     }
 
 
