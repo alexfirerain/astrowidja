@@ -25,14 +25,16 @@ public class Application {
     static final AstroSource astroSource;
     static final ChartRepository chartRepository;
 
+    static final LibraryService libraryService;
 
     /*
         Инициализация имплементации
      */
     static {
-        mainShield = new CommandLineMainUI();
         astroSource = new CommandLineAstroSource();
         chartRepository = new FileChartRepository();
+        libraryService = new LibraryService(chartRepository);
+        mainShield = new CommandLineMainUI(libraryService);
     }
 
     /**

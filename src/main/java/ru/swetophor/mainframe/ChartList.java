@@ -291,8 +291,11 @@ public class ChartList {
     }
 
     /**
-     * @param name
-     * @return
+     * Сообщает первый найденный индекс элемента в этом списке,
+     * соответствующего карте с таким именем.
+     * @param name  имя искомой карты.
+     * @return  индекс искомой карты в этом списке,
+     * или -1, если не найдено.
      */
     public int indexOf(String name) {
         return names.indexOf(name);

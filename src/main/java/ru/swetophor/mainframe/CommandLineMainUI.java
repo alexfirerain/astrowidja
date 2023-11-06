@@ -13,6 +13,11 @@ public class CommandLineMainUI implements MainUI {
     static final Scanner KEYBOARD = new Scanner(System.in);
     static final Set<String> yesValues = Set.of("да", "+", "yes", "true", "д", "y", "t", "1");
     static final Set<String> noValues = Set.of("нет", "-", "no", "false", "н", "n", "f", "0");
+    private final LibraryService libraryService;
+
+    public CommandLineMainUI(LibraryService libraryService) {
+        this.libraryService = libraryService;
+    }
 
     private String extractOrder(String input, int offset) {
        return offset >= 0 ?
@@ -347,7 +352,7 @@ public class CommandLineMainUI implements MainUI {
                 }
 
             } else if (input.endsWith("->")) {
-                DESK.addAll(chartRepository.findList(extractOrder(input, -2)));
+                DESK.addAll(libraryService.findList(extractOrder(input, -2)));
                 displayDesk();
 
             } else if (input.startsWith(">>")) {
