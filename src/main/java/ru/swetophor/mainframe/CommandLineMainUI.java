@@ -333,7 +333,7 @@ public class CommandLineMainUI implements MainUI {
             if (input == null || input.isBlank()) return;
 
             if (input.equals("=")) {
-                printInAsterisk(chartRepository.listLibrary()); // TODO: выделить прослойку сервиса карт
+                printInAsterisk(libraryService.listLibrary()); // TODO: выделить прослойку сервиса карт
 
             } else if (input.equals("==")) {
                 printInAsterisk(FileChartRepository.reportBaseContentExpanded());
