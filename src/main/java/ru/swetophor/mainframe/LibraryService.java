@@ -1,10 +1,5 @@
 package ru.swetophor.mainframe;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
 public class LibraryService {
     private final ChartRepository chartRepository;
 
@@ -22,11 +17,11 @@ public class LibraryService {
         return library.findList(chartListOrder);
     }
 
+    public String exploreLibrary() {
+        return library.exploreLibrary();
+    }
+
     public String listLibrary() {
-        List<String> names = library.getGroupNames();
-        return IntStream.range(0, names.size())
-                .mapToObj(i -> "%d. %s%n"
-                        .formatted(i + 1, names.get(i)))
-                .collect(Collectors.joining());
+        return library.listLibrary();
     }
 }

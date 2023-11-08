@@ -6,6 +6,7 @@ import ru.swetophor.celestialmechanics.ChartObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Getter
@@ -107,6 +108,28 @@ public class Library {
             throw new IllegalArgumentException("Списка не найдено: " + e);
         }
         return chartCatalogue.get(groupIndex);
+    }
+
+    public String exploreLibrary() {
+        StringBuilder output = new StringBuilder();
+        IntStream.range(0, groupNames.size())
+                .forEach(g -> {
+                    output.append("%d. %s:%n"
+                            .formatted(g + 1, groupNames.get(g)));
+                    List<String> chartNames = chartCatalogue.get(g).getNames();
+                    IntStream.range(0, chartNames.size())
+                            .mapToObj(i -> "\t%3d. %s%n"
+                                    .formatted(i + 1, chartNames.get(i)))
+                            .forEach(output::append);
+                });
+        return output.toString();
+    }
+
+    public String listLibrary() {
+        return IntStream.range(0, groupNames.size())
+                .mapToObj(i -> "%d. %s%n"
+                        .formatted(i + 1, groupNames.get(i)))
+                .collect(Collectors.joining());
     }
 
     @AllArgsConstructor

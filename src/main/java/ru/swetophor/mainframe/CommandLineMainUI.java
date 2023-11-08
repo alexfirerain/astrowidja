@@ -336,7 +336,8 @@ public class CommandLineMainUI implements MainUI {
                 printInAsterisk(libraryService.listLibrary()); // TODO: выделить прослойку сервиса карт
 
             } else if (input.equals("==")) {
-                printInAsterisk(FileChartRepository.reportBaseContentExpanded());
+//                printInAsterisk(FileChartRepository.reportBaseContentExpanded());
+                printInAsterisk(libraryService.exploreLibrary());
 
             } else if (input.toLowerCase().startsWith("xxx") || input.toLowerCase().startsWith("ххх")) {
                 print(chartRepository.deleteFile(extractOrder(input, 3)));

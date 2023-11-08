@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static ru.swetophor.mainframe.Application.libraryService;
 import static ru.swetophor.mainframe.Decorator.*;
 
 /**
@@ -15,7 +16,7 @@ public class Storage {
 
     static void fullBaseReport() {
         System.out.println("В базе присутствуют следующие файлы и карты:");
-        System.out.println(frameText(FileChartRepository.reportBaseContentExpanded(), 40, '*'));
+        System.out.println(frameText(libraryService.exploreLibrary(), 40, '*'));
     }
 
 

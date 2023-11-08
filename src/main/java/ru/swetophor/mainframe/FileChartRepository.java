@@ -59,32 +59,6 @@ public class FileChartRepository implements ChartRepository {
                         .collect(Collectors.toList());
     }
 
-    public static String reportBaseContentExpanded() {  // TODO: превратить в декоратор, принимающий список картосписков
-        chartLibrary = chartRepository.getWholeLibrary();
-
-        StringBuilder output = new StringBuilder();
-        List<String> tableOfContents = chartRepository.baseNames();
-
-        for (int f = 0; f < tableOfContents.size(); f++) {
-            String filename = tableOfContents.get(f);
-            output.append("%d. ".formatted(f + 1)).append(filename).append(":\n");
-            List<String> chartNames = chartLibrary.get(f).getNames();
-
-            if (filename.endsWith(".awb"))
-                IntStream.range(0, chartNames.size())
-                        .mapToObj(i -> "\t%3d. %s%n"
-                                .formatted(i + 1,
-                                        chartNames.get(i)))
-                        .forEach(output::append);
-
-            if (filename.endsWith(".awc") && !chartNames.isEmpty())
-                output.append(chartNames.get(0));
-
-        }
-
-        return output.toString();
-    }
-
     /**
      * Выдаёт строковое представление содержимого рабочей папки.
      *
