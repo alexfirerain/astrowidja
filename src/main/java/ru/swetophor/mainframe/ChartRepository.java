@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ChartRepository {
 
-    String saveTableToFile(ChartList table, String target);
+    String addChartsToGroup(ChartList table, String target);
 
     String loadBase(String filename);
 
@@ -14,9 +14,9 @@ public interface ChartRepository {
 
     ChartList findList(String order);
 
-    void dropListToFile(ChartList list, String s);
+    void saveChartsAsGroup(ChartList list, String s);
 
-    void putChartToBase(ChartObject chartObject, String baseName);
+    boolean putChartsToBase(String baseName, ChartObject... chartObject);
 
     ChartList readChartsFromBase(String baseName);
 

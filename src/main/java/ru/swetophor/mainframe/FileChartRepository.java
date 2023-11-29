@@ -41,6 +41,14 @@ public class FileChartRepository implements ChartRepository {
         }
     }
 
+    private static String[] getNames(String filename) throws IOException {
+        return Files.readString(Path.of(baseDir, filename))
+                .lines()
+                .filter(line -> line.startsWith("#") && line.length() > 1)
+                .map(line -> line.substring(1).strip())
+                .toArray(String[]::new);
+    }
+
     /**
      * Прочитывает и отдаёт список файлов в рабочей папке.
      * Вспомогательный метод при файловой реализации картохранилища.
@@ -116,14 +124,15 @@ public class FileChartRepository implements ChartRepository {
      * Если список пуст или в ходе выполнения ни одной карты из списка не добавляется,
      * сообщает об этом и выходит. Если хотя бы одна карта добавляется,
      * переписывает указанный файл его новой версией после слияния и сообщает,
-     * какое содержание было записано. Если запись обламывается, сообщает и об этом.
+     * какое содержание было записано.
+     * Если запись обламывается, сообщает и об этом.
      *
      * @param table  список карт, который надо добавить к списку в файле.
      * @param target имя файла в папке базы данных, в который нужно дописать карты.
-     * @return
+     * @return  строку с описанием результата операции.
      */
     @Override
-    public String saveTableToFile(ChartList table, String target) {
+    public String addChartsToGroup(ChartList table, String target) {
         String result;
         ChartList fileContent = readChartsFromBase(target);
         if (table.isEmpty() || !fileContent.addAll(table)) {
@@ -133,7 +142,7 @@ public class FileChartRepository implements ChartRepository {
 
             try (PrintWriter out = new PrintWriter(Path.of(baseDir, target).toFile())) {
                 out.println(drop);
-                result = "Строка%n%s%n записана в %s%n".formatted(drop, target);
+                result = "Строка {%n%s%n} записана в %s%n".formatted(drop, target);
             } catch (FileNotFoundException e) {
                 result = "Запись в файл %s обломалась: %s%n".formatted(target, e.getLocalizedMessage());
             }
@@ -155,18 +164,12 @@ public class FileChartRepository implements ChartRepository {
                 .forEach(sourceList::remove);
 
         if (!sourceList.equals(readChartsFromBase(source)))
-            dropListToFile(sourceList, source);
+            saveChartsAsGroup(sourceList, source);
         if (!targetList.equals(readChartsFromBase(target)))
-            dropListToFile(targetList, target);
+            saveChartsAsGroup(targetList, target);
     }
 
     @Override
-    public void putChartToBase(ChartObject chart, String file) {
-        ChartList fileContent = readChartsFromBase(file);
-        if (fileContent.addResolving(chart, file))
-            dropListToFile(fileContent, file);
-    }
-
     public boolean  putChartsToBase(String file, ChartObject... charts) {
         ChartList fileContent = readChartsFromBase(file);
         boolean changed = false;
@@ -174,7 +177,7 @@ public class FileChartRepository implements ChartRepository {
             if (fileContent.addResolving(c, file))
                 changed = true;
         if (changed)
-            dropListToFile(fileContent, file);
+            saveChartsAsGroup(fileContent, file);
         return changed;
     }
 
@@ -217,8 +220,8 @@ public class FileChartRepository implements ChartRepository {
      * @param fileName    имя файла в рабочей папке.
      */
     @Override
-    public void dropListToFile(ChartList content, String fileName) {
-        fileName = extendFileName(content, fileName);
+    public void saveChartsAsGroup(ChartList content, String fileName) {
+        fileName = extendFileName(fileName, content.size() == 1);
 
         try (PrintWriter out = new PrintWriter(Path.of(baseDir, fileName).toFile())) {
             out.println(content.getString());
@@ -230,9 +233,9 @@ public class FileChartRepository implements ChartRepository {
         }
     }
 
-    private static String extendFileName(ChartList content, String filename) {
+    private static String extendFileName(String filename, boolean asAwc) {
         if (!filename.endsWith(".awb") && !filename.endsWith(".awc"))
-            filename += content.size() == 1 ? ".awc" : ".awb";
+            filename += asAwc ? ".awc" : ".awb";
         return filename;
     }
 
@@ -357,7 +360,7 @@ public class FileChartRepository implements ChartRepository {
 
     @Override
     public String autosave() {
-        return saveTableToFile(DESK, newAutosaveName());
+        return addChartsToGroup(DESK, newAutosaveName());
     }
 
 //    /**

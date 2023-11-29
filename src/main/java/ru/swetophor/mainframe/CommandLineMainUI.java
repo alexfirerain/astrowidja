@@ -19,6 +19,13 @@ public class CommandLineMainUI implements MainUI {
         this.libraryService = libraryService;
     }
 
+    /**
+     * Извлекает из строки аргумент, удаляя из её начала или конца оператор в заданной позиции.
+     * @param input входная строка.
+     * @param offset    какая часть строки откусывается.
+     *                  Если положительное число, то от начала, если отрицательное, то от конца.
+     * @return  входную строку с удалённым из неё оператором в указанной позиции.
+     */
     private String extractOrder(String input, int offset) {
        return offset >= 0 ?
                input.trim().substring(offset).trim() :
@@ -85,11 +92,11 @@ public class CommandLineMainUI implements MainUI {
                 return;
 
             if (input.startsWith("->")) {
-                chartRepository.putChartToBase(chartObject, input.substring(2).trim());
+                chartRepository.putChartsToBase(extractOrder(input, 2), chartObject);
 
             } else if (input.startsWith("+") && chartObject instanceof Chart) {
                 ChartObject counterpart;
-                String order = input.substring(1).trim();
+                String order = extractOrder(input, 1);
                 try {
                     counterpart = findOnDesk(order);
                     if (counterpart instanceof Chart)
@@ -101,7 +108,7 @@ public class CommandLineMainUI implements MainUI {
 
             } else if (input.startsWith("*") && chartObject instanceof Chart) {
                 ChartObject counterpart;
-                String order = input.substring(1).trim();
+                String order = extractOrder(input, 1);
                 try {
                     counterpart = findOnDesk(order);
                     if (counterpart instanceof Chart)
@@ -155,6 +162,11 @@ public class CommandLineMainUI implements MainUI {
         return yesValues.contains(value.toLowerCase());
     }
 
+    /**
+     * Задаёт пользователю вопрос и возвращает булево, соответствующее его ответу.
+     * @param prompt    вопрос, который спрашивает программа.
+     * @return  {@code ДА} или {@code НЕТ} сообразно вводу пользователя.
+     */
     @Override
     public boolean confirmationAnswer(String prompt) {
         printInFrame(prompt);
@@ -206,7 +218,7 @@ public class CommandLineMainUI implements MainUI {
     @Override
     public void displayDesk() {
         printInFrame(DESK.isEmpty() ?
-                "Ни одной карты не загружено." :
+                "На столе нет ни одной карты." :
                 DESK.toString()
         );
     }
@@ -333,34 +345,37 @@ public class CommandLineMainUI implements MainUI {
             if (input == null || input.isBlank()) return;
 
             if (input.equals("=")) {
-                printInAsterisk(libraryService.listLibrary()); // TODO: выделить прослойку сервиса карт
+                printInAsterisk(libraryService.listLibrary()); // TODO: завершить определение полномочий сервиса
 
             } else if (input.equals("==")) {
-//                printInAsterisk(FileChartRepository.reportBaseContentExpanded());
-                printInAsterisk(libraryService.exploreLibrary());
+                printInAsterisk(libraryService.libraryListing());
 
             } else if (input.toLowerCase().startsWith("xxx") || input.toLowerCase().startsWith("ххх")) {
                 print(chartRepository.deleteFile(extractOrder(input, 3)));
 
             } else if (input.endsWith(">>")) {
-                ChartList loadingList = chartRepository.findList(extractOrder(input, -2));
-                if (loadingList == null || loadingList.isEmpty()) {     // TODO: write a confirmation general utility
-                    print("список не найден или пуст");
-                } else {
+                try {
+                    ChartList loadingList = libraryService.findList(extractOrder(input, -2));
                     DESK.clear();
                     DESK.addAll(loadingList);
                     displayDesk();
+                } catch (IllegalArgumentException e) {
+                    print(e.getLocalizedMessage());
                 }
 
             } else if (input.endsWith("->")) {
-                DESK.addAll(libraryService.findList(extractOrder(input, -2)));
-                displayDesk();
+                try {
+                    DESK.addAll(libraryService.findList(extractOrder(input, -2)));
+                    displayDesk();
+                } catch (IllegalArgumentException e) {
+                    print(e.getLocalizedMessage());
+                }
 
             } else if (input.startsWith(">>")) {
-                chartRepository.dropListToFile(DESK, extractOrder(input, 2));
+                chartRepository.saveChartsAsGroup(DESK, extractOrder(input, 2));
 
             } else if (input.startsWith("->")) {
-                print(chartRepository.saveTableToFile(DESK, extractOrder(input, 2)));
+                print(chartRepository.addChartsToGroup(DESK, extractOrder(input, 2)));
             }
         }
 

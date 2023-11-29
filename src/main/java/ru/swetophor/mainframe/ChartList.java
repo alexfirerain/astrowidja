@@ -81,7 +81,7 @@ public class ChartList {
      * @return {@code да}, если добавление карты (с переименованием либо с заменой) состоялось,
      *          {@code нет}, если была выбрана отмена.
      */
-    public boolean mergeResolving(ChartObject controversial, String listName) {
+    public boolean resolveCollision(ChartObject controversial, String listName) {
         while (true) {
             System.out.printf("""
                                                     
@@ -124,7 +124,7 @@ public class ChartList {
     /**
      * Процедура добавления карты к списку. Если название карты входит в
      * коллизию с именем уже присутствующей карты, запускается интерактивная процедура
-     * в соответствии с методом {@link #mergeResolving(ChartObject, String)}.
+     * в соответствии с методом {@link #resolveCollision(ChartObject, String)}.
      *
      * @param chart      добавляемая карта.
      * @param toListName название пополняемого списка (в предложном падеже,
@@ -134,7 +134,7 @@ public class ChartList {
      */
     public boolean addResolving(ChartObject chart, String toListName) {
         return contains(chart.getName()) ?
-                mergeResolving(chart, toListName) :
+                resolveCollision(chart, toListName) :
                 addItem(chart);
     }
 
@@ -189,7 +189,7 @@ public class ChartList {
     /**
      * Добавляет в список указанную карту.
      * Если карта с таким именем уже в наличии, запускает интерактивную процедуру разрешения
-     * конфликта {@link #mergeResolving(ChartObject, String)} (с названием списка "этот список").
+     * конфликта {@link #resolveCollision(ChartObject, String)} (с названием списка "этот список").
      *
      * @param chart добавляемая.
      * @return {@code true}, если список изменился в результате операции.
@@ -197,15 +197,17 @@ public class ChartList {
     public boolean add(ChartObject chart) {
         int mod = this.modCount;
         if (contains(chart.getName()))
-            mergeResolving(chart, "этом списке");
+            resolveCollision(chart, "этом списке");
         else
             addItem(chart);
         return this.modCount != mod;
     }
 
     /**
-     * @param collection
-     * @return
+     * Добавляет к этому картосписку все карты из коллекции.
+     * @param collection любая коллекция карт.
+     * @return  {@code true}, если картосписок изменился
+     * в результате вызова.
      */
     public boolean addAll(Collection<ChartObject> collection) {
         if (collection == null) return false;
