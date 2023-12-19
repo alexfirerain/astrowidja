@@ -3,9 +3,11 @@ package ru.swetophor.celestialmechanics;
 import lombok.Getter;
 import lombok.Setter;
 import ru.swetophor.harmonix.Matrix;
+import ru.swetophor.harmonix.Pattern;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Setter
 @Getter
@@ -106,6 +108,15 @@ public class Synastry extends MultiChart {
     @Override
     public String resonanceAnalysisVerbose(int upToHarmonic) {
         return "подробный анализ паттернов резонансов в синастрии";
+    }
+
+    /**
+     * @param edgeHarmonic
+     * @return
+     */
+    @Override
+    public Map<Integer, List<Pattern>> buildPatternAnalysis(int edgeHarmonic) {
+        return null;
     }
 
     /**

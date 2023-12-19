@@ -1,7 +1,5 @@
 package ru.swetophor.mainframe;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import ru.swetophor.celestialmechanics.ChartObject;
 
 import java.util.ArrayList;
@@ -50,12 +48,13 @@ public class LibraryService {
      * В ином случае ищет сначала индекс точного совпадения
      * ввода с элементом, затем, если его не найдено, индекс первого элемента с совпадением
      * начальных символов.
+     *
      * @param input строка, анализируемая как источник индекса.
      * @param list  список строк, индекс в котором ищется.
-     * @return  индекс элемента в списке, если ввод содержит корректный номер или
+     * @return индекс элемента в списке, если ввод содержит корректный номер или
      * присутствующий элемент.
      * @throws IllegalArgumentException если ни по номеру, ни по имени элемента
-     * не найдено в списке, а также если аргументы пусты.
+     *                                  не найдено в списке, а также если аргументы пусты.
      */
     private int defineIndexFromInput(String input, List<String> list) {
         if (input == null || input.isBlank())
@@ -87,12 +86,13 @@ public class LibraryService {
     /**
      * Возвращает объект, содержащий индекс группы в Библиотеке
      * и индекс элемента в этой группе.
-     * @param groupInput    текстовый ввод для определения группы.
-     * @param chartNameInput    текстовый ввод для определения карты.
-     * @return  объект-контейнер, содержащий два числа,
+     *
+     * @param groupInput     текстовый ввод для определения группы.
+     * @param chartNameInput текстовый ввод для определения карты.
+     * @return объект-контейнер, содержащий два числа,
      * определяющие место карты в Библиотеке (индекс группы и индекс карты).
      * @throws IllegalArgumentException если ввод не распознан как адрес
-     * существующей в Библиотеке карты.
+     *                                  существующей в Библиотеке карты.
      */
     private ChartAddress defineAddress(String groupInput, String chartNameInput) {
         int groupIndex;
@@ -113,9 +113,10 @@ public class LibraryService {
     /**
      * Находит в базе (ея отображении в памяти) список карт по
      * строке ввода.
+     *
      * @param chartListOrder строка ввода, как номер, название
      *                       или первые символы названия.
-     * @return  список карт с указанным номером или названием.
+     * @return список карт с указанным номером или названием.
      * @throws IllegalArgumentException если по вводу не опознан список.
      */
     public ChartList findList(String chartListOrder) {
@@ -131,6 +132,7 @@ public class LibraryService {
     /**
      * Выдаёт строковое представление содержимого библиотеки
      * (как оно отображается в памяти).
+     *
      * @return нумерованный (с 1) список групп, вслед каждой группе -
      * нумерованный (с 1) список карт в ней.
      */
@@ -149,7 +151,8 @@ public class LibraryService {
 
     /**
      * Выдаёт строковое представление групп карт в библиотеке.
-     * @return  нумерованный (с 1) список групп.
+     *
+     * @return нумерованный (с 1) список групп.
      */
     public String listLibrary() {
         return IntStream.range(0, groupNames.size())
@@ -169,17 +172,10 @@ public class LibraryService {
     }
 
     public ChartObject getByGroupAndChartName(String groupName, String chartName) {
-        ChartAddress order = defineAddress(groupName, chartName);
+        var order = defineAddress(groupName, chartName);
         return chartCatalogue
-                .get(order.getGroupIndex())
-                .get(order.getChartIndex());
-    }
-
-    @AllArgsConstructor
-    @Getter
-    private static class ChartAddress {
-        private int groupIndex;
-        private int chartIndex;
+                .get(order.groupIndex())
+                .get(order.chartIndex());
     }
 
 }

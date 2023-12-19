@@ -25,7 +25,7 @@ public class FileChartRepository implements ChartRepository {
     /**
      * Список списков карт, соответствующих файлам в рабочей папке.
      */
-    protected static List<ChartList> chartLibrary = chartRepository.getWholeLibrary();
+    protected List<ChartList> chartLibrary = getWholeLibrary();
 
     static {
         Path basePath = Path.of(baseDir);

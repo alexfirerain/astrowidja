@@ -15,7 +15,7 @@ public class Application {
     /**
      * Счётчик для нумерации объектов типа КартОбъект.
      */
-    @Deprecated
+//    @Deprecated
     static public int id = 0;
 
     /**
