@@ -26,7 +26,7 @@ public class Pattern {
     List<PatternElement> entries = new ArrayList<>();
     int harmonic;
 
-    ChartObject heaven;
+    ChartObject heaven; // TODO: категорически ненужный параметр, ибо мобыть синастрией
 
     double totalClearance = 0.0;
 

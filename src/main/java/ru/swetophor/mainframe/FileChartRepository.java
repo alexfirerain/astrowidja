@@ -1,6 +1,7 @@
 package ru.swetophor.mainframe;
 
 import ru.swetophor.celestialmechanics.ChartObject;
+import ru.swetophor.celestialmechanics.Mechanics;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -50,24 +51,6 @@ public class FileChartRepository implements ChartRepository {
     }
 
     /**
-     * Прочитывает и отдаёт список файлов в рабочей папке.
-     * Вспомогательный метод при файловой реализации картохранилища.
-     *
-     * @return список имён файлов АстроВидьи *.awb и *.awc, присутствующих в рабочей папке
-     * в момент вызова, сортированный по дате последнего изменения, где последними самые свежеизменённые.
-     * Если путь к базе не определён, или её файл не существует или не является папкой, то пустой список.
-     */
-    private List<File> getBaseContent() {
-        return base == null || !base.exists() || base.listFiles() == null ?
-                new ArrayList<>() :
-                Arrays.stream(Objects.requireNonNull(base.listFiles()))
-                        .filter(file -> !file.isDirectory())
-                        .filter(file -> file.getName().endsWith(".awb") || file.getName().endsWith(".awc"))
-                        .sorted(Comparator.comparing(File::lastModified))
-                        .collect(Collectors.toList());
-    }
-
-    /**
      * Выдаёт строковое представление содержимого рабочей папки.
      *
      * @return нумерованный (начиная с 1) построчный список
@@ -91,9 +74,14 @@ public class FileChartRepository implements ChartRepository {
      */
     @Override
     public List<String> baseNames() {
-        return getBaseContent().stream()
-                .map(File::getName)
-                .toList();
+        return base == null || !base.exists() || base.listFiles() == null ?
+                new ArrayList<>() :
+                Arrays.stream(Objects.requireNonNull(base.listFiles()))
+                        .filter(file -> !file.isDirectory())
+                        .filter(file -> file.getName().endsWith(".awb") || file.getName().endsWith(".awc"))
+                        .sorted(Comparator.comparing(File::lastModified))
+                        .map(File::getName)
+                        .toList();
     }
 
     /**
@@ -192,9 +180,8 @@ public class FileChartRepository implements ChartRepository {
     @Override
     public ChartList readChartsFromBase(String fileName) {
         ChartList read = new ChartList();
-        if (fileName == null) {
+        if (fileName == null || fileName.isBlank())
             System.out.println("Файл не указан");
-        }
         Path filePath = Path.of(baseDir, fileName);
         if (!Files.exists(filePath))
             System.out.printf("Не удалось обнаружить файла '%s'%n", fileName);
@@ -215,13 +202,16 @@ public class FileChartRepository implements ChartRepository {
      * Записывает содержимое картосписка (как возвращается {@link ChartList#getString()})
      * в файл по указанному адресу (относительно рабочей папки).
      * Существующий файл заменяется, несуществующий создаётся.
+     * Если предложенное для сохранения имя оканчивается на {@code .awc} или {@code .awb},
+     * используется оно. Если не оканчивается, то к нему добавляется {@code .awb}
+     * или (если сохраняемый список содержит только одну карту) {@code .awc}.
      *
      * @param content список карт, чьё содержимое записывается.
-     * @param fileName    имя файла в рабочей папке.
+     * @param fileName    имя файла в рабочей папке, в который сохраняется.
      */
     @Override
     public void saveChartsAsGroup(ChartList content, String fileName) {
-        fileName = extendFileName(fileName, content.size() == 1);
+        fileName = Mechanics.extendFileName(fileName, content.size() == 1);
 
         try (PrintWriter out = new PrintWriter(Path.of(baseDir, fileName).toFile())) {
             out.println(content.getString());
@@ -231,12 +221,6 @@ public class FileChartRepository implements ChartRepository {
         } catch (FileNotFoundException e) {
             System.out.printf("Запись в файл %s обломалась: %s%n", fileName, e.getLocalizedMessage());
         }
-    }
-
-    private static String extendFileName(String filename, boolean asAwc) {
-        if (!filename.endsWith(".awb") && !filename.endsWith(".awc"))
-            filename += asAwc ? ".awc" : ".awb";
-        return filename;
     }
 
     /**
@@ -282,6 +266,9 @@ public class FileChartRepository implements ChartRepository {
         return list;
     }
 
+    public String deleteGroup(String groupToDelete) {
+        return null;
+    }
     @Override
     public String deleteFile(String fileToDelete) {
         // TODO: выделить функции идентификации файла/карты по номеру/имени
@@ -351,6 +338,13 @@ public class FileChartRepository implements ChartRepository {
                 .confirmationAnswer("Точно удалить " + fileToDelete + "?");
     }
 
+    /**
+     * Добавляет ко СТОЛУ карты из файла с указанным именем.
+     * Карты с повторяющимся названием подвергаются
+     * интерактивной процедуре подтверждения слияния.
+     * @param filename имя файла в рабочей папке, из которого добавить карты.
+     * @return  строковое сообщение об успехе операции.
+     */
     @Override
     public String loadBase(String filename) {
         readChartsFromBase(filename)

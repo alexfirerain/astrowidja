@@ -111,6 +111,7 @@ public class Chart extends ChartObject {
     public Chart(String name, List<Astra> astras) {
         super(name);
         this.astras = astras;
+        astras.forEach(a -> a.setHeaven(this));
         calculateAspectTable();
     }
 
@@ -396,12 +397,16 @@ public class Chart extends ChartObject {
 
     public PatternAnalysis buildAnalysis(int edgeHarmonic) {
 
-        return new PatternAnalysis(rangeClosed(1, edgeHarmonic)
+        return new PatternAnalysis(
+                rangeClosed(1, edgeHarmonic)
                 .boxed()
-                .collect(Collectors
-                        .toMap(h -> h,
+                .collect(
+                        Collectors.toMap(h -> h,
                                 this::findPatterns,
-                                (a, b) -> b)));
+                                (a, b) -> b
+                        )
+                )
+        );
     }
 
     /**

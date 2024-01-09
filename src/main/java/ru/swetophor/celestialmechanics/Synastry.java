@@ -24,7 +24,7 @@ public class Synastry extends MultiChart {
     protected Matrix aspects;
 
     /**
-     * конструктор синастрии из двух карт
+     * Конструктор синастрии из двух карт
      */
     public Synastry(Chart chart1, Chart chart2) {
         super("Синастрия: %s и %s".formatted(chart1.name, chart2.name));

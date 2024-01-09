@@ -96,7 +96,7 @@ public class Aspect {
         return Mechanics.multipliersExplicate(numeric);
     }
     /**
-     * точность аспекта через количество последующих гармоник, через кои проходит
+     * Точность аспекта через количество последующих гармоник, через кои проходит
      */
     private final int depth;
 

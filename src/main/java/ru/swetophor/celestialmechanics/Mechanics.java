@@ -170,7 +170,7 @@ public class Mechanics {
 
 
     /**
-     * вспомогательный метод нахождения крата аспекта
+     * Вспомогательный метод нахождения крата аспекта
      * @param resonance какой гармоники анализируется дуга.
      * @param arc   анализируемая дуга.
      * @param orb   первичный орбис, используемый при расчёте аспектов.
@@ -280,5 +280,19 @@ public class Mechanics {
         }
 
         return composite;
+    }
+
+    /**
+     * Дополняет к строке расширение файла Астровидьи, если строка
+     * ещё не оканчивается на него. Если второй параметр {@code ДА},
+     * раширение используется {@code .awc}, иначе {@code .awb}.
+     * @param filename имя файла, которое снабжается расширением.
+     * @param asAwc    использовать ли расширение {@code .awc} (иначе {@code .awb}).
+     * @return  строку с добавленным, если было необходимо, расширением файла.
+     */
+    public static String extendFileName(String filename, boolean asAwc) {
+        if (!filename.endsWith(".awb") && !filename.endsWith(".awc"))
+            filename += asAwc ? ".awc" : ".awb";
+        return filename;
     }
 }

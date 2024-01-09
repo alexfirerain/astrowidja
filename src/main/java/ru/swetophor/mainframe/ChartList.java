@@ -227,6 +227,11 @@ public class ChartList {
         return charts.addAll(i, collection);
     }
 
+    public boolean substitute(ChartList collection) {
+        clear();
+        return addAll(collection);
+    }
+
     /**
      * Сортирует карты сообразно полученному компаратору,
      * затем перезаполняет список имён в соответствие с обновлённым

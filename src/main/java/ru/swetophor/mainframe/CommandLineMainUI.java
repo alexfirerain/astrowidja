@@ -144,13 +144,13 @@ public class CommandLineMainUI implements MainUI {
                         или пустой ввод для выхода >
                             
                 """;
-        System.out.println(singularFrame(
-                MENU.formatted(edgeHarmonic,
-                        orbsDivisor,
+        printInFrame(MENU.formatted(
+                        getEdgeHarmonic(),
+                        getOrbDivisor(),
                         Mechanics.secondFormat(getPrimalOrb(), false),
-                        halfOrbsForDoubles ? "да" : "нет",
-                        autosave ? "да" : "нет",
-                        autoloadFile)
+                        isHalfOrbsForDoubles() ? "да" : "нет",
+                        isAutosave() ? "да" : "нет",
+                        getAutoloadFile()
         ));
     }
 
@@ -187,7 +187,7 @@ public class CommandLineMainUI implements MainUI {
                 break;
             int delimiter = command.indexOf("=");
             if (delimiter == -1) {
-                print("Команда должна содержать оператор '='\n");
+                print("Команда должна содержать оператор '='");
                 continue;
             }
             String parameter = command.substring(0, delimiter).trim();
@@ -201,15 +201,17 @@ public class CommandLineMainUI implements MainUI {
                         if (negativeAnswer(value)) disableHalfOrbForDoubles();
                     }
                     case "4" -> {
-                        if (positiveAnswer(value)) autosave = true;
-                        if (negativeAnswer(value)) autosave = false;
+                        if (positiveAnswer(value)) setAutosave(true);
+                        if (negativeAnswer(value)) setAutosave(false);
                     }
-                    default -> print("Введи номер существующего параметра, а не '" + parameter + "'\n");
+                    case "5" -> setAutoloadFile(Mechanics.extendFileName(value, false));
+                    default -> print("Введи номер существующего параметра, а не вот это вот '" + parameter + "'");
                 }
             } catch (NumberFormatException e) {
                 print("Не удалось прочитать значение.\n");
             }
         }
+        saveSettings();
     }
 
     /**
@@ -342,27 +344,31 @@ public class CommandLineMainUI implements MainUI {
         while (true) {
             String input = getUserInput();
 
+            // выход из цикла
             if (input == null || input.isBlank()) return;
 
+            // вывод списка групп (файлов)
             if (input.equals("=")) {
                 printInAsterisk(libraryService.listLibrary()); // TODO: завершить определение полномочий сервиса
 
+            // вывод двухуровневого списка групп (файлов) и карт в них
             } else if (input.equals("==")) {
                 printInAsterisk(libraryService.libraryListing());
 
+            // удаление файла (группы)
             } else if (input.toLowerCase().startsWith("xxx") || input.toLowerCase().startsWith("ххх")) {
                 print(chartRepository.deleteFile(extractOrder(input, 3)));
 
+            // очистка стола и загрузка в него карт из группы (из файла)
             } else if (input.endsWith(">>")) {
                 try {
-                    ChartList loadingList = libraryService.findList(extractOrder(input, -2));
-                    DESK.clear();
-                    DESK.addAll(loadingList);
+                    DESK.substitute(libraryService.findList(extractOrder(input, -2)));
                     displayDesk();
                 } catch (IllegalArgumentException e) {
                     print(e.getLocalizedMessage());
                 }
 
+            // добавление къ столу карт из группы (из файла)
             } else if (input.endsWith("->")) {
                 try {
                     DESK.addAll(libraryService.findList(extractOrder(input, -2)));
@@ -371,6 +377,7 @@ public class CommandLineMainUI implements MainUI {
                     print(e.getLocalizedMessage());
                 }
 
+            //
             } else if (input.startsWith(">>")) {
                 chartRepository.saveChartsAsGroup(DESK, extractOrder(input, 2));
 

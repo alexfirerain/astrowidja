@@ -56,12 +56,12 @@ public class Application {
 
         mainShield.welcome();
 
-        if (autoloadEnabled)
-            print(chartRepository.loadBase("autosave.awb"));
+        if (isAutoloadEnabled())
+            print(chartRepository.loadBase(getAutoloadFile()));
 
         mainShield.mainCycle();
 
-        if (autosave)
+        if (Settings.isAutosave())
             print(chartRepository.autosave());
     }
 
