@@ -179,21 +179,21 @@ public class FileChartRepository implements ChartRepository {
      */
     @Override
     public ChartList readChartsFromBase(String fileName) {
-        ChartList read = new ChartList();
+        ChartList read = new ChartList(fileName);
         if (fileName == null || fileName.isBlank())
-            System.out.println("Файл не указан");
+            print("Файл не указан");
         Path filePath = Path.of(baseDir, fileName);
         if (!Files.exists(filePath))
-            System.out.printf("Не удалось обнаружить файла '%s'%n", fileName);
+            print("Не удалось обнаружить файла '%s'%n".formatted(fileName));
         else
             try {
                 Arrays.stream(Files.readString(filePath)
                                 .split("#"))
-                        .filter(s -> !s.isBlank())
-                        .map(ChartObject::readFromString)
-                        .forEach(chart -> read.addResolving(chart, fileName));
+                                .filter(s -> !s.isBlank())
+                                .map(ChartObject::readFromString)
+                                .forEach(chart -> read.addResolving(chart, fileName));
             } catch (IOException e) {
-                System.out.printf("Не удалось прочесть файл '%s': %s%n", fileName, e.getLocalizedMessage());
+                print("Не удалось прочесть файл '%s': %s%n".formatted(fileName, e.getLocalizedMessage()));
             }
         return read;
     }
@@ -236,7 +236,7 @@ public class FileChartRepository implements ChartRepository {
      * Если ни одним из способов файл не найден, то пустой список.
      */
     public ChartList findList(String order) {
-        ChartList list = new ChartList();
+        ChartList list = new ChartList("список из " + order);
         if (order == null || order.isBlank())
             return list;
         List<ChartList> base = getWholeLibrary();
@@ -247,9 +247,9 @@ public class FileChartRepository implements ChartRepository {
                 if (i >= 0 && i < base.size())
                     list = base.get(i);
                 else
-                    System.out.printf("В базе всего %d файлов%n", base.size());
+                    print("В базе всего %d файлов%n".formatted(base.size()));
             } catch (NumberFormatException e) {
-                System.out.println("Число не распознано.");
+                print("Число не распознано.");
             }
         else {
             int index;
@@ -259,7 +259,7 @@ public class FileChartRepository implements ChartRepository {
                     .findFirst()
                     .orElse(-1);
             if (index == -1)
-                System.out.println("Нет файла с именем на " + order);
+                print("Нет файла с именем на " + order);
             else
                 list = base.get(index);
         }

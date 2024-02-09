@@ -264,10 +264,10 @@ public class CommandLineAstroSource implements AstroSource {
 
 
     @Override
-    public void loadFromFile(String filename) {
+    public String loadFromFile(String filename) throws ChartNotFoundException {
         chartRepository.readChartsFromBase(filename)
                 .forEach(c -> Application.DESK.addResolving(c, "на столе"));
-        print("Загружены карты из " + filename);
+        return "Загружены карты из " + filename;
     }
 
     /**

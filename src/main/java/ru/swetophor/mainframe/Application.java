@@ -23,9 +23,9 @@ public class Application {
      */
     static final MainUI mainShield;
     static final AstroSource astroSource;
+    static final LibraryService libraryService;
     static final ChartRepository chartRepository;
 
-    static final LibraryService libraryService;
 
     /*
         Инициализация имплементации
@@ -40,7 +40,7 @@ public class Application {
     /**
      * Статический список карт в памяти работающей АстроВидьи.
      */
-    protected static final ChartList DESK = new ChartList();
+    protected static final ChartList DESK = new ChartList("Стол Астровидьи");
 
     public static final AstroSet DEFAULT_ASTRO_SET = new AstroSet(AstraEntity.values());
 
@@ -61,7 +61,7 @@ public class Application {
 
         mainShield.mainCycle();
 
-        if (Settings.isAutosave())
+        if (isAutosave())
             print(chartRepository.autosave());
     }
 

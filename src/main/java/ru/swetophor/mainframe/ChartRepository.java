@@ -18,7 +18,7 @@ public interface ChartRepository {
 
     boolean putChartsToBase(String baseName, ChartObject... chartObject);
 
-    ChartList readChartsFromBase(String baseName);
+    ChartList readChartsFromBase(String baseName) throws ChartNotFoundException;
 
     List<ChartList> getWholeLibrary();
 

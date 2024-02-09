@@ -12,8 +12,9 @@ public interface AstroSource {
      * Прочитывает карты из файла в папке базы данных на {@link Application#DESK стол} {@link Application АстроВидьи}.
      *
      * @param filename имя файла в папке базы данных.
+     * @return
      */
-    void loadFromFile(String filename);
+    String loadFromFile(String filename) throws ChartNotFoundException;
 
     Chart getChartFromUserInput(String data);
 

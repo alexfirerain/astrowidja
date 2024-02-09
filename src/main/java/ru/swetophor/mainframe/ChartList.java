@@ -25,13 +25,24 @@ public class ChartList {
      * Имена хранимых в списке карт.
      */
     private final List<String> names = new ArrayList<>();
+    private String listName = "список карт";
     protected transient int modCount = 0;
 
     public ChartList() {
     }
 
+    public ChartList(String listName) {
+        if (listName != null)
+            this.listName = listName;
+    }
+
     public ChartList(List<ChartObject> charts) {
         this();
+        addAll(charts);
+    }
+
+    public ChartList(String listName, List<ChartObject> charts) {
+        this(listName);
         addAll(charts);
     }
 
@@ -217,9 +228,10 @@ public class ChartList {
     }
 
     /**
-     * @param i
-     * @param collection
-     * @return
+     * Добавляет все карты коллекции к списку в определённую позицию.
+     * @param i          в какую позицию вставлять новые карты.
+     * @param collection    коллекция, из которой добавляем.
+     * @return  {@code ДА}, если картосписок изменился в результате.
      */
     public boolean addAll(int i, Collection<ChartObject> collection) {
         ++this.modCount;
@@ -247,6 +259,7 @@ public class ChartList {
     }
 
     /**
+     * Выдаёт
      * @return массив с содержащимися картами.
      */
     public ChartObject[] toArray() {

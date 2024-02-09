@@ -18,6 +18,8 @@ public class WavePattern {
         System.out.println(reportOverlapping());
     }
 
+
+
     private static int edgeOfPatternHarmonics = Settings.getEdgeHarmonic();
 
     private static String reportOverlapping() {
@@ -191,7 +193,7 @@ public class WavePattern {
         }
 
         private static void createPattern(int harmonics) {
-//            patterns = new ArrayList <>();
+            patterns = new ArrayList <>();
             patterns.add(new Aspect(1, 1));            // до конца не удалось понять, почему нужна эта строка
 
             IntStream.rangeClosed(1, harmonics).forEach(
